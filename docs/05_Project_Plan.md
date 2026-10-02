@@ -1,8 +1,8 @@
 # Online Exam Portal
 ## Agile Project Plan
 
-**Version:** 0.1  
-**Status:** Initial Planning Baseline  
+**Version:** 0.2  
+**Status:** Updated Planning Baseline  
 **Course:** UE24CS341A - Software Engineering
 
 ---
@@ -12,6 +12,7 @@
 | Version | Date | Author | Change |
 |---|---|---|---|
 | 0.1 | 02 October 2026 | Tanusha | Initial Agile project planning baseline |
+| 0.2 | 02 October 2026 | Tanusha | Updated technology baseline from Django/PostgreSQL to MERN |
 
 ---
 
@@ -29,7 +30,7 @@ The project will be developed by a team of three members:
 | Manaswi | Student Exam Attempt |
 | Gururaj | Evaluation and Results |
 
-All three members will also participate in shared Software Engineering activities such as requirements analysis, design reviews, authentication decisions, integration, testing, security validation, CI/CD and documentation.
+All three members will also participate in shared Software Engineering activities such as requirements analysis, architecture and design reviews, authentication decisions, integration, testing, security validation, CI/CD and documentation.
 
 ---
 
