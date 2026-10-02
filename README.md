@@ -38,3 +38,7 @@ Project documentation is maintained in the `docs/` directory.
 ## Agile Process
 
 The project follows an Agile Scrum-inspired iterative development process with user stories, sprint planning, code review, testing, validation and continuous documentation updates.
+
+## Project Management
+
+Jira Board: https://tanushaprakash.atlassian.net/jira/software/projects/OEP/summary
