@@ -47,8 +47,8 @@ Keep project documents in `docs/`. The first four documents will be authored sep
 | [OEP-19](https://tanushaprakash.atlassian.net/browse/OEP-19) | Initial Requirement Traceability Matrix | Manaswi | `docs/OEP-19-rtm` |
 | [OEP-20](https://tanushaprakash.atlassian.net/browse/OEP-20) | Agile Project Plan | Tanusha | Existing `docs/project-plan` |
 | [OEP-21](https://tanushaprakash.atlassian.net/browse/OEP-21) | Architecture | Tanusha | Existing `docs/architecture` |
-| [OEP-22](https://tanushaprakash.atlassian.net/browse/OEP-22) | Software Design | Tanusha | Choose a task-specific branch when updating |
-| [OEP-23](https://tanushaprakash.atlassian.net/browse/OEP-23) | Initial Validation Specification / Test Plan | Tanusha | Choose a task-specific branch when updating |
+| [OEP-22](https://tanushaprakash.atlassian.net/browse/OEP-22) | Software Design | Tanusha | `docs/OEP-22-software-design` |
+| [OEP-23](https://tanushaprakash.atlassian.net/browse/OEP-23) | Initial Validation Specification / Test Plan | Tanusha | `docs/OEP-23-validation-plan` |
 
 Existing documents under `docs/` are retained for their owners to review and align with the confirmed stack and SRS. Initial Field Layout/RTM versions describe the planned design; unavailable code/test results remain Pending and are updated after implementation.
 
