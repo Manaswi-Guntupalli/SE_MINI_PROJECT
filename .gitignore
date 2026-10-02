@@ -1,22 +1,26 @@
-# Python
-__pycache__/
-*.pyc
+# Node / React dependencies and output
+node_modules/
+dist/
+build/
+coverage/
+*.log
 
-# Virtual environment
-venv/
+# Local environment secrets (allow example templates)
+.env
+.env.*
+!.env.example
+!.env.*.example
 .env/
 
-# Environment secrets
-.env
-
-# Django
+# Existing Python/Django local artifacts
+__pycache__/
+*.pyc
+venv/
 db.sqlite3
 staticfiles/
 media/
 
-# VS Code
+# Editor and OS files
 .vscode/
-
-# OS
 .DS_Store
 Thumbs.db
