@@ -4,9 +4,9 @@ Software Engineering Mini Project
 
 ## Team
 
-- Tanusha — Exam and Question Management
-- Manaswi — Student Exam Attempt
-- Gururaj — Evaluation and Results
+- Tanusha Prakash (PES1UG24CS494) — Exam and Question Management
+- Guntupalli Manaswi (PES1UG24CS548) — Student Exam Attempt
+- Vidimalla Guru Teja (PES1UG24CS528) — Evaluation and Results
 
 ## Technology Stack
 
