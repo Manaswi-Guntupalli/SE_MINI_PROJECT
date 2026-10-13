@@ -12,21 +12,21 @@ React + Node.js/Express + MongoDB/Mongoose. Student, Instructor and Admin roles;
 
 ## GitHub issue structure (audit 13 October 2026)
 
-44 existing issues: **7 epics, 16 user stories, 21 tasks**. Every one of the 37 non-epic issues refers to one of the 7 epics in its issue description. The epic Markdown checklists account for all 37 exactly once.
+44 existing issues: **7 epics, 16 user stories, 21 tasks**. All 37 non-epic issues are linked exactly once through native GitHub Sub-issue relationships under their correct epics. The original 17 relationships were preserved and the 20 missing links completed. Markdown checklists supplement the native relationships.
 
 | Epic | Parent issue | Children (GitHub issue numbers) | Story points (stories only) | Primary ownership |
 |---|---|---|---:|---|
 | OEP-1 Foundation | #10 | #17 #18 #19 #20 #21 #22 #23 #24 #51 #52 | 15 | Shared |
 | OEP-2 Exam Management | #11 | #33 #34 #35 #36 #37 | 22 | Tanusha (`Tanusha181825`) |
 | OEP-3 Exam Attempt | #12 | #38 #39 #40 #46 #47 | 29 | Manaswi (`Manaswi-Guntupalli`) |
-| OEP-4 Evaluation & Results | #13 | #48 #49 #50 | 13 | Guru Teja (GitHub username to confirm) |
+| OEP-4 Evaluation & Results | #13 | #48 #49 #50 | 13 | Guru Teja (`Guruteja2319`) |
 | OEP-5 Testing & Security | #14 | #53 | — | Shared |
 | OEP-6 CI/CD & DevOps | #15 | #41 #42 #43 #44 #45 | — | Shared |
 | OEP-7 Documentation | #16 | #25 #26 #27 #28 #29 #30 #31 #32 | — | Manaswi (#25–28), Tanusha (#29–32) |
 
-All 16 user stories have written acceptance criteria and Fibonacci-style estimates. Their total is **79 points** (15 + 22 + 29 + 13). Six additional foundation tasks (#17–22) have 15 points as separate estimates; do not add these to story velocity or double count them. Fifteen support/documentation tasks do not currently have numeric points. Estimate these separately by agreed team capacity if needed rather than inventing retroactive story points.
+All 37 child issues have saved native Story Points: the existing 22 estimates remain unchanged (94 points), and the 15 previously missing estimates were reviewed and saved (73 points). The total child backlog is 167 points. See [Estimate Review](ESTIMATE_REVIEW.md) for the 15 values and their rationale. Estimates were authorized by Manaswi after asking the assistant to review and choose appropriate values; no separate team-wide agreement is claimed.
 
-**Important: Epic Markdown checklists are not equivalent to native GitHub sub-issue relations.** At this audit, native sub-issue relationships were missing for #24, #51, #52 under #10; #48–50 under #13; #53 under #14; #41–45 under #15; #25–32 under #16. Connect these existing issues through each epic's **Sub-issues → Add existing issue** UI. Do not create duplicates. Until linked, the native epic progress bar may be misleading.
+**Estimate accounting:** The 16 implementation user stories retain their 79-point subtotal; foundation/support/documentation tasks are separate child work. Do not add epic estimates or treat these mixed-work planning totals as achieved velocity. The eight closed documents represent historical work, not new Sprint 1 delivery. Feature/model-specific tests belong to their implementation criteria; #53 covers the broader cross-module/system/security test scope and #44 owns CI wiring rather than authoring those suites again.
 
 ## Board status and issue state
 
@@ -44,10 +44,18 @@ At the 13 October 2026 snapshot: Todo 35, In Progress 1 (#18/OEP-9), In Review 0
 ## Project fields and views
 
 - **01-Kanban Board:** group cards by native Status with four columns.
-- **02-Sprint Planning:** use existing `product backlog` Table view and rename when ready; add `Sprint` (Iteration), `Story Points` (Number), `Priority` (Single select), Assignees and Parent issue. Copy the 16 story-point estimates from descriptions to the numeric field without changing values. Avoid point totals for both stories and support tasks.
-- **03-Project Roadmap:** Roadmap layout, Start Date and Target Date fields. Filter to `label:"type:epic"` and enter **team-approved** dates rather than assumed deadlines.
+- **Product Backlog:** retain the existing backlog table.
+- **Sprint Planning Table:** [saved view](https://github.com/users/Manaswi-Guntupalli/projects/3/views/3) with Title, Assignees, Status, Priority, Story Points and Sprint visible. Native Priority values are exactly 19 High, 16 Medium and 2 Low. Low means lower scheduling urgency; every child remains in Release 1.
+- **Roadmap:** optional visualization, not a required Part-2 deliverable. Add only if useful with approved dates; this guide does not claim one exists.
 
-Five one-week sprints beginning 19 October 2026 were **proposed only**, not confirmed or already configured. Agree actual dates and capacity before configuring Iterations.
+Exactly two delivery sprints cover all 37 children:
+
+| Sprint | Dates in 2026 | Issues | Count | Planning points |
+|---|---|---|---:|---:|
+| Sprint 1 | 19–23 October | #17–#37, #42, #44, #51, #52 | 25 | 99 (29 historical documentation; 70 remaining) |
+| Sprint 2 | 26–30 October | #38–#41, #43, #45–#50, #53 | 12 | 68 |
+
+Sprint 3 is preserved as an unused iteration (2–8 November) with no Release 1 issues assigned. All seven parent epics retain their existing fields.
 
 ## Functional story owners
 
@@ -55,8 +63,12 @@ Five one-week sprints beginning 19 October 2026 were **proposed only**, not conf
 |---|---|---|
 | #33–37 | Exam/question management | `Tanusha181825` |
 | #38–40 and #46–47 | Student exam attempts | `Manaswi-Guntupalli` |
-| #48–50 | Evaluation & results | Vidimalla Guru Teja — GitHub handle not yet confirmed |
-| #23, #24, #51 | Auth, roles, admin | Agree and assign as shared work |
+| #48–50 | Evaluation & results | `Guruteja2319` |
+| #23, #24 | Auth and roles | `Tanusha181825` |
+| #51, #52 | Admin and shared persistence models | `Guruteja2319` |
+| #41, #42, #44 | Docker, Jenkins, CI/GitHub Actions | `Manaswi-Guntupalli` |
+| #43, #45 | SonarQube and deployment/smoke | `Guruteja2319` |
+| #53 | Cross-module functional/security testing | All three members |
 
 Support infrastructure, data model, testing and documentation remain shared. A module owner is accountable for integration of its stories; other teammates participate in testing and reviews.
 
@@ -64,12 +76,24 @@ Support infrastructure, data model, testing and documentation remain shared. A m
 
 Acceptance criteria satisfied; security and correctness validated; real evidence preserved, including tests when implementation exists; teammate review completed; PR merged; project Status and issue state/labels aligned; RTM and dependent documents updated. No fabricated test results or completion evidence.
 
-## Open setup actions
+## Deliverables Part-2 checklist
 
-1. Add the 20 missing native sub-issue relationships through GitHub's Projects/Issues UI.
-2. Confirm Guru Teja's exact GitHub username and assign #48–50; decide shared issue assignees.
-3. Create/complete the Sprint Planning and Roadmap Project views and populate the numeric Story Points field and approved dates.
-4. Review and merge the documentation migration PR into `develop`; do not bypass a requested teammate review.
-5. Track implementation and executed test evidence separately from finished planning documents.
+This schedule follows the supplied **Mini-Project Deliverables Part-2** guideline. Checked entries describe verified setup, not implemented application features.
 
-*This guide is current planning documentation, not a claim that unbuilt features, pipeline jobs, native hierarchy fixes or Project fields already exist.*
+- [x] Existing GitHub Project contains the repository backlog: 7 epics and 37 native children, with no duplicate issues.
+- [x] Existing FR/NFR and security acceptance criteria are retained in the backlog. Implementation and execution traceability must be updated against the submitted SRS/SAD/Test Plan as work progresses.
+- [x] All 37 children have owners, native Story Points and the exact requested Priority values.
+- [x] All 37 are assigned to the two delivery sprints above. Eight completed documentation issues remain closed/Done.
+- [x] GitHub Actions is explicitly included under Sprint 1 issue [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44), separate from Jenkins [#42](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/42). The [repository workflow](../.github/workflows/repository-checks.yml) checks PRs and pushes. Application-test stages and actual test reports remain pending until code/suites exist.
+- [ ] Optional dry run, 12–16 October; do not claim it was completed without evidence. Backlog changes remain permitted on 19 October.
+- [ ] During Sprint 1, implement its assigned work against the submitted SRS, SAD and Test Plan; have each assigned developer raise their PR and the repository owner review and merge it.
+- [ ] By 23 October, record a **one-minute actual working-product video** and upload it to the repository. A planned video or mockup does not satisfy the guideline.
+- [ ] Record and explain deviations from submitted documents during the final demo. Update affected requirements, architecture/design, RTM and tests through reviewed changes.
+- [ ] During Sprint 2, complete its remaining assigned work and preserve genuine system, functional/security and deployment-smoke evidence under #53/#45; continue incremental CI integration under #44.
+- [ ] By 30 October, record a **two-minute actual working-product video**, complete documentation, and freeze the development cycle. The Sprint 2 guideline explicitly requires the recording; keep it in the repo with the other delivery evidence.
+
+## Evidence and completion rules
+
+Keep real recordings, test reports and deviation notes together in a documented repository location chosen by the team; do not add empty recordings or fabricated result files. Link evidence from the relevant existing issues/PRs and RTM. The repository currently contains documentation, not the MERN application. The repository-check workflow does not establish application-test success or complete #44. Jenkins/Docker/SonarQube, the application features, demo videos, final evidence and freeze must be completed during delivery. Preserve existing issue states until their real acceptance criteria are met.
+
+The older five-iteration proposal is superseded by the supplied two-sprint guideline. This guide reports the current planning baseline and separates setup from outstanding delivery work.

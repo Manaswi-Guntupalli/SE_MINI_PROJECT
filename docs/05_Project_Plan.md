@@ -1,6 +1,6 @@
 # Online Exam Portal — Agile Project Plan
 
-**Version:** 0.4 · **Date:** 13 October 2026 · **Course:** UE24CS341A — Software Engineering  
+**Version:** 0.5 · **Date:** 13 October 2026 · **Course:** UE24CS341A — Software Engineering
 **Status:** Working planning baseline; refine estimates and dates during sprint planning.
 
 ## 1. Problem statement and Release 1 scope
@@ -28,11 +28,18 @@ Functional module ownership does not replace shared responsibility for integrati
 
 Use Scrum-inspired, time-boxed iterations and a Kanban workflow. Select stories with testable acceptance criteria, confirm dependencies and team capacity, implement small vertical slices, demonstrate and review completed increments, and improve the backlog each sprint.
 
-**GitHub Project:** [Online Exam Portal — Release 1](https://github.com/users/Manaswi-Guntupalli/projects/3). Its views are a Kanban Board, Sprint Planning Table, and Roadmap (configure the latter two as needed). Project **Status** is the primary Kanban status. Labels `status:*` are a companion classification and must remain consistent; these two GitHub concepts do not automatically sync.
+**GitHub Project:** [Online Exam Portal — Release 1](https://github.com/users/Manaswi-Guntupalli/projects/3). Use its existing Kanban Board, Product Backlog and [Sprint Planning Table](https://github.com/users/Manaswi-Guntupalli/projects/3/views/3). A Roadmap is optional; the Part-2 guideline requires two planned sprints. Project **Status** is the primary Kanban status. Labels `status:*` are a companion classification and must remain consistent; these two GitHub concepts do not automatically sync.
 
 Workflow: **Todo → In Progress → In Review → Done**. Only move to Done when documented acceptance criteria and review/testing evidence are satisfied; close the corresponding GitHub issue. PRs target `develop`, and `main` is the stable release branch. Do not assume merging into `develop` will automatically close an issue.
 
-**Iteration proposal (not committed deadlines):** Five one-week iterations starting 19 October 2026, subject to the team's class timetable and faculty deadlines. Sprint 1: shared foundation and first runnable vertical slice; Sprint 2: instructor drafts/questions/publication; Sprint 3: student eligibility/attempts/answer persistence; Sprint 4: timing, submissions, evaluation and results; Sprint 5: integration, hardening, CI/CD, evidence and demonstration. Carry testing/documentation into every sprint, not just the last.
+**Delivery schedule:** Follow the supplied Mini-Project Deliverables Part-2 dates and the saved Project assignments:
+
+| Sprint | Dates in 2026 | Assigned child issues | Delivery goal |
+|---|---|---|---|
+| Sprint 1 | 19–23 October | #17–#37, #42, #44, #51, #52 (25) | Scope, roles/data model, MERN setup, authentication/Admin accounts, instructor exam/draft/MCQ/publication workflow; Jenkins setup plus explicitly required GitHub Actions; one-minute actual working-product video uploaded to the repo |
+| Sprint 2 | 26–30 October | #38–#41, #43, #45–#50, #53 (12) | Student attempt/save/timer/submission, automatic evaluation and authorized results; Docker/SonarQube, final functional/security tests and deployment smoke checks; two-minute working-product video, complete documentation and development freeze |
+
+The eight closed documentation issues (#25–#32) are historical prerequisites in Sprint 1, not newly completed Sprint 1 work. The unused Sprint 3 iteration remains intact; no Release 1 issue is assigned to it. The optional dry run is 12–16 October. The guideline allows backlog changes on 19 October. Tests, document updates and PR reviews continue in both sprints. #53 begins test authoring alongside Sprint 1 features even though its final completion is assigned to Sprint 2; #44 wires those incremental suites into GitHub Actions in Sprint 1. Assigned developers raise their own PRs; repository owners review and merge them.
 
 ## 4. Work Breakdown Structure and traceability
 
@@ -46,7 +53,9 @@ Workflow: **Todo → In Progress → In Review → Done**. Only move to Done whe
 | OEP-6 CI/CD & DevOps | [#15](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/15) | Docker, Jenkins, SonarQube, CI tests and deployment checks | All |
 | OEP-7 Documentation | [#16](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/16) | Proposal, SRS, field layout, RTM, project plan, architecture, design, validation specification | All |
 
-**Estimate convention:** Sixteen implementation user stories total **79 story points**, using the initial Fibonacci-style 3/5/8 estimates: shared foundation 15; exam management 22; exam attempt 29; results 13. Six separate foundational tasks have 15 points in their descriptions. Do **not** add both parent-story and implementation-task estimates into sprint velocity or call 79 the entire project effort. Supporting tasks and documentation should receive effort estimates or capacity budgets during sprint planning; story points are relative complexity, **not person-months**.
+**Estimate convention:** Sixteen implementation user stories retain their existing **79 points**; six foundation tasks retain their existing **15 points**. The remaining 15 tasks were reviewed against their acceptance criteria and estimated at **73 points**, using the existing relative scale with 13 for the broad cross-module testing task. All 37 child items have native Project Story Points. See [Estimate Review](ESTIMATE_REVIEW.md) for values, assumptions and authorization. These are assistant-reviewed estimates authorized by Manaswi, not a claim of separate three-person agreement.
+
+The complete child backlog totals **167 points**: Sprint 1 has 99, including 29 for already-closed documentation; its remaining items total 70. Sprint 2 has 68. These planning totals combine different work types and are not measured velocity or evidence that capacity is sufficient. Epics are not additionally estimated. Do not count initial documents as newly delivered velocity or count test authoring again as CI wiring. Story points measure relative complexity, **not person-months**.
 
 **Effort and schedule:** The team should record capacity per sprint and any faculty-required person-month estimates separately, based on actual availability. Do not invent effort hours or a Gantt completion baseline before the team agrees. The Roadmap's date fields should reflect approved target dates, not arbitrary claimed commitments. Identify dependencies: roles/data model → authentication/exam models → publication → attempts/timer/persistence → finalization/evaluation → result views. Build tests and CI alongside implementation.
 
