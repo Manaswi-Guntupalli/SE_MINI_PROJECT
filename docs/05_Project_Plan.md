@@ -1,7 +1,7 @@
 # Online Exam Portal
 ## Agile Project Plan
 
-**Version:** 0.2  
+**Version:** 0.3  
 **Status:** Updated Planning Baseline  
 **Course:** UE24CS341A - Software Engineering
 
@@ -13,6 +13,7 @@
 |---|---|---|---|
 | 0.1 | 02 October 2026 | Tanusha | Initial Agile project planning baseline |
 | 0.2 | 02 October 2026 | Tanusha | Updated technology baseline from Django/PostgreSQL to MERN |
+| 0.3 | 13 October 2026 | Team | Moved primary backlog and workflow tracking to GitHub Issues |
 
 ---
 
@@ -28,7 +29,7 @@ The project will be developed by a team of three members:
 |---|---|
 | Tanusha | Exam and Question Management |
 | Manaswi | Student Exam Attempt |
-| Gururaj | Evaluation and Results |
+| Vidimalla Guru Teja | Evaluation and Results |
 
 All three members will also participate in shared Software Engineering activities such as requirements analysis, architecture and design reviews, authentication decisions, integration, testing, security validation, CI/CD and documentation.
 
@@ -61,19 +62,17 @@ A sprint is considered successful only when selected work has been implemented, 
 
 ## 3. Agile Workflow
 
-The Product Backlog is maintained in Jira.
+The Product Backlog is maintained in [GitHub Issues](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues). GitHub is the sole source of truth for current planning, story ownership, status, traceability and delivery evidence. The migrated OEP identifiers are retained for consistent requirement mapping.
+
+GitHub Issues uses the labels `type:epic`, `type:story` and `type:task`; `area:*` identifies functional ownership domains and `status:*` captures the working state. Team members update status labels while delivering work, link PRs to issues and only close issues after meeting their acceptance criteria. Epics contain linked checklists of child issues. See `docs/GITHUB_BACKLOG.md` for saved filters and procedures.
 
 The working flow is:
 
 ```text
-Backlog
+To Do (status:todo)
    ↓
-Ready
+In Progress (status:in-progress)
    ↓
-In Progress
+In Review (status:review)
    ↓
-Review
-   ↓
-Validation
-   ↓
-Done
+Done (status:done; close issue after acceptance checks)
