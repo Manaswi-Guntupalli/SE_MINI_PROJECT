@@ -1,7 +1,9 @@
 # GitHub Agile backlog — Online Exam Portal Release 1
 
-**Project board:** https://github.com/users/Manaswi-Guntupalli/projects/3  
-**Product backlog:** https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues  
+**Project board:** https://github.com/users/Manaswi-Guntupalli/projects/3
+
+**Product backlog:** https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues
+
 **Primary source of truth:** GitHub only. Historical OEP identifiers are retained for document traceability, not Jira dependency.
 
 ## Scope baseline
