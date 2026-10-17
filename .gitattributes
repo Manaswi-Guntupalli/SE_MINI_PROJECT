@@ -1,0 +1,4 @@
+# Treat document artifacts as binary; whitespace checks apply to text sources.
+*.pdf binary
+*.docx binary
+*.xlsx binary
