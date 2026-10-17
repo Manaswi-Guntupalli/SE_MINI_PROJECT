@@ -1,4 +1,4 @@
-# Node / React dependencies and output
+# Node / React dependencies and generated output
 node_modules/
 dist/
 build/
@@ -12,7 +12,7 @@ coverage/
 !.env.*.example
 .env/
 
-# Existing Python/Django local artifacts
+# Existing Python local artifacts
 __pycache__/
 *.pyc
 venv/

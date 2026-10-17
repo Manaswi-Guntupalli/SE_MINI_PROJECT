@@ -1,93 +1,59 @@
-# Online Exam Portal
+# Online Exam Portal — Software Engineering Mini Project
 
-Software Engineering mini-project using an Agile, Scrum-inspired iterative process.
+A web-based multiple-choice examination system for instructors, students and administrators.
 
-## Project tracking
+## Team
+- Tanusha Prakash (PES1UG24CS494) — Exam and Question Management
+- Guntupalli Manaswi (PES1UG24CS548) — Student Exam Attempt
+- Vidimalla Guru Teja (PES1UG24CS528) — Evaluation and Results
 
-- [Jira backlog — OEP](https://tanushaprakash.atlassian.net/jira/software/projects/OEP/boards/34/backlog)
-- [Jira project](https://tanushaprakash.atlassian.net/jira/software/projects/OEP/summary)
+All members contribute to shared authentication, access control, MongoDB integration, security, testing, GitHub reviews, CI/CD and documentation.
 
-Jira is the source of truth for user stories, tasks, status, acceptance criteria and dependencies. Include the relevant OEP issue key in branch names, commit messages and pull request titles. A GitHub upload does not by itself complete a Jira task.
+## Technology baseline
+- Frontend: React
+- Backend: Node.js and Express
+- Database: MongoDB (Mongoose)
+- Quality and delivery: Git, GitHub Actions, Jenkins, Docker, SonarQube
 
-## Release 1
+These are the agreed technology choices, not a claim that every component is already implemented.
 
-Instructors create, manage and publish MCQ examinations. Students complete timed attempts, save/change answers, navigate questions and submit manually or automatically on timeout. The system evaluates responses, calculates scores and provides authorized Student/Instructor result views.
+## Project management — GitHub only
+**[Online Exam Portal — Release 1 Project Board](https://github.com/users/Manaswi-Guntupalli/projects/3)** · [Kanban view](https://github.com/users/Manaswi-Guntupalli/projects/3/views/1)
+**GitHub Issues is the authoritative product backlog:** https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues
 
-Included: authentication with Student, Instructor and Admin roles; exam/question/option management; publication; timed attempts; answer storage/navigation; manual/timeout submission; automatic evaluation/scoring; result viewing. Minimum Admin account/role administration is tracked in OEP-42.
+- [Epics](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues?q=is%3Aissue+label%3Atype%3Aepic)
+- [User stories](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues?q=is%3Aissue+label%3Atype%3Astory)
+- [Implementation and documentation tasks](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues?q=is%3Aissue+label%3Atype%3Atask)
+- [In progress](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues?q=is%3Aissue+label%3Astatus%3Ain-progress)
+- [In review](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues?q=is%3Aissue+label%3Astatus%3Areview)
+- [Completed](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues?q=is%3Aissue+label%3Astatus%3Adone)
 
-Excluded: negative marking, AI question generation/proctoring, reusable question banks, course/enrollment management, advanced analytics, CSV export, offline synchronization and mobile applications.
+The OEP identifiers are retained as stable historical identifiers and correspond to the already-created GitHub issues. Work planning, ownership, progress, and evidence should now be managed in GitHub, **not Jira**. See [GitHub Backlog Guide](docs/GITHUB_BACKLOG.md) for the complete epic/story/task mapping, estimates, ownership, sprint and roadmap configuration, and outstanding setup checks.
 
-## Confirmed technology stack
+## Development workflow
+- `main`: stable release branch
+- `develop`: integration branch
+- `feature/*`: features and stories
+- `docs/*`: documentation
+- `fix/*`: bug fixes
+- `test/*`: tests
+- `chore/*`: tooling, configuration and DevOps
 
-- React frontend
-- Node.js / Express backend
-- MongoDB / Mongoose
-- Git and GitHub
-- Jira
-- Existing planned engineering tools: Jenkins, Docker and SonarQube
+Create a branch for the linked GitHub issue, commit with the issue reference, open a pull request targeting `develop`, request teammate review, verify tests and then merge. Keep the GitHub Project Status and the issue's status label consistent; close the issue only when its acceptance criteria are met. The Project Status and labels are separate GitHub fields.
 
-Application initialization is tracked in OEP-12; database setup in OEP-13. This repository's planning files are not evidence that the application is implemented or deployed.
+The assigned developer raises the PR and the repository owner reviews and merges it. [GitHub Actions](.github/workflows/repository-checks.yml) runs repository checks on PRs and pushes. Application install/build/test stages must be added as the MERN code and real test suites become available under [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44); repository checks do not establish application correctness. Jenkins is additional tooling, not a substitute for the required GitHub Actions automation.
 
-## Team ownership
+## Two-sprint delivery plan
 
-- Tanusha — Exam and Question Management
-- Manaswi — Student Exam Attempt
-- Gururaj — Evaluation and Results
-- Foundation, security, testing and DevOps are coordinated across the team through Jira.
-
-## Documentation ownership and branches
-
-Keep project documents in `docs/`. The first four documents will be authored separately; workflow setup does not create their content.
-
-| Jira task | Document | Owner | Working branch |
+| Sprint | Dates in 2026 | Existing child issues | Required outcome |
 |---|---|---|---|
-| [OEP-16](https://tanushaprakash.atlassian.net/browse/OEP-16) | Project Proposal / Synopsis | Manaswi | `docs/OEP-16-project-proposal` |
-| [OEP-17](https://tanushaprakash.atlassian.net/browse/OEP-17) | Software Requirements Specification | Manaswi | `docs/OEP-17-srs` |
-| [OEP-18](https://tanushaprakash.atlassian.net/browse/OEP-18) | Field Layout workbook | Manaswi | `docs/OEP-18-field-layout` |
-| [OEP-19](https://tanushaprakash.atlassian.net/browse/OEP-19) | Initial Requirement Traceability Matrix | Manaswi | `docs/OEP-19-rtm` |
-| [OEP-20](https://tanushaprakash.atlassian.net/browse/OEP-20) | Agile Project Plan | Tanusha | Existing `docs/project-plan` |
-| [OEP-21](https://tanushaprakash.atlassian.net/browse/OEP-21) | Architecture | Tanusha | Existing `docs/architecture` |
-| [OEP-22](https://tanushaprakash.atlassian.net/browse/OEP-22) | Software Design | Tanusha | `docs/OEP-22-software-design` |
-| [OEP-23](https://tanushaprakash.atlassian.net/browse/OEP-23) | Initial Validation Specification / Test Plan | Tanusha | `docs/OEP-23-validation-plan` |
+| Sprint 1 | 19–23 October | #17–#37, #42, #44, #51, #52 (25) | Secure instructor workflow, GitHub Actions, reviewed developer PRs, one-minute working-product video uploaded to the repo |
+| Sprint 2 | 26–30 October | #38–#41, #43, #45–#50, #53 (12) | Complete student/evaluation/results workflow, real testing and smoke evidence, two-minute working-product video, final documentation and development freeze |
 
-Existing documents under `docs/` are retained for their owners to review and align with the confirmed stack and SRS. Initial Field Layout/RTM versions describe the planned design; unavailable code/test results remain Pending and are updated after implementation.
+See the saved [Sprint Planning Table](https://github.com/users/Manaswi-Guntupalli/projects/3/views/3), [estimate review](docs/ESTIMATE_REVIEW.md) and [deliverable checklist](docs/GITHUB_BACKLOG.md#deliverables-part-2-checklist). The eight completed documentation issues remain closed; their Sprint 1 placement records prerequisites. Sprint 3 is retained as an unused Project iteration and has no Release 1 items assigned.
 
-## Git and review workflow
+## Scope
+Release 1 covers account roles, instructor exam and MCQ management, published timed student attempts, server-side answer persistence, submission, automated scoring and result visibility. Negative marking, AI proctoring, offline synchronization, advanced analytics and mobile apps are excluded.
 
-- `main`: stable release branch.
-- `develop`: integration branch.
-- Work branches: `docs/OEP-<number>-<topic>`, `feature/OEP-<number>-<topic>`, `fix/OEP-<number>-<topic>`, `test/OEP-<number>-<topic>`, `chore/OEP-<number>-<topic>`.
-- Keep existing branches; they do not need renaming just to match the convention. Include OEP keys in their future commit messages and PR titles.
-
-For each task:
-
-1. Assign it to its agreed owner. Move it to In Progress when work starts.
-2. Start from the current `develop` branch. Update an existing work branch with current `develop` before beginning.
-3. Commit only the relevant work. Example: `OEP-16 Add project proposal`.
-4. Open a pull request into `develop`. Example title: `OEP-16 Complete project proposal`.
-5. Link the Jira task in the PR and complete the PR checklist.
-6. When all task acceptance criteria are ready for review, move the Jira task to In Review.
-7. A teammate reviews and approves significant work; address requested changes.
-8. Merge the reviewed complete-task PR into `develop`.
-9. Move Jira to Done only when the entire task meets its acceptance criteria. Until a native merge rule is installed and tested, update the status manually.
-10. Promote reviewed releases from `develop` to `main` using a separate PR.
-
-Use one complete-task PR per documentation task for the proposed merge-to-Done rule. Partial/draft uploads should remain In Progress and must not close the task. Later document maintenance uses its own task-specific PR so an initial document is not confused with completed implementation/testing.
-
-## GitHub ↔ Jira integration setup status
-
-The repository includes issue-key conventions and links. This does not prove the native GitHub for Atlassian/Jira app is installed or that automatic transitions are enabled.
-
-A site admin must authorize the native integration for this repository. Then an OEP project admin can configure and test the documentation rule:
-
-- Trigger: Pull request merged.
-- Condition: project OEP, issue in OEP-16 through OEP-23, status In Review.
-- Destination branch: `develop`.
-- Action: transition to Done.
-- Verify the first real reviewed complete-document PR in Jira's automation audit log.
-
-Do not put Jira tokens or GitHub tokens in repository files. Connecting GitHub to ChatGPT is separate from connecting GitHub to Jira.
-
-## Documentation maintenance
-
-Keep Proposal, SRS, Field Layout, RTM, architecture, design and validation consistent. Add actual code/test evidence only when it exists. Do not infer that a document or linked PR proves a feature passes its tests.
+## Documentation
+Documentation lives in [docs/](docs/). The project is planned and delivered iteratively using Agile practices.
