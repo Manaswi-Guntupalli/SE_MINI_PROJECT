@@ -55,5 +55,7 @@ See the saved [Sprint Planning Table](https://github.com/users/Manaswi-Guntupall
 ## Scope
 Release 1 covers account roles, instructor exam and MCQ management, published timed student attempts, server-side answer persistence, submission, automated scoring and result visibility. Negative marking, AI proctoring, offline synchronization, advanced analytics and mobile apps are excluded.
 
+The [Release 1 scope and permissions agreement](docs/RELEASE_1_AGREEMENT.md) records the full scope, business rules, 17-requirement crosswalk, role matrix and planned authorization checks for #17/#19. Team agreement is pending review; implementation and executed-test evidence remain tracked in the existing stories.
+
 ## Documentation
 Documentation lives in [docs/](docs/). The project is planned and delivered iteratively using Agile practices.
