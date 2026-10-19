@@ -41,6 +41,8 @@ The OEP identifiers are retained as stable historical identifiers and correspond
 
 Create a branch for the linked GitHub issue, commit with the issue reference, open a pull request targeting `develop`, request teammate review, verify tests and then merge. Keep the GitHub Project Status and the issue's status label consistent; close the issue only when its acceptance criteria are met. The Project Status and labels are separate GitHub fields.
 
+Follow the [development workflow and verification guide](docs/DEVELOPMENT_WORKFLOW.md) for the exact steps, review/merge responsibilities and #18 evidence checklist. Repository setup is verified; independent teammate review and actual team workflow demonstrations remain pending.
+
 The assigned developer raises the PR and the repository owner reviews and merges it. [GitHub Actions](.github/workflows/repository-checks.yml) runs repository checks on PRs and pushes. Application install/build/test stages must be added as the MERN code and real test suites become available under [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44); repository checks do not establish application correctness. Jenkins is additional tooling, not a substitute for the required GitHub Actions automation.
 
 ## Two-sprint delivery plan
