@@ -24,3 +24,5 @@ media/
 .vscode/
 .DS_Store
 Thumbs.db
+
+server/.env
