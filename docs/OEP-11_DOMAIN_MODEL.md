@@ -1,6 +1,6 @@
 # OEP-11 — Release 1 Domain Entities and Relationships
 
-**Status:** Proposed design — pending team review and agreement  
+**Status:** Proposed design — pending team review, Field Layout/SAD reconciliation and agreement  
 **Issue:** [OEP-11 / #20](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/20)  
 **Implementation:** [OEP-43 / #52](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/52)
 
@@ -25,7 +25,7 @@ Release 1 includes User, Exam, embedded Question and Option, Attempt, Response a
 | `isActive` | Boolean | Required, default `true` |
 | `createdAt`, `updatedAt` | Date | Mongoose timestamps |
 
-Accounts are Admin-provisioned. Changing role or active status must not delete or reassign historic exam/attempt/result references. The initial Admin must be provisioned securely, without committed default credentials.
+Account identifiers must use one consistent canonical normalization rule before the unique index is created; the exact field name and format remain a team decision. Accounts are Admin-provisioned. Changing role or active status must not delete or reassign historic exam/attempt/result references. The initial Admin must be provisioned securely, without committed default credentials.
 
 ### Exam (collection `exams`)
 
@@ -47,7 +47,7 @@ Only the authenticated owning Instructor may manage a Draft. Publication validat
 
 | Field | Type | Required / constraint |
 |---|---|---|
-| `_id` | ObjectId | Subdocument ID, unique within its parent Exam |
+| `_id` | ObjectId | Mongoose subdocument ID; validate uniqueness within its parent Exam |
 | `questionText` | String | Required, nonblank, trimmed |
 | `options` | Array of Option subdocuments | At least two nonblank options |
 | `marks` | Number | Existing prototype field defaults to 1; **Release 1 scoring is fixed at 1**, so do not allow variable weights to affect scoring |
@@ -58,7 +58,7 @@ Exactly one Option per Question must have `isCorrect: true` before publication.
 
 | Field | Type | Required / constraint |
 |---|---|---|
-| `_id` | ObjectId | Subdocument ID, unique within parent Question |
+| `_id` | ObjectId | Mongoose subdocument ID; validate uniqueness within parent Question |
 | `text` | String | Required, nonblank, trimmed |
 | `isCorrect` | Boolean | Required, default `false`; exactly one true per published Question |
 
@@ -73,15 +73,15 @@ Correctness flags/answer keys must be omitted from Student-facing payloads.
 | `examId` | ObjectId reference to Exam | Required; Published exam |
 | `startedAt` | Date | Required, server-generated |
 | `deadlineAt` | Date | Required, fixed at start: `startedAt + duration minutes` |
-| `status` | String enum | Required: `Active` or `Submitted` |
+| `status` | String enum | Required: `Active` at creation; `Submitted` after finalization |
 | `submittedAt` | Date or null | Set once by server upon manual/timeout finalization |
 | `submissionReason` | String enum or null | `Manual` or `Timeout`, assigned at finalization |
-| `evaluationStatus` | String enum | `Pending` or `Evaluated`; pending remains valid after evaluation failure |
+| `evaluationStatus` | String enum | Required; default `Pending`, later `Evaluated`; pending remains valid after evaluation failure |
 | `createdAt`, `updatedAt` | Date | Mongoose timestamps |
 
 **Unique compound index:** `{ studentId: 1, examId: 1 }`. Starting the same exam again returns the same Attempt and original deadline; no retakes. Deadline is server-authoritative; reject saves at or after deadline, including attempts made with a manipulated browser clock.
 
-Finalization must atomically transition one Active Attempt to Submitted, use a consistent saved-response snapshot, reject later writes and return the same persisted outcome for retries/races. The implementation and tests belong to OEP-43 and submission issues.
+Finalization must atomically transition one Active Attempt to Submitted, use a consistent saved-response snapshot, reject later writes and return the same persisted outcome for retries/races. An ordinary status update alone is not sufficient to prevent concurrent Response saves; the implementation must enforce a write/finalization coordination protocol, with transactions or an equivalent tested strategy. The implementation and tests belong to OEP-43 and submission issues.
 
 ### Response (collection `responses`)
 
@@ -119,7 +119,7 @@ Exam              1 -------- 0..* Attempt
 (Student, Exam)   1 -------- 0..1 Attempt  [unique pair]
 Attempt           1 -------- 0..* Response
 Question          1 -------- 0..* Response [across attempts]
-(Attempt,Question)1 -------- 0..1 Response [unique pair]
+(Attempt, Question) 1 -------- 0..1 Response [unique pair]
 Attempt           1 -------- 0..1 Result   [after evaluation]
 ```
 
@@ -127,8 +127,8 @@ Questions and Options are **not** standalone reusable banks. Their identifiers a
 
 ## Persistence constraints and implementation ownership
 
-- Mongoose field validation and MongoDB unique indexes are both needed; validation alone cannot enforce concurrency-safe uniqueness.
-- Create and verify indexes in a fresh database, and write tests for duplicate Attempt/Response/Result writes.
+- Mongoose field validation and MongoDB unique indexes are both needed; validation alone cannot enforce concurrency-safe uniqueness. Indexes enforce pair uniqueness, but question/option membership requires explicit application validation against the parent Exam.
+- Create and verify indexes in a fresh database, and write tests for duplicate Attempt/Response/Result writes. Enforce that the referenced User has the correct role and that the referenced Exam is Published when an Attempt starts.
 - For submission races, coordinate atomic Attempt status transition with Response snapshot/finalization and idempotent Result creation. The exact transaction/locking strategy must be decided during OEP-43 implementation.
 - Server derives ownership, student identity, deadlines, status, score and authorization from authenticated records; never trust these values from an unprivileged client.
 - Existing prototype gaps requiring migration/design reconciliation: `Exam.instructorId` String versus User ObjectId, `Exam.startTime` required versus optional in Release 1, and `Question.marks` variable versus fixed +1/0 evaluation.
@@ -142,5 +142,5 @@ Questions and Options are **not** standalone reusable banks. Their identifiers a
 - [ ] Confirm separate Result collection versus embedded Attempt result.
 - [ ] Confirm lifecycle/status names, deadline and response membership constraints.
 - [ ] Confirm consistency strategy for atomic finalization and evaluation retry.
-- [ ] Confirm agreement with Field Layout, SRS, SAD and Release 1 scope.
+- [ ] Compare field names, types and relationships directly against the authoritative Field Layout, SRS and SAD; record and resolve any differences (these source artifacts have not been fully reconciled in this proposal).
 - [ ] Record reviewer approval before marking OEP-11 Done or using it as the finalized OEP-43 contract.
