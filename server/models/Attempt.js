@@ -12,7 +12,7 @@ const attemptSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 attemptSchema.index({ studentId: 1, examId: 1 }, { unique: true });
-attemptSchema.pre("validate", function validateAttempt(next) {
+attemptSchema.pre("validate", function validateAttempt() {
   if (this.startedAt && this.deadlineAt && this.deadlineAt <= this.startedAt) {
     this.invalidate("deadlineAt", "Deadline must be later than start time");
   }
@@ -22,6 +22,5 @@ attemptSchema.pre("validate", function validateAttempt(next) {
   if (this.status === "Submitted" && (!this.submittedAt || !this.submissionReason)) {
     this.invalidate("submittedAt", "Submitted attempts require submission timestamp and reason");
   }
-  next();
 });
 module.exports = mongoose.models.Attempt || mongoose.model("Attempt", attemptSchema);
