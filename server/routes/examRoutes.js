@@ -12,30 +12,60 @@ const {
   publishExam,
 } = require("../controllers/examController");
 
+const {
+  requireAuth,
+  requireRole,
+} = require("../middleware/authMiddleware");
+
+const {
+  requireCsrf,
+} = require("../middleware/csrfMiddleware");
+
 const router = express.Router();
 
-router.post("/", createExam);
+// Every exam-management operation requires an authenticated Instructor.
+// Admin is intentionally NOT included because OEP-15 says Admin status
+// does not automatically grant Instructor workflow permissions.
+router.use(requireAuth);
+router.use(requireRole("Instructor"));
 
-router.get("/instructor/:instructorId", getInstructorExams);
+// Instructor's own exams
+router.get("/mine", getInstructorExams);
 
+// Create draft exam
+router.post("/", requireCsrf, createExam);
+
+// Read/manage one owned exam
 router.get("/:id", getExamById);
 
-router.put("/:id", updateExam);
+router.put("/:id", requireCsrf, updateExam);
 
-router.delete("/:id", deleteExam);
+router.delete("/:id", requireCsrf, deleteExam);
 
-router.post("/:id/questions", addQuestion);
+// Manage questions on owned draft exam
+router.post(
+  "/:id/questions",
+  requireCsrf,
+  addQuestion
+);
 
 router.put(
   "/:examId/questions/:questionId",
+  requireCsrf,
   updateQuestion
 );
 
 router.delete(
   "/:examId/questions/:questionId",
+  requireCsrf,
   deleteQuestion
 );
 
-router.post("/:id/publish", publishExam);
+// Publish owned draft
+router.post(
+  "/:id/publish",
+  requireCsrf,
+  publishExam
+);
 
 module.exports = router;

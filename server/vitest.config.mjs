@@ -2,6 +2,10 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
+    env: {
+      NODE_ENV: 'test',
+      SESSION_SECRET: 'vitest-only-session-secret',
+    },
     environment: 'node',
     include: ['test/**/*.test.mjs'],
     fileParallelism: false,
