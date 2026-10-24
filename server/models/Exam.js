@@ -4,7 +4,7 @@ const optionSchema = new mongoose.Schema(
   {
     text: {
       type: String,
-      required: true,
+      default: "",
       trim: true,
     },
     isCorrect: {
@@ -22,15 +22,12 @@ const questionSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+
     options: {
       type: [optionSchema],
-      validate: {
-        validator(options) {
-          return options.length >= 2;
-        },
-        message: "A question must contain at least two options.",
-      },
+      default: [],
     },
+
     marks: {
       type: Number,
       default: 1,
@@ -55,13 +52,14 @@ const examSchema = new mongoose.Schema(
     },
 
     instructorId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
 
     startTime: {
       type: Date,
-      required: true,
+      default: null,
     },
 
     duration: {
@@ -76,7 +74,10 @@ const examSchema = new mongoose.Schema(
       default: "Draft",
     },
 
-    questions: [questionSchema],
+    questions: {
+      type: [questionSchema],
+      default: [],
+    },
   },
   {
     timestamps: true,
