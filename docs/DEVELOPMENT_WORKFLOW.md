@@ -131,7 +131,7 @@ This is a 19 October snapshot. Refresh the pending rows with actual evidence as 
 
 Additional setup evidence: the PR template has identical content on `main` and `develop`; the MERN/environment ignore rules and binary document attributes are present; both teammates' configured repository access was checked. Access configuration does not prove that someone has cloned, pushed or reviewed successfully on their own device/account.
 
-Actual [PR #4 repository checks](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/39047963602) and [PR #55 repository checks](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/39297709037) passed. Those runs cover whitespace/local documentation links, not application correctness. Main has not been given a new application workflow by this task. Continue real application CI integration in #44 and Jenkins in #42.
+Actual [PR #4 repository checks](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/39047963602) and [PR #55 repository checks](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/39297709037) passed. Those runs cover whitespace/local documentation links, not application correctness. Main has not been given a new application workflow by this task. GitHub Actions is the sole CI provider: #42 owns pipeline setup/install/build and #44 owns automated test execution and reports. The implementation and genuine application-test evidence are in [PR #58](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/58); continue incremental test integration there without requiring another CI server.
 
 ## Team workflow demonstration
 
