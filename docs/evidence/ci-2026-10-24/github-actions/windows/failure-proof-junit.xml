@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="24" failures="1" errors="0" time="23.0991023">
+    <testsuite name="test/exam-api.test.mjs" timestamp="2026-10-24T06:00:04.707Z" hostname="runnervmdaln5" tests="16" failures="0" errors="0" skipped="0" time="23.0749547">
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-EXAM-01: serves the application health response" time="0.0255912">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-EXAM-02: persists a new draft and reloads it from MongoDB" time="0.053186">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-EXAM-03: rejects blank titles without inserting a partial record" time="0.0095456">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-EXAM-04: filters the prototype list by its supplied instructor identifier" time="0.0168289">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-EXAM-05: saves and reloads draft edits" time="0.0204238">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-EXAM-06: deletes a draft together with its embedded question data" time="0.0168276">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-EXAM-07: returns 404 for a missing exam and 400 for a malformed id" time="0.0078873">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-MCQ-01: adds, edits and deletes an MCQ with durable changes" time="0.0364026">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-MCQ-02: rejects an MCQ with 0 correct options" time="0.0096765">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-MCQ-02: rejects an MCQ with 2 correct options" time="0.0102894">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-MCQ-03: rejects blank option text and leaves the stored draft unchanged" time="0.01072">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-MCQ-04: rejects a question identifier belonging to a different exam" time="0.013737">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-PUBLISH-01: rejects publication of an empty draft" time="0.0083732">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-PUBLISH-02: rejects publication of stored questions without a correct option" time="0.01029">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-PUBLISH-03: publishes valid content, persists status and never duplicates on repeat" time="0.0157478">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with a real isolated MongoDB database &gt; IT-PUBLISH-04: blocks published exam/question edits and deletion" time="0.0276836">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/exam-model.test.mjs" timestamp="2026-10-24T06:00:04.712Z" hostname="runnervmdaln5" tests="8" failures="1" errors="0" skipped="0" time="0.0241476">
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: currently implemented validation &gt; UT-EXAM-01: creates a draft with trimmed text and an empty question list" time="0.0127952">
+            <failure message="expected &apos;Draft&apos; to be &apos;Published&apos; // Object.is equality" type="AssertionError">
+AssertionError: expected &apos;Draft&apos; to be &apos;Published&apos; // Object.is equality
+
+Expected: &quot;Published&quot;
+Received: &quot;Draft&quot;
+
+ ❯ test/exam-model.test.mjs:18:25
+            </failure>
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: currently implemented validation &gt; UT-EXAM-02: rejects blank title &quot;&quot;" time="0.001412">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: currently implemented validation &gt; UT-EXAM-02: rejects blank title &quot;   &quot;" time="0.0005571">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: currently implemented validation &gt; UT-EXAM-03: rejects duration 0" time="0.000375">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: currently implemented validation &gt; UT-EXAM-03: rejects duration -5" time="0.0002736">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: currently implemented validation &gt; UT-EXAM-04: rejects a status outside the draft/publication lifecycle" time="0.0003438">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: currently implemented validation &gt; UT-MCQ-01: requires two options and nonblank question/option text" time="0.0058267">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: currently implemented validation &gt; UT-MCQ-02: gives embedded questions and options distinct identifiers" time="0.0009116">
+        </testcase>
+    </testsuite>
+</testsuites>

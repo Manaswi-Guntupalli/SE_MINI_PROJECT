@@ -1,0 +1,3 @@
+{"total": {"lines":{"total":116,"covered":84,"skipped":0,"pct":72.41},"statements":{"total":120,"covered":88,"skipped":0,"pct":73.33},"functions":{"total":38,"covered":27,"skipped":0,"pct":71.05},"branches":{"total":58,"covered":34,"skipped":0,"pct":58.62},"branchesTrue":{"total":0,"covered":0,"skipped":0,"pct":"Unknown"}}
+,"D:\\a\\SE_MINI_PROJECT\\SE_MINI_PROJECT\\client\\src\\App.jsx": {"lines":{"total":116,"covered":84,"skipped":0,"pct":72.41},"functions":{"total":38,"covered":27,"skipped":0,"pct":71.05},"statements":{"total":120,"covered":88,"skipped":0,"pct":73.33},"branches":{"total":58,"covered":34,"skipped":0,"pct":58.62}}
+}

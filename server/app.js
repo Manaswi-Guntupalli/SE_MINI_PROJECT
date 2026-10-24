@@ -20,7 +20,11 @@ app.use(express.json());
 const sessionConfig = {
   name: "oep.sid",
 
-  secret: process.env.SESSION_SECRET,
+  secret:
+    process.env.SESSION_SECRET ||
+    (process.env.NODE_ENV === "test"
+      ? "test-only-session-secret"
+      : undefined),
 
   resave: false,
   saveUninitialized: false,

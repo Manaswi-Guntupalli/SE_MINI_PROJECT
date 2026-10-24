@@ -15,7 +15,7 @@ No numeric estimates or team agreement were recorded in these 15 issue descripti
 | #31 | Software design | 5 | Data/API/UML design, lifecycle and atomic/idempotent finalization with save/submit race protection. |
 | #32 | Validation specification | 5 | Functional, security and NFR strategy with requirement-mapped IDs and negative cases; execution stays in #53. |
 | #41 | Docker configuration | 5 | MERN service builds, networks, persistent volumes, clean-start verification and troubleshooting. |
-| #42 | Jenkins pipeline | 5 | Triggers, reproducible install/build stages, secure credentials and real success/failure evidence. |
+| #42 | GitHub Actions pipeline | 5 | Triggers, reproducible install/build stages, secure credentials and real success/failure evidence. |
 | #43 | SonarQube | 3 | Bounded sources/exclusions/gate configuration and actual analysis using the application/pipeline. |
 | #44 | CI tests and GitHub Actions | 5 | PR/push automation, real frontend/backend test wiring, failure propagation and retained reports. |
 | #45 | Deployment and smoke tests | 5 | Admin/runtime setup, restart persistence, role-based end-to-end smoke workflow and recovery evidence. |
@@ -25,3 +25,5 @@ No numeric estimates or team agreement were recorded in these 15 issue descripti
 The 15 values total **73 points**. Existing 22 estimates total **94** and are unchanged; all 37 children total **167**. Sprint 1 has 99, including 29 for already-closed documentation (#25–#32), leaving 70 for its open work. Sprint 2 has 68. No parent-epic points are added.
 
 These relative estimates do not determine duration or prove available capacity. Historical document points record their original scope and are not new Sprint 1 velocity. Model/feature-specific tests, broader test authoring (#53) and test-suite wiring (#44) have distinct scope; do not bill the same work twice. Revisit uncertainty and capacity with all three members during planning, without silently changing priorities or completed documentation states.
+
+On 24 October 2026, Manaswi selected GitHub Actions as the sole CI provider. The #42 work title reflects that [tooling decision](CI_TOOLING_DECISION.md); all numeric estimates above remain unchanged.
