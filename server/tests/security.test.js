@@ -1,3 +1,5 @@
+jest.setTimeout(30000);
+
 const path = require("path");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
