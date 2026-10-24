@@ -26,7 +26,7 @@ async function saveResponse({ attemptId, studentId, questionId, selectedOptionId
       );
       // Force a write conflict against a concurrent finalization transaction.
       const gate = await Attempt.updateOne(
-        { _id: attempt._id, status: "Active", deadlineAt: { $gt: new Date() } },
+        { _id: attempt._id, status: "Active", deadlineAt: { $gt: now } },
         { $set: { updatedAt: new Date() } },
         { session }
       );
@@ -54,8 +54,6 @@ async function finalizeAttempt({ attemptId, studentId, reason, now = new Date() 
         { new: true, runValidators: true, session }
       );
       if (!result) throw new Error("Attempt was concurrently finalized");
-      // Reads inside this transaction observe a consistent response snapshot.
-      await Response.find({ attemptId: attempt._id }).session(session);
       return result;
     });
   } finally {
