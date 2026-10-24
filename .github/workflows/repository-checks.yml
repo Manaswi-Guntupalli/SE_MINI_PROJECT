@@ -15,21 +15,55 @@ concurrency:
 
 jobs:
   repository-checks:
-    name: Repository and documentation checks
+    name: Repository and application checks
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
+
     steps:
       - name: Check out the reviewed commit
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 2
           persist-credentials: false
+
       - name: Check changed lines for whitespace errors
         run: git diff --check HEAD^ HEAD
+
       - name: Verify relative documentation links
         run: python3 scripts/check_documentation.py
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            server/package-lock.json
+            client/package-lock.json
+
+      - name: Install backend dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Run backend tests
+        working-directory: server
+        env:
+          NODE_ENV: test
+          SESSION_SECRET: github_actions_test_session_secret
+          MONGO_URI: ${{ secrets.TEST_MONGO_URI }}
+        run: npm test
+
+      - name: Install frontend dependencies
+        working-directory: client
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: client
+        run: npm run build
+
       - name: Describe the scope of this run
         run: |
-          echo '## Repository checks' >> "$GITHUB_STEP_SUMMARY"
+          echo '## Repository and application checks' >> "$GITHUB_STEP_SUMMARY"
           echo 'Checked changed-line whitespace and local Markdown link destinations.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Application install/build/test execution remains pending under #44 until MERN code and real test suites are available. This run does not verify application correctness.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Installed backend dependencies and ran the automated backend test suite.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Installed frontend dependencies and verified the production frontend build.' >> "$GITHUB_STEP_SUMMARY"
