@@ -44,7 +44,14 @@ jobs:
       - name: Install backend dependencies
         working-directory: server
         run: npm ci
-
+      
+      - name: Verify test database configuration
+        working-directory: server
+        env:
+          MONGO_URI: ${{ secrets.TEST_MONGO_URI }}
+        run: |
+          node -e "if (!process.env.MONGO_URI) { console.error('TEST_MONGO_URI is missing'); process.exit(1); } if (!process.env.MONGO_URI.includes('online_exam_portal_test')) { console.error('TEST_MONGO_URI does not target online_exam_portal_test'); process.exit(1); } console.log('TEST_MONGO_URI is configured for the isolated test database');"
+      
       - name: Run backend tests
         working-directory: server
         env:
