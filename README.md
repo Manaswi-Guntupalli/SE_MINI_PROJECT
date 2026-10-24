@@ -57,3 +57,16 @@ Release 1 covers account roles, instructor exam and MCQ management, published ti
 
 ## Documentation
 Documentation lives in [docs/](docs/). The project is planned and delivered iteratively using Agile practices.
+
+## Local development setup
+
+### Prerequisites
+Install the following before running the project:
+- Node.js and npm
+- Git
+- Access to a MongoDB database
+
+### 1. Clone and open the repository
+```bash
+git clone https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT.git
+cd SE_MINI_PROJECT
