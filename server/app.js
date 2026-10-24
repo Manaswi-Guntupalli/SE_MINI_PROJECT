@@ -37,8 +37,11 @@ const sessionConfig = {
   },
 };
 
-if (process.env.NODE_ENV !== "test") {
-  sessionConfig.store = MongoStore.create({
+if (
+  process.env.NODE_ENV !== "test" &&
+  process.env.MONGO_URI
+) {
+    sessionConfig.store = MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
   });
 }
