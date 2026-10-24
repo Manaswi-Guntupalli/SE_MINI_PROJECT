@@ -38,7 +38,15 @@ function App() {
   };
 
   useEffect(() => {
-    loadExams();
+    let active = true;
+    axios.get(`${API}/instructor/${INSTRUCTOR_ID}`)
+      .then((response) => {
+        if (active) setExams(response.data);
+      })
+      .catch((error) => {
+        if (active) alert(error.response?.data?.message || "Could not load exams");
+      });
+    return () => { active = false; };
   }, []);
 
   const createExam = async (event) => {

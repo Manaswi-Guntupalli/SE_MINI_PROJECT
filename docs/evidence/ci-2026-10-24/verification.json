@@ -1,0 +1,77 @@
+{
+  "reviewedDevelop": "0e0582ecdb5b97c101666de7a60d10359013f0be",
+  "githubActions": [
+    {
+      "os": "ubuntu",
+      "passingRun": 40068235351,
+      "passingCommit": "817f5aa2c4f7bb85a92338373abd4b667fe67930",
+      "passingTests": {
+        "server": {
+          "name": "vitest tests",
+          "tests": "24",
+          "failures": "0",
+          "errors": "0",
+          "time": "5.315161587"
+        },
+        "client": {
+          "name": "vitest tests",
+          "tests": "11",
+          "failures": "0",
+          "errors": "0",
+          "time": "0.603749012"
+        }
+      },
+      "failureRun": 40068368568,
+      "failureCommit": "e831fa51cb31cf9547fc232a10dd52ceebf48b07",
+      "intentionalFailureCounts": {
+        "name": "vitest tests",
+        "tests": "24",
+        "failures": "1",
+        "errors": "0",
+        "time": "4.485166559"
+      },
+      "artifactReRead": true
+    },
+    {
+      "os": "windows",
+      "passingRun": 40068235351,
+      "passingCommit": "817f5aa2c4f7bb85a92338373abd4b667fe67930",
+      "passingTests": {
+        "server": {
+          "name": "vitest tests",
+          "tests": "24",
+          "failures": "0",
+          "errors": "0",
+          "time": "20.9006216"
+        },
+        "client": {
+          "name": "vitest tests",
+          "tests": "11",
+          "failures": "0",
+          "errors": "0",
+          "time": "0.526266"
+        }
+      },
+      "failureRun": 40068368568,
+      "failureCommit": "e831fa51cb31cf9547fc232a10dd52ceebf48b07",
+      "intentionalFailureCounts": {
+        "name": "vitest tests",
+        "tests": "24",
+        "failures": "1",
+        "errors": "0",
+        "time": "23.0991023"
+      },
+      "artifactReRead": true
+    }
+  ],
+  "scope": "Prototype test/build verification; release acceptance remains 7 FAIL / 3 PASS. No human review or issue completion is implied.",
+  "latestPipelineChecks": {
+    "commit": "9755255eed635440a8f8b81ba9fd7a438a6a05af",
+    "pushRun": 40069198838,
+    "pullRequestRun": 40069202330,
+    "conclusion": "success",
+    "change": "Explicit generated-output cleanup before each run"
+  },
+  "ciProvider": "GitHub Actions",
+  "toolingDecision": "docs/CI_TOOLING_DECISION.md"
+}

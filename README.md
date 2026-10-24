@@ -13,7 +13,7 @@ All members contribute to shared authentication, access control, MongoDB integra
 - Frontend: React
 - Backend: Node.js and Express
 - Database: MongoDB (Mongoose)
-- Quality and delivery: Git, GitHub Actions, Jenkins, Docker, SonarQube
+- Quality and delivery: Git, GitHub Actions, Docker, SonarQube
 
 These are the agreed technology choices, not a claim that every component is already implemented.
 
@@ -41,7 +41,11 @@ The OEP identifiers are retained as stable historical identifiers and correspond
 
 Create a branch for the linked GitHub issue, commit with the issue reference, open a pull request targeting `develop`, request teammate review, verify tests and then merge. Keep the GitHub Project Status and the issue's status label consistent; close the issue only when its acceptance criteria are met. The Project Status and labels are separate GitHub fields.
 
-The assigned developer raises the PR and the repository owner reviews and merges it. [GitHub Actions](.github/workflows/repository-checks.yml) runs repository checks on PRs and pushes. Application install/build/test stages must be added as the MERN code and real test suites become available under [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44); repository checks do not establish application correctness. Jenkins is additional tooling, not a substitute for the required GitHub Actions automation.
+Follow the [development workflow and verification guide](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/blob/docs/OEP-9-workflow-verification/docs/DEVELOPMENT_WORKFLOW.md) for the exact steps, review/merge responsibilities and #18 evidence checklist. Repository setup is verified; independent teammate review and actual team workflow demonstrations remain pending.
+
+The assigned developer raises the PR and the repository owner reviews and merges it. GitHub Actions is the project's sole CI provider. The [application CI implementation in PR #58](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/58) runs locked MERN installs, build/lint, real MongoDB API tests and React component tests on Ubuntu and Windows for pushes and PRs, with its commands and execution evidence documented in that PR. [Repository checks](.github/workflows/repository-checks.yml) separately verify whitespace and Markdown links. No local CI server is required. Deployment and smoke-test work remains under #45; a passing CI run is not a deployed application.
+
+The current instructor workflow is a prototype with known authentication, ownership and validation gaps. Read the [Sprint 1 acceptance review](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/blob/chore/OEP-33-OEP-35-application-ci/docs/SPRINT_1_ACCEPTANCE_REVIEW.md) before treating a green prototype build as full Release 1 acceptance.
 
 ## Two-sprint delivery plan
 
@@ -54,6 +58,8 @@ See the saved [Sprint Planning Table](https://github.com/users/Manaswi-Guntupall
 
 ## Scope
 Release 1 covers account roles, instructor exam and MCQ management, published timed student attempts, server-side answer persistence, submission, automated scoring and result visibility. Negative marking, AI proctoring, offline synchronization, advanced analytics and mobile apps are excluded.
+
+The [Release 1 scope and permissions agreement](docs/RELEASE_1_AGREEMENT.md) records the full scope, business rules, 17-requirement crosswalk, role matrix and planned authorization checks for #17/#19. Team agreement is pending review; implementation and executed-test evidence remain tracked in the existing stories.
 
 ## Documentation
 Documentation lives in [docs/](docs/). The project is planned and delivered iteratively using Agile practices.
