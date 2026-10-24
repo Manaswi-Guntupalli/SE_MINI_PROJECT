@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="11" failures="0" errors="0" time="0.536356253">
+    <testsuite name="src/App.test.jsx" timestamp="2026-10-24T06:19:04.598Z" hostname="3f37ca450b23" tests="11" failures="0" errors="0" skipped="0" time="0.536356253">
+        <testcase classname="src/App.test.jsx" name="Instructor prototype component (HTTP calls mocked) &gt; UI-EXAM-01: renders the empty list after loading" time="0.042551219">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Instructor prototype component (HTTP calls mocked) &gt; UI-EXAM-02: displays a fetched exam and its status" time="0.013485959">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Instructor prototype component (HTTP calls mocked) &gt; UI-EXAM-03: submits exam form data and refreshes the list" time="0.119175454">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Instructor prototype component (HTTP calls mocked) &gt; UI-EXAM-04: displays the server validation error on a rejected create" time="0.06328744">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Instructor prototype component (HTTP calls mocked) &gt; UI-EXAM-05: reports a failed list request" time="0.055243329">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Instructor prototype component (HTTP calls mocked) &gt; UI-EXAM-06: cancels deletion without sending a destructive request" time="0.018904885">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Instructor prototype component (HTTP calls mocked) &gt; UI-EXAM-07: sends confirmed deletion and refreshes the list" time="0.016993648">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Instructor prototype component (HTTP calls mocked) &gt; UI-MCQ-01: submits question text/options with exactly one selected answer" time="0.06024839">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Instructor prototype component (HTTP calls mocked) &gt; UI-MCQ-02: editing an existing question uses its own API identifier" time="0.055203229">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Instructor prototype component (HTTP calls mocked) &gt; UI-PUBLISH-01: confirmed publication updates the displayed status" time="0.048662235">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Instructor prototype component (HTTP calls mocked) &gt; UI-PUBLISH-02: published content has no edit/delete management actions" time="0.04052594">
+        </testcase>
+    </testsuite>
+</testsuites>

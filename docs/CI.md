@@ -14,7 +14,7 @@ node scripts/ci.mjs all
 
 | Stage | Actual commands or behavior | Required result |
 |---|---|---|
-| preflight | Record Node/npm, platform and checked-out Git SHA | Node 24 and Git available |
+| preflight | Record Node/npm, platform and checked-out Git SHA; clear generated reports/coverage/manifest/dist from prior runs | Node 24 and Git available; no stale success evidence |
 | install | `npm ci --prefix server --no-audit --no-fund` and same for client | Locked installs succeed |
 | build | Server `node --check` on entry/app/controllers/models/routes; client ESLint and Vite production build | Syntax/lint/build succeed; `client/dist/index.html` exists |
 | test | `npm run test:ci --prefix server` and same for client | Real Vitest suites pass; JUnit and V8 coverage emitted |
@@ -83,14 +83,21 @@ Executed hosted evidence for implementation commit `817f5aa2c4f7bb85a92338373abd
 | [Application CI push 40068235351](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/40068235351) | SUCCESS on Ubuntu and Windows | Locked installs, lint/build, 24 backend + 11 frontend tests, coverage, real negative-control assertion, acceptance diagnostics and artifact upload |
 | [Application CI PR 40068270152](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/40068270152) | SUCCESS | PR trigger executes the same pipeline |
 | [Intentional failure 40068368568](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/40068368568) | Expected FAILURE on Ubuntu and Windows | Isolated proof commit `e831fa51cb31cf9547fc232a10dd52ceebf48b07` changed the real draft-default test's expected value to Published; the required test stage failed with 1 failed / 23 passed and exit 1; reports/coverage still uploaded |
+| [Cleanup verification 40069198838](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/40069198838) and [PR run 40069202330](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/40069202330) | SUCCESS | Final pipeline code at `9755255eed635440a8f8b81ba9fd7a438a6a05af`, including generated-output cleanup, passes on both OSes |
 
-The deliberate assertion change exists only on `test/OEP-35-ci-failure-proof`; it is not part of the implementation PR and must not be merged. The correct expectation remains on the reviewed implementation branch. No earlier documentation-only Jenkins/Actions result is represented as an application pipeline result. The assistant cannot reach Manaswi's Windows `localhost` Jenkins from the remote workspace; that installation's configuration/build remains unverified until its actual console/artifact evidence is available.
+The deliberate assertion change exists only on `test/OEP-35-ci-failure-proof`; it is not part of the implementation PR and must not be merged. The correct expectation remains on the reviewed implementation branch. The uploaded passing artifacts were downloaded and their saved JUnit, coverage, negative-control and acceptance values re-read; the failed run's XML was also re-read and contains exactly the intended failed assertion on each OS.
+
+The actual Jenkinsfile was additionally executed from Git SCM on an isolated temporary **Linux Jenkins 2.580.1 / Temurin 21.0.13** controller at commit `9755255eed635440a8f8b81ba9fd7a438a6a05af`. Build **7 succeeded**, build **8 failed intentionally** with `VERIFY_FAILURE_PATH=true`, and build **9 succeeded** with it false. The successful builds each archived 42 files; the intentionally failed build archived 40, with no stale success manifest or acceptance report from skipped stages. Saved successful manifests were checked against their actual build numbers. The saved configuration registers SCM polling every five minutes.
+
+Permanent [verification metadata](evidence/ci-2026-10-24/verification.json), [Jenkins run records](evidence/ci-2026-10-24/jenkins/runs.json), [successful console](evidence/ci-2026-10-24/jenkins/passing-console.txt), [intentional failure console](evidence/ci-2026-10-24/jenkins/failure-console.txt) and [recovery console](evidence/ci-2026-10-24/jenkins/recovery-console.txt) are committed alongside the actual XML, coverage summaries, manifests and acceptance reports. These records retain the executed SHA, not a claim that a later documentation-only evidence commit was already tested.
+
+No earlier documentation-only Jenkins/Actions result is represented as an application pipeline result. The temporary controller was stopped after verification. The assistant cannot reach Manaswi's Windows `localhost` Jenkins from the remote workspace; activating and verifying that installation's new SCM job remains a separate local step using the instructions above.
 
 ## Completion checks for the existing tasks
 
 | Issue | Repository implementation | Evidence needed before calling the task fully complete |
 |---|---|---|
-| #42 | Versioned Jenkinsfile; SCM polling; recorded build/install scripts; required test integration; nonzero failures; safe read-only checkout; retained artifacts | Actual configured Jenkins passing run for a repository change, intentional failing run and recovery; teammate review |
-| #44 | Native Actions workflow; genuine frontend/backend suites; required failures; JUnit/coverage artifacts; isolated failure verification | Actual Actions passing/failing run evidence and teammate review/merge |
+| #42 | Versioned Jenkinsfile; SCM polling; recorded build/install scripts; required test integration; nonzero failures; safe read-only checkout; real Linux Jenkins pass/fail/recovery logs and archived reports | Activate/verify the SCM job on the team's Windows Jenkins if that is the retained team environment; teammate review/merge |
+| #44 | Native Actions workflow; genuine frontend/backend suites; required failures; saved/re-read JUnit/coverage artifacts; actual passing/failing hosted runs on both OSes | Teammate review/merge; full future system/security tests remain #53 |
 
 This PR relates to the existing issues without auto-closing them. Issue/Project statuses and all scheduling fields are preserved. Green CI does not complete Tanusha's missing acceptance criteria or the final #53 system/security deliverable.
