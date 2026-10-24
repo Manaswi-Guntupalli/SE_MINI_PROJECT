@@ -41,7 +41,9 @@ The OEP identifiers are retained as stable historical identifiers and correspond
 
 Create a branch for the linked GitHub issue, commit with the issue reference, open a pull request targeting `develop`, request teammate review, verify tests and then merge. Keep the GitHub Project Status and the issue's status label consistent; close the issue only when its acceptance criteria are met. The Project Status and labels are separate GitHub fields.
 
-The assigned developer raises the PR and the repository owner reviews and merges it. [GitHub Actions](.github/workflows/repository-checks.yml) runs repository checks on PRs and pushes. Application install/build/test stages must be added as the MERN code and real test suites become available under [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44); repository checks do not establish application correctness. Jenkins is additional tooling, not a substitute for the required GitHub Actions automation.
+The assigned developer raises the PR and the repository owner reviews and merges it. [Application CI](.github/workflows/application-ci.yml) runs locked MERN installs, build/lint, real MongoDB API tests and React component tests on Ubuntu and Windows for pushes and PRs. The [Jenkinsfile](Jenkinsfile) uses the same scripts. [Repository checks](.github/workflows/repository-checks.yml) separately verify whitespace and Markdown links. See [CI setup and evidence](docs/CI.md) for commands and Windows Jenkins configuration. Jenkins is additional tooling, not a substitute for the required GitHub Actions automation.
+
+The current instructor workflow is a prototype with known authentication, ownership and validation gaps. Read the [Sprint 1 acceptance review](docs/SPRINT_1_ACCEPTANCE_REVIEW.md) before treating a green prototype build as full Release 1 acceptance.
 
 ## Two-sprint delivery plan
 

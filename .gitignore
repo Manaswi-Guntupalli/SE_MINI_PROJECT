@@ -3,6 +3,10 @@ node_modules/
 dist/
 build/
 coverage/
+reports/
+ci-evidence/
+server/.ci-negative-*/
+server/.ci-mongodb/
 *.log
 
 # Local environment secrets (allow example templates)
