@@ -26,8 +26,8 @@ jobs:
           fetch-depth: 2
           persist-credentials: false
 
-      - name: Check changed lines for whitespace errors
-        run: git diff --check HEAD^ HEAD
+      - name: Check repository for whitespace errors
+        run: git diff --check
 
       - name: Verify relative documentation links
         run: python3 scripts/check_documentation.py
