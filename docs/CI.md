@@ -72,7 +72,7 @@ The deliberate assertion change exists only on `test/OEP-35-ci-failure-proof`; i
 
 Permanent [verification metadata](evidence/ci-2026-10-24/verification.json), actual JUnit XML, coverage summaries, manifests and acceptance reports are retained under `docs/evidence/ci-2026-10-24/github-actions/` for both operating systems. The source run IDs and commit SHAs remain unchanged; historical reports are not relabelled as new executions.
 
-The CI provider change is recorded in the [tooling decision](CI_TOOLING_DECISION.md). Original submitted artifacts are retained as the baseline, with the change explicitly documented for final reconciliation. Current CI instructions require only GitHub Actions.
+The CI provider change is recorded in the [tooling decision](CI_TOOLING_DECISION.md). The current proposal, SRS, RTM, SAD and Test Plan name GitHub Actions consistently; earlier submitted versions remain in Git history. Current CI instructions require only GitHub Actions.
 
 ## Completion checks for the existing tasks
 

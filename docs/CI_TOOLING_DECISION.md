@@ -2,7 +2,7 @@
 
 **Decision date:** 24 October 2026. **Requested by:** Guntupalli Manaswi.
 
-Use **GitHub Actions as the sole CI provider** for the Online Exam Portal. Remove the Jenkinsfile, local-server setup instructions, provider-specific environment fallback and Jenkins evidence files from the current implementation. No Windows CI service or Jenkins job is required for this plan. Existing Git history and earlier verification comments remain historical records.
+Use **GitHub Actions as the sole CI provider** for the Online Exam Portal. The former local CI-server configuration, setup instructions, provider-specific environment fallback and provider-specific evidence files have been removed from the current implementation. No Windows CI service or local CI-server job is required. Existing Git history and earlier verification comments remain historical records.
 
 ## Existing backlog and implementation
 
@@ -11,9 +11,9 @@ Use **GitHub Actions as the sole CI provider** for the Online Exam Portal. Remov
 - Existing issue identities, owners, numeric story points, priorities, sprint placement, native epic relationships and completion states are preserved. No duplicate issue replaces #42.
 - The current workflow performs **CI**: install, lint/build and test. Deployment credentials/target, deployment automation and smoke verification remain under #45. Selecting a CI/CD platform does not mean CD is already implemented.
 
-## Submitted baseline and course wording
+## Project document amendment
 
-The submitted [SRS PDF](OEP-17_SRS_Final.pdf), including its PROC-01 process requirement, names Jenkins CI/CD. The original [RTM](OEP-19_Initial_RTM.xlsx) also names it. The Part 1 SAD and Test Plan describe GitHub Actions or Jenkins as CI choices. Those submitted artifacts are retained as the original baseline; this decision supersedes their tooling choice for the current implementation and must be reflected when the final documents/RTM are reconciled.
+On 24 October 2026, the current [proposal](../OEP-16_Project_Proposal_Final.pdf), [SRS PDF](OEP-17_SRS_Final.pdf), [RTM](OEP-19_Initial_RTM.xlsx), Part 1 SAD and Test Plan were amended to name GitHub Actions consistently. The changes affect the proposal's CI description, SRS section 2.5 and PROC-01, RTM Traceability C48 and Planned Tests D191, and the CI tool descriptions in the SAD and Test Plan. Earlier submitted versions remain available in Git history; the working project files reflect the selected provider.
 
 The change is explicitly requested by Manaswi. **Faculty acceptance of substituting GitHub Actions for an explicitly named course tool has not been verified.** It is not represented as a faculty-approved exception or a separate three-person agreement. Explain the tooling deviation in the final deliverables rather than silently claiming the earlier baseline is unchanged.
 

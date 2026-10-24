@@ -1,0 +1,4 @@
+# Preserve binary project documents without text conversion or whitespace checks.
+*.pdf binary
+*.docx binary
+*.xlsx binary
