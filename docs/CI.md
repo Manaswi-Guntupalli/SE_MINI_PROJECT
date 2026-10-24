@@ -76,7 +76,15 @@ Jenkins archives reports/coverage/dist/evidence in `post { always { ... } }` and
 
 The local complete command has been executed with real MongoDB and real test reports. An intentional assertion failure is also verified with the same test runner; `node scripts/ci.mjs verify-failure-propagate` exits 1 and removes the temporary failing file. Run `node scripts/ci.mjs all` afterward to verify normal recovery. The wrapper's successful negative-control check is not by itself proof that an entire hosted CI run became red; use the actual run links recorded below/with the PR.
 
-Remote run URLs and any Jenkins execution record are added only after execution. No earlier documentation-only Jenkins/Actions result is represented as an application pipeline result. The assistant cannot reach Manaswi's Windows `localhost` Jenkins from the remote workspace; that installation's configuration/build remains unverified until its actual console/artifact evidence is available.
+Executed hosted evidence for implementation commit `817f5aa2c4f7bb85a92338373abd4b667fe67930`:
+
+| Run | Result | What was verified |
+|---|---|---|
+| [Application CI push 40068235351](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/40068235351) | SUCCESS on Ubuntu and Windows | Locked installs, lint/build, 24 backend + 11 frontend tests, coverage, real negative-control assertion, acceptance diagnostics and artifact upload |
+| [Application CI PR 40068270152](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/40068270152) | SUCCESS | PR trigger executes the same pipeline |
+| [Intentional failure 40068368568](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions/runs/40068368568) | Expected FAILURE on Ubuntu and Windows | Isolated proof commit `e831fa51cb31cf9547fc232a10dd52ceebf48b07` changed the real draft-default test's expected value to Published; the required test stage failed with 1 failed / 23 passed and exit 1; reports/coverage still uploaded |
+
+The deliberate assertion change exists only on `test/OEP-35-ci-failure-proof`; it is not part of the implementation PR and must not be merged. The correct expectation remains on the reviewed implementation branch. No earlier documentation-only Jenkins/Actions result is represented as an application pipeline result. The assistant cannot reach Manaswi's Windows `localhost` Jenkins from the remote workspace; that installation's configuration/build remains unverified until its actual console/artifact evidence is available.
 
 ## Completion checks for the existing tasks
 
