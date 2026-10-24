@@ -12,6 +12,8 @@ React + Node.js/Express + MongoDB/Mongoose. Student, Instructor and Admin roles;
 
 **Excluded:** Negative marking; AI question generation/proctoring; reusable question banks; enrollment/courses; advanced analytics; CSV export; offline sync; native mobile apps.
 
+See the [Release 1 scope and permissions agreement](RELEASE_1_AGREEMENT.md) for #17/#19: optional availability start time, one resumable attempt per Student/exam, immutable published content, the complete requirement crosswalk and the same permissions used by #23/#24/#51. Multiple result-release modes are outside the minimal release. Agreement remains pending team review.
+
 ## GitHub issue structure (audit 13 October 2026)
 
 44 existing issues: **7 epics, 16 user stories, 21 tasks**. All 37 non-epic issues are linked exactly once through native GitHub Sub-issue relationships under their correct epics. The original 17 relationships were preserved and the 20 missing links completed. Markdown checklists supplement the native relationships.
