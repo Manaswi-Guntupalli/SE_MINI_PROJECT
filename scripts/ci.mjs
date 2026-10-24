@@ -1,6 +1,7 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
+import { rmSync } from 'node:fs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 function run(command, args, shell = false) {
@@ -21,6 +22,14 @@ const stages = {
     console.log(`Node ${process.version}; ${process.platform}/${process.arch}`);
     npm('npm --version');
     run('git', ['rev-parse', 'HEAD']);
+    // A failed stage must never archive success metadata from an earlier run.
+    // These are generated CI outputs only; retained Jenkins build archives and
+    // committed docs/evidence records are outside these paths.
+    for (const output of ['client/reports', 'server/reports', 'ci-evidence',
+      'client/coverage', 'server/coverage', 'client/dist']) {
+      rmSync(join(root, output), { recursive: true, force: true });
+    }
+    console.log('Cleared generated reports, coverage, manifest and frontend build before this CI run.');
   },
   install() {
     npm('npm ci --prefix server --no-audit --no-fund');

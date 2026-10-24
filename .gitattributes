@@ -1,4 +1,2 @@
-# Treat document artifacts as binary; whitespace checks apply to text sources.
-*.pdf binary
-*.docx binary
-*.xlsx binary
+# Preserve raw archived test-tool spacing in console evidence.
+docs/evidence/**/jenkins/*-console.txt whitespace=-blank-at-eol
