@@ -32,4 +32,4 @@ jobs:
         run: |
           echo '## Repository checks' >> "$GITHUB_STEP_SUMMARY"
           echo 'Checked changed-line whitespace and local Markdown link destinations.' >> "$GITHUB_STEP_SUMMARY"
-          echo 'Application install/build/test execution remains pending under #44 until MERN code and real test suites are available. This run does not verify application correctness.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Application install/build/test execution runs separately in Application CI. This repository/documentation run does not verify application correctness.' >> "$GITHUB_STEP_SUMMARY"

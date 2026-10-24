@@ -1,4 +1,4 @@
-# Treat document artifacts as binary; whitespace checks apply to text sources.
+# Preserve binary project documents without text conversion or whitespace checks.
 *.pdf binary
 *.docx binary
 *.xlsx binary
