@@ -15,7 +15,7 @@ describe('Exam schema: currently implemented validation', () => {
     const exam = new Exam(validExam());
     expect(exam.validateSync()).toBeUndefined();
     expect(exam.title).toBe('Algorithms Quiz');
-    expect(exam.status).toBe('Draft');
+    expect(exam.status).toBe('Published'); // Deliberately wrong: hosted CI failure proof only.
     expect(exam.questions).toHaveLength(0);
   });
 
