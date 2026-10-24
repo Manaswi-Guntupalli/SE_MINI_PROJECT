@@ -64,38 +64,6 @@
       "artifactReRead": true
     }
   ],
-  "jenkins": {
-    "environment": "Temporary isolated Linux controller; not Manaswi Windows localhost",
-    "version": "2.580.1",
-    "java": "Temurin 21.0.13+9",
-    "warSha256": "393bf2476352dd726519fd1f92ce66eac7d23c0936e6967420b717060c4c40d0",
-    "commit": "9755255eed635440a8f8b81ba9fd7a438a6a05af",
-    "results": [
-      {
-        "build": 7,
-        "result": "SUCCESS",
-        "failureParameter": false,
-        "artifacts": 42,
-        "manifestPresent": true
-      },
-      {
-        "build": 8,
-        "result": "FAILURE",
-        "failureParameter": true,
-        "artifacts": 40,
-        "manifestPresent": false
-      },
-      {
-        "build": 9,
-        "result": "SUCCESS",
-        "failureParameter": false,
-        "artifacts": 42,
-        "manifestPresent": true
-      }
-    ],
-    "scmPollingRegistered": "H/5 * * * *",
-    "windowsLocalInstallationVerified": false
-  },
   "scope": "Prototype test/build verification; release acceptance remains 7 FAIL / 3 PASS. No human review or issue completion is implied.",
   "latestPipelineChecks": {
     "commit": "9755255eed635440a8f8b81ba9fd7a438a6a05af",
@@ -103,5 +71,7 @@
     "pullRequestRun": 40069202330,
     "conclusion": "success",
     "change": "Explicit generated-output cleanup before each run"
-  }
+  },
+  "ciProvider": "GitHub Actions",
+  "toolingDecision": "docs/CI_TOOLING_DECISION.md"
 }

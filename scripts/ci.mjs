@@ -23,7 +23,7 @@ const stages = {
     npm('npm --version');
     run('git', ['rev-parse', 'HEAD']);
     // A failed stage must never archive success metadata from an earlier run.
-    // These are generated CI outputs only; retained Jenkins build archives and
+    // These are generated CI outputs only; retained workflow artifacts and
     // committed docs/evidence records are outside these paths.
     for (const output of ['client/reports', 'server/reports', 'ci-evidence',
       'client/coverage', 'server/coverage', 'client/dist']) {

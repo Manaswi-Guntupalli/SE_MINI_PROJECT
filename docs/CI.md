@@ -1,6 +1,6 @@
-# Application CI and Jenkins
+# GitHub Actions application CI
 
-This contribution implements the repository work for [#42](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/42) and [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44). GitHub Actions and Jenkins execute the same committed scripts. The existing repository/documentation workflow remains separate. **Application CI verifies the implemented prototype, not full Release 1 acceptance**; the [acceptance review](SPRINT_1_ACCEPTANCE_REVIEW.md) records missing authentication and other defects.
+This contribution implements the repository work for [#42](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/42) and [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44). GitHub Actions is the sole CI provider and executes the committed scripts; no local CI server setup is required. The existing repository/documentation workflow remains separate. **Application CI verifies the implemented prototype, not full Release 1 acceptance**; the [acceptance review](SPRINT_1_ACCEPTANCE_REVIEW.md) records missing authentication and other defects.
 
 ## Recorded tools and reproducible commands
 
@@ -49,28 +49,11 @@ Coverage is measured for `server/app.js`, controllers/models/routes and `client/
 
 ## GitHub Actions
 
-`.github/workflows/application-ci.yml` runs automatically on repository pushes and PRs targeting `develop` or `main`; it can also be dispatched manually when available on the default branch. Ubuntu and Windows jobs use Node from `.node-version` and the same stages as Jenkins. Required install/build/lint/test failures fail the job. There is no `continue-on-error` on those stages.
+`.github/workflows/application-ci.yml` runs automatically on repository pushes and PRs targeting `develop` or `main`; it can also be dispatched manually when available on the default branch. Ubuntu and Windows jobs use Node from `.node-version` and the committed CI stages. Required install/build/lint/test failures fail the job. There is no `continue-on-error` on those stages.
 
 Reports, coverage and production assets upload on both success and failure, when generated. Artifacts are retained for 14 days; download required course evidence before expiry. The job summary explicitly lists failed acceptance diagnostics. Read it even when the prototype test job is green.
 
 Open [GitHub Actions](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/actions), select **Application CI**, open the exact commit's run and inspect both OS jobs. The old **Repository checks** job only checks whitespace/Markdown links and is not application-test evidence.
-
-## Configure the existing Windows Jenkins installation
-
-The earlier `OEP-33-Jenkins-Readiness` job proved local Git/Python/checkout/documentation checks and a deliberate batch failure. Keep its retained evidence. It does **not** execute these new MERN tests.
-
-1. In the same Windows account/environment Jenkins runs under, verify `node --version`, `npm --version` and `git --version`. Node must be 24; use the recorded version. If Node was installed while Jenkins was running, restart Jenkins to refresh PATH. Keep the Java installation already used to run Jenkins.
-2. Ensure the **Pipeline** and **Git** plugins are installed. No NodeJS, Docker, coverage, JUnit or GitHub webhook plugin is required by this Jenkinsfile; XML/coverage files are archived directly.
-3. Create a new **Pipeline** job named `OEP-33-MERN-CI`. Use a dedicated workspace; the Jenkinsfile cleans that job's workspace before checkout. Preserve the old readiness job.
-4. Configure **Definition: Pipeline script from SCM**, **SCM: Git**, repository URL `https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT.git`. The public repository needs no credential for read-only checkout. Never paste a PAT or MongoDB URI into the script, console or repository. If the repository later becomes private, select a least-privilege Jenkins-stored credential by ID.
-5. Before merge, set **Branch Specifier** to `*/chore/OEP-33-OEP-35-application-ci`. After the reviewed PR merges, change it to `*/develop`. Set **Script Path** to `Jenkinsfile`; save. Do not paste it into an inline job: `checkout scm` needs the configured SCM context.
-6. Choose **Build Now** for the first run. The Jenkinsfile then defines `VERIFY_FAILURE_PATH`; its default is false. The first run also registers polling every five minutes while Jenkins is running. No public localhost webhook or tunnel is necessary. Polling triggers on source changes, not merely because the clock reaches a poll interval.
-7. Check the checkout SHA, locked installs, frontend lint/build, both suites and archived artifacts. `npm ci` and the first MongoDB binary download can take several minutes. Keep the successful application run and its console output.
-8. Choose **Build with Parameters**, set **VERIFY_FAILURE_PATH=true**, and build. It must fail at **Prove failing tests are detected**, with the deliberately wrong `Draft` versus `Published` assertion recorded in `negative-control.json`. Later normal stages are skipped and available reports are still archived. Keep this intentionally red run as evidence; it is not a product defect.
-9. Run again with **VERIFY_FAILURE_PATH=false** and verify recovery to SUCCESS. Keep this green run too. Record the three build numbers, checked-out commit and console/artifact links in the PR. Do not leave the failure parameter true for normal builds.
-10. Once the first passing run is configured, a later committed repository change must be picked up by SCM polling (or a manually started checkout of that new commit). Confirm its new SHA in the build log. This establishes the real-change criterion for #42.
-
-Jenkins archives reports/coverage/dist/evidence in `post { always { ... } }` and keeps 15 builds by default. Use **Keep this build forever** on the course-evidence runs or export them before normal retention removes them. JUnit XML can optionally be published into Jenkins' test UI if the team later installs the JUnit plugin; it is already retained as a downloadable artifact.
 
 ## Passing and failure evidence
 
@@ -87,17 +70,17 @@ Executed hosted evidence for implementation commit `817f5aa2c4f7bb85a92338373abd
 
 The deliberate assertion change exists only on `test/OEP-35-ci-failure-proof`; it is not part of the implementation PR and must not be merged. The correct expectation remains on the reviewed implementation branch. The uploaded passing artifacts were downloaded and their saved JUnit, coverage, negative-control and acceptance values re-read; the failed run's XML was also re-read and contains exactly the intended failed assertion on each OS.
 
-The actual Jenkinsfile was additionally executed from Git SCM on an isolated temporary **Linux Jenkins 2.580.1 / Temurin 21.0.13** controller at commit `9755255eed635440a8f8b81ba9fd7a438a6a05af`. Build **7 succeeded**, build **8 failed intentionally** with `VERIFY_FAILURE_PATH=true`, and build **9 succeeded** with it false. The successful builds each archived 42 files; the intentionally failed build archived 40, with no stale success manifest or acceptance report from skipped stages. Saved successful manifests were checked against their actual build numbers. The saved configuration registers SCM polling every five minutes.
+Permanent [verification metadata](evidence/ci-2026-10-24/verification.json), actual JUnit XML, coverage summaries, manifests and acceptance reports are retained under `docs/evidence/ci-2026-10-24/github-actions/` for both operating systems. The source run IDs and commit SHAs remain unchanged; historical reports are not relabelled as new executions.
 
-Permanent [verification metadata](evidence/ci-2026-10-24/verification.json), [Jenkins run records](evidence/ci-2026-10-24/jenkins/runs.json), [successful console](evidence/ci-2026-10-24/jenkins/passing-console.txt), [intentional failure console](evidence/ci-2026-10-24/jenkins/failure-console.txt) and [recovery console](evidence/ci-2026-10-24/jenkins/recovery-console.txt) are committed alongside the actual XML, coverage summaries, manifests and acceptance reports. These records retain the executed SHA, not a claim that a later documentation-only evidence commit was already tested.
-
-No earlier documentation-only Jenkins/Actions result is represented as an application pipeline result. The temporary controller was stopped after verification. The assistant cannot reach Manaswi's Windows `localhost` Jenkins from the remote workspace; activating and verifying that installation's new SCM job remains a separate local step using the instructions above.
+The CI provider change is recorded in the [tooling decision](CI_TOOLING_DECISION.md). Original submitted artifacts are retained as the baseline, with the change explicitly documented for final reconciliation. Current CI instructions require only GitHub Actions.
 
 ## Completion checks for the existing tasks
 
 | Issue | Repository implementation | Evidence needed before calling the task fully complete |
 |---|---|---|
-| #42 | Versioned Jenkinsfile; SCM polling; recorded build/install scripts; required test integration; nonzero failures; safe read-only checkout; real Linux Jenkins pass/fail/recovery logs and archived reports | Activate/verify the SCM job on the team's Windows Jenkins if that is the retained team environment; teammate review/merge |
+| #42 | Native GitHub Actions workflow; automatic push/PR triggers; locked installs; build/lint stages; read-only permissions; real hosted pass/fail evidence | Teammate review/merge and documented course-tool substitution review |
 | #44 | Native Actions workflow; genuine frontend/backend suites; required failures; saved/re-read JUnit/coverage artifacts; actual passing/failing hosted runs on both OSes | Teammate review/merge; full future system/security tests remain #53 |
 
 This PR relates to the existing issues without auto-closing them. Issue/Project statuses and all scheduling fields are preserved. Green CI does not complete Tanusha's missing acceptance criteria or the final #53 system/security deliverable.
+
+The current workflow builds and tests the prototype. Deployment automation and deployment/smoke evidence remain #45; CD is not claimed as implemented.

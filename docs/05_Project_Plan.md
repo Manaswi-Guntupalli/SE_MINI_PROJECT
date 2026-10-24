@@ -36,7 +36,7 @@ Workflow: **Todo → In Progress → In Review → Done**. Only move to Done whe
 
 | Sprint | Dates in 2026 | Assigned child issues | Delivery goal |
 |---|---|---|---|
-| Sprint 1 | 19–23 October | #17–#37, #42, #44, #51, #52 (25) | Scope, roles/data model, MERN setup, authentication/Admin accounts, instructor exam/draft/MCQ/publication workflow; Jenkins setup plus explicitly required GitHub Actions; one-minute actual working-product video uploaded to the repo |
+| Sprint 1 | 19–23 October | #17–#37, #42, #44, #51, #52 (25) | Scope, roles/data model, MERN setup, authentication/Admin accounts, instructor exam/draft/MCQ/publication workflow; GitHub Actions pipeline setup and automated tests; one-minute actual working-product video uploaded to the repo |
 | Sprint 2 | 26–30 October | #38–#41, #43, #45–#50, #53 (12) | Student attempt/save/timer/submission, automatic evaluation and authorized results; Docker/SonarQube, final functional/security tests and deployment smoke checks; two-minute working-product video, complete documentation and development freeze |
 
 The eight closed documentation issues (#25–#32) are historical prerequisites in Sprint 1, not newly completed Sprint 1 work. The unused Sprint 3 iteration remains intact; no Release 1 issue is assigned to it. The optional dry run is 12–16 October. The guideline allows backlog changes on 19 October. Tests, document updates and PR reviews continue in both sprints. #53 begins test authoring alongside Sprint 1 features even though its final completion is assigned to Sprint 2; #44 wires those incremental suites into GitHub Actions in Sprint 1. Assigned developers raise their own PRs; repository owners review and merge them.
@@ -50,7 +50,7 @@ The eight closed documentation issues (#25–#32) are historical prerequisites i
 | OEP-3 Exam Attempt | [#12](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/12) | Available exams, start/resume, answer persistence, timer, submission | Manaswi |
 | OEP-4 Results | [#13](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/13) | Auto-evaluation and student/instructor results | Guru Teja |
 | OEP-5 Testing & Security | [#14](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/14) | Release 1 functional/security tests | All |
-| OEP-6 CI/CD & DevOps | [#15](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/15) | Docker, Jenkins, SonarQube, CI tests and deployment checks | All |
+| OEP-6 CI/CD & DevOps | [#15](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/15) | Docker, GitHub Actions, SonarQube, CI tests and deployment checks | All |
 | OEP-7 Documentation | [#16](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/16) | Proposal, SRS, field layout, RTM, project plan, architecture, design, validation specification | All |
 
 **Estimate convention:** Sixteen implementation user stories retain their existing **79 points**; six foundation tasks retain their existing **15 points**. The remaining 15 tasks were reviewed against their acceptance criteria and estimated at **73 points**, using the existing relative scale with 13 for the broad cross-module testing task. All 37 child items have native Project Story Points. See [Estimate Review](ESTIMATE_REVIEW.md) for values, assumptions and authorization. These are assistant-reviewed estimates authorized by Manaswi, not a claim of separate three-person agreement.
@@ -60,6 +60,8 @@ The complete child backlog totals **167 points**: Sprint 1 has 99, including 29 
 **Effort and schedule:** The team should record capacity per sprint and any faculty-required person-month estimates separately, based on actual availability. Do not invent effort hours or a Gantt completion baseline before the team agrees. The Roadmap's date fields should reflect approved target dates, not arbitrary claimed commitments. Identify dependencies: roles/data model → authentication/exam models → publication → attempts/timer/persistence → finalization/evaluation → result views. Build tests and CI alongside implementation.
 
 ## 5. Design and reuse decisions
+
+GitHub Actions is the sole CI provider following Manaswi's 24 October 2026 instruction. #42 owns workflow/install/build setup and #44 owns actual test execution and reports. This tooling change preserves the existing issues, sprint assignments and numeric estimates. See [CI tooling decision](CI_TOOLING_DECISION.md) for its relationship to the submitted baseline and remaining deployment work.
 
 Implement project-specific React views, Express endpoints, MongoDB models and business rules. Reuse established maintained libraries for authentication/password hashing, server validation, date handling, testing and logging; do not implement cryptographic primitives manually. MongoDB/Mongoose is the single datastore. Persist published exam/question snapshots or enforce immutable published content, server-controlled attempt deadlines, idempotent submission/evaluation and restricted answer-key access.
 

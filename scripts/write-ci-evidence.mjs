@@ -21,7 +21,7 @@ const evidence = {
   generatedAt: new Date().toISOString(),
   commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
   node: process.version, platform: process.platform, arch: process.arch,
-  run: process.env.GITHUB_RUN_ID || process.env.BUILD_NUMBER || 'local',
+  run: process.env.GITHUB_RUN_ID || 'local',
   lockfiles: Object.fromEntries(['client', 'server'].map((part) => [part,
     createHash('sha256').update(readFileSync(join(root, part, 'package-lock.json'))).digest('hex')])),
   coverage,

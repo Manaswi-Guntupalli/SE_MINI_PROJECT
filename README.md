@@ -13,7 +13,7 @@ All members contribute to shared authentication, access control, MongoDB integra
 - Frontend: React
 - Backend: Node.js and Express
 - Database: MongoDB (Mongoose)
-- Quality and delivery: Git, GitHub Actions, Jenkins, Docker, SonarQube
+- Quality and delivery: Git, GitHub Actions, Docker, SonarQube
 
 These are the agreed technology choices, not a claim that every component is already implemented.
 
@@ -41,7 +41,7 @@ The OEP identifiers are retained as stable historical identifiers and correspond
 
 Create a branch for the linked GitHub issue, commit with the issue reference, open a pull request targeting `develop`, request teammate review, verify tests and then merge. Keep the GitHub Project Status and the issue's status label consistent; close the issue only when its acceptance criteria are met. The Project Status and labels are separate GitHub fields.
 
-The assigned developer raises the PR and the repository owner reviews and merges it. [Application CI](.github/workflows/application-ci.yml) runs locked MERN installs, build/lint, real MongoDB API tests and React component tests on Ubuntu and Windows for pushes and PRs. The [Jenkinsfile](Jenkinsfile) uses the same scripts. [Repository checks](.github/workflows/repository-checks.yml) separately verify whitespace and Markdown links. See [CI setup and evidence](docs/CI.md) for commands and Windows Jenkins configuration. Jenkins is additional tooling, not a substitute for the required GitHub Actions automation.
+The assigned developer raises the PR and the repository owner reviews and merges it. [Application CI](.github/workflows/application-ci.yml) runs locked MERN installs, build/lint, real MongoDB API tests and React component tests on Ubuntu and Windows for pushes and PRs. [Repository checks](.github/workflows/repository-checks.yml) separately verify whitespace and Markdown links. GitHub Actions is the project's only CI provider; no local CI server is required. See [CI commands and evidence](docs/CI.md) and the [recorded tooling decision](docs/CI_TOOLING_DECISION.md). Deployment and smoke-test work remains under #45; a passing CI run is not a deployed application.
 
 The current instructor workflow is a prototype with known authentication, ownership and validation gaps. Read the [Sprint 1 acceptance review](docs/SPRINT_1_ACCEPTANCE_REVIEW.md) before treating a green prototype build as full Release 1 acceptance.
 

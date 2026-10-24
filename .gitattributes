@@ -1,2 +1,0 @@
-# Preserve raw archived test-tool spacing in console evidence.
-docs/evidence/**/jenkins/*-console.txt whitespace=-blank-at-eol
