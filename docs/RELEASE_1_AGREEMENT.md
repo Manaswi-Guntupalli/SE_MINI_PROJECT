@@ -27,7 +27,7 @@ The implementation stack is **MongoDB/Mongoose, Express, React and Node.js (MERN
 9. Automatic MCQ evaluation, persisted scores, Student own-result viewing and Instructor owned-exam result viewing.
 10. The existing shared persistence, functional/security testing, documentation and delivery tooling tasks supporting those capabilities.
 
-GitHub Actions is required in Sprint 1 under [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44). Jenkins under [#42](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/42) is additional required work. Docker, SonarQube, smoke testing and the sprint demo evidence remain within their existing tasks. A lower scheduling priority does not remove an item from Release 1.
+GitHub Actions is the sole CI provider. [#42](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/42) covers pipeline setup/install/build, and [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44) covers actual test execution and retained reports in that same workflow. [PR #58](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/58) contains the implementation and evidence. Docker, SonarQube, smoke testing and the sprint demo evidence remain within their existing tasks. A lower scheduling priority does not remove an item from Release 1.
 
 ## Excluded functionality
 

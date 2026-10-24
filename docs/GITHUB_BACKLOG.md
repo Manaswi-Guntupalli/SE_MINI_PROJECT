@@ -70,7 +70,7 @@ Sprint 3 is preserved as an unused iteration (2–8 November) with no Release 1 
 | #48–50 | Evaluation & results | `Guruteja2319` |
 | #23, #24 | Auth and roles | `Tanusha181825` |
 | #51, #52 | Admin and shared persistence models | `Guruteja2319` |
-| #41, #42, #44 | Docker, Jenkins, CI/GitHub Actions | `Manaswi-Guntupalli` |
+| #41, #42, #44 | Docker, GitHub Actions pipeline setup and CI test execution | `Manaswi-Guntupalli` |
 | #43, #45 | SonarQube and deployment/smoke | `Guruteja2319` |
 | #53 | Cross-module functional/security testing | All three members |
 
@@ -88,7 +88,7 @@ This schedule follows the supplied **Mini-Project Deliverables Part-2** guidelin
 - [x] Existing FR/NFR and security acceptance criteria are retained in the backlog. Implementation and execution traceability must be updated against the submitted SRS/SAD/Test Plan as work progresses.
 - [x] All 37 children have owners, native Story Points and the exact requested Priority values.
 - [x] All 37 are assigned to the two delivery sprints above. Eight completed documentation issues remain closed/Done.
-- [x] GitHub Actions is explicitly included under Sprint 1 issue [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44), separate from Jenkins [#42](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/42). The [repository workflow](../.github/workflows/repository-checks.yml) checks PRs and pushes. Application-test stages and actual test reports remain pending until code/suites exist.
+- [x] GitHub Actions is the sole CI provider for Sprint 1. [#42](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/42) owns workflow/install/build setup; [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44) owns actual test execution and reports. [PR #58](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/58) contains the application workflow, real frontend/backend suites and passing/failing evidence. [Repository checks](../.github/workflows/repository-checks.yml) separately validate documentation.
 - [ ] Optional dry run, 12–16 October; do not claim it was completed without evidence. Backlog changes remain permitted on 19 October.
 - [ ] During Sprint 1, implement its assigned work against the submitted SRS, SAD and Test Plan; have each assigned developer raise their PR and the repository owner review and merge it.
 - [ ] By 23 October, record a **one-minute actual working-product video** and upload it to the repository. A planned video or mockup does not satisfy the guideline.
@@ -98,6 +98,6 @@ This schedule follows the supplied **Mini-Project Deliverables Part-2** guidelin
 
 ## Evidence and completion rules
 
-Keep real recordings, test reports and deviation notes together in a documented repository location chosen by the team; do not add empty recordings or fabricated result files. Link evidence from the relevant existing issues/PRs and RTM. The repository currently contains documentation, not the MERN application. The repository-check workflow does not establish application-test success or complete #44. Jenkins/Docker/SonarQube, the application features, demo videos, final evidence and freeze must be completed during delivery. Preserve existing issue states until their real acceptance criteria are met.
+Keep real recordings, test reports and deviation notes together in a documented repository location chosen by the team; do not add empty recordings or fabricated result files. Link evidence from the relevant existing issues/PRs and RTM. The MERN instructor prototype is present on develop, and the application workflow in [PR #58](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/58) has genuine passing/failing test evidence. Its acceptance review records missing functionality and security criteria; green CI does not establish full application acceptance. Docker/SonarQube, deployment/smoke checks, unfinished application features, demo videos and final evidence remain delivery work. Preserve existing issue states until their real acceptance criteria are met.
 
 The older five-iteration proposal is superseded by the supplied two-sprint guideline. This guide reports the current planning baseline and separates setup from outstanding delivery work.

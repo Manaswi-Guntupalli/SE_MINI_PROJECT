@@ -13,7 +13,7 @@ All members contribute to shared authentication, access control, MongoDB integra
 - Frontend: React
 - Backend: Node.js and Express
 - Database: MongoDB (Mongoose)
-- Quality and delivery: Git, GitHub Actions, Jenkins, Docker, SonarQube
+- Quality and delivery: Git, GitHub Actions, Docker, SonarQube
 
 These are the agreed technology choices, not a claim that every component is already implemented.
 
@@ -41,7 +41,7 @@ The OEP identifiers are retained as stable historical identifiers and correspond
 
 Create a branch for the linked GitHub issue, commit with the issue reference, open a pull request targeting `develop`, request teammate review, verify tests and then merge. Keep the GitHub Project Status and the issue's status label consistent; close the issue only when its acceptance criteria are met. The Project Status and labels are separate GitHub fields.
 
-The assigned developer raises the PR and the repository owner reviews and merges it. [GitHub Actions](.github/workflows/repository-checks.yml) runs repository checks on PRs and pushes. Application install/build/test stages must be added as the MERN code and real test suites become available under [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44); repository checks do not establish application correctness. Jenkins is additional tooling, not a substitute for the required GitHub Actions automation.
+The assigned developer raises the PR and the repository owner reviews and merges it. GitHub Actions is the project's sole CI provider. The [application CI implementation in PR #58](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/58) runs locked MERN installs, build/lint, real MongoDB API tests and React component tests on Ubuntu and Windows for pushes and PRs, with its commands and execution evidence documented in that PR. [Repository checks](.github/workflows/repository-checks.yml) separately verify whitespace and Markdown links. No local CI server is required. Deployment and smoke-test work remains under #45; a passing CI run is not a deployed application.
 
 ## Two-sprint delivery plan
 
