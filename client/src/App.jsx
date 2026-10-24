@@ -91,6 +91,10 @@ function App() {
         setUser(currentUser);
 
         await loadCsrfToken();
+
+        if (currentUser.role === "Instructor") {
+          await loadExams();
+        }
       } catch {
         setUser(null);
         setCsrfToken("");
@@ -101,12 +105,6 @@ function App() {
 
     restoreSession();
   }, []);
-
-  useEffect(() => {
-    if (user?.role === "Instructor") {
-      loadExams();
-    }
-  }, [user]);
 
   const login = async (event) => {
     event.preventDefault();
@@ -124,6 +122,10 @@ function App() {
       setUser(loggedInUser);
 
       await loadCsrfToken();
+
+      if (loggedInUser.role === "Instructor") {
+        await loadExams();
+      }
 
       setLoginForm({
         email: "",
