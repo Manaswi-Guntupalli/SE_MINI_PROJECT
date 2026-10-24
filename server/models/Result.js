@@ -8,10 +8,9 @@ const resultSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 resultSchema.index({ attemptId: 1 }, { unique: true });
-resultSchema.pre("validate", function validateScore(next) {
+resultSchema.pre("validate", function validateScore() {
   if (this.score != null && this.maximumScore != null && this.score > this.maximumScore) {
     this.invalidate("score", "Score cannot exceed maximumScore");
   }
-  next();
 });
 module.exports = mongoose.models.Result || mongoose.model("Result", resultSchema);
