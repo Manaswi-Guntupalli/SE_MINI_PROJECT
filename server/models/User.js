@@ -1,11 +1,49 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
-const userSchema = new mongoose.Schema({
-  loginIdentifier: { type: String, required: true, trim: true, lowercase: true },
-  passwordHash: { type: String, required: true, select: false },
-  role: { type: String, enum: ["Student", "Instructor", "Admin"], required: true },
-  isActive: { type: Boolean, default: true, required: true },
-}, { timestamps: true });
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-userSchema.index({ loginIdentifier: 1 }, { unique: true });
-module.exports = mongoose.models.User || mongoose.model("User", userSchema);
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    },
+
+    passwordHash: {
+      type: String,
+      required: true,
+      select: false,
+      match: /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/,
+    },
+
+    role: {
+      type: String,
+      enum: ["Student", "Instructor", "Admin"],
+      required: true,
+    },
+
+    active: {
+      type: Boolean,
+      default: true,
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+userSchema.methods.comparePassword = function (password) {
+  return bcrypt.compare(password, this.passwordHash);
+};
+
+module.exports = mongoose.model("User", userSchema);

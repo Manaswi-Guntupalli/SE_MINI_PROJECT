@@ -25,8 +25,9 @@ const evidence = {
   lockfiles: Object.fromEntries(['client', 'server'].map((part) => [part,
     createHash('sha256').update(readFileSync(join(root, part, 'package-lock.json'))).digest('hex')])),
   coverage,
-  releaseAcceptance: { passed: audit.passed, failed: audit.failed, accepted: audit.failed === 0 },
-  scope: 'Current exam-management prototype suites. Green CI does not approve missing authentication, ownership or full Release 1 acceptance.',
+  releaseAcceptance: { passed: audit.passed, failed: audit.failed, diagnosticPassed: audit.failed === 0,
+    formalAcceptance: 'Requires independent review, team agreement and remaining Release 1 feature acceptance' },
+  scope: 'Integrated Instructor, authentication, Admin and persistence suites. Automated diagnostics do not replace human acceptance or verify separate Student submission, background timeout and scoring features.',
 };
 mkdirSync(join(root, 'ci-evidence'), { recursive: true });
 writeFileSync(join(root, 'ci-evidence', 'run.json'), JSON.stringify(evidence, null, 2) + '\n');

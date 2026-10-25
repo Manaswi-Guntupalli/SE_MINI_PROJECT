@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
 const server = join(dirname(fileURLToPath(import.meta.url)), '..', 'server');
-const roots = ['server.js', 'app.js', 'controllers', 'models', 'routes'];
+const roots = ['server.js', 'app.js', 'controllers', 'models', 'routes', 'middleware', 'services', 'scripts'];
 function check(path) {
   if (!path.endsWith('.js')) {
     for (const entry of readdirSync(path, { withFileTypes: true })) {

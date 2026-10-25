@@ -9,7 +9,7 @@ export default defineConfig({
     reporters: ['default', ['junit', { outputFile: 'reports/junit.xml' }]],
     coverage: {
       provider: 'v8',
-      include: ['src/App.jsx'],
+      include: ['src/App.jsx', 'src/RoleDashboard.jsx', 'src/dateTime.js'],
       reporter: ['text', 'json-summary', 'lcov', 'cobertura'],
       reportsDirectory: 'coverage',
       reportOnFailure: true,
