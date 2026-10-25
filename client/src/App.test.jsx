@@ -172,6 +172,51 @@ afterEach(() => {
 describe(
   'Authenticated Instructor exam management',
   () => {
+    it('UI-AC35: removes the correct option without silently choosing another and supports adding replacements', async () => {
+      await openExam(exam({ questions: [question()] }))
+      fireEvent.click(screen.getByRole('button', { name: 'Edit Question' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Remove option 1' }))
+      expect(screen.getAllByRole('radio').every(radio => !radio.checked)).toBe(true)
+      fireEvent.click(screen.getByRole('button', { name: 'Add option' }))
+      fireEvent.change(screen.getByPlaceholderText('Option 2'), { target: { value: 'Replacement' } })
+      fireEvent.click(screen.getByRole('radio', { name: 'Correct option 2' }))
+      axios.put.mockResolvedValue({ data: exam() })
+      fireEvent.submit(screen.getByRole('button', { name: 'Save Question Changes' }).closest('form'))
+      await waitFor(() => expect(axios.put).toHaveBeenCalled())
+      expect(axios.put.mock.calls[0][1].options).toEqual([
+        { text: '5', isCorrect: false }, { text: 'Replacement', isCorrect: true },
+      ])
+    })
+
+    it('UI-AC33: editing the local start preserves the instant and explicitly identifies the timezone', async () => {
+      await openExam()
+      const input = document.querySelector('#edit-start')
+      const instant = new Date(exam().startTime)
+      expect(input.value).toContain(`${String(instant.getHours()).padStart(2, '0')}:${String(instant.getMinutes()).padStart(2, '0')}`)
+      expect(screen.getByLabelText(/Start time.*optional.*—/, { selector: '#edit-start' })).toBe(input)
+      axios.put.mockResolvedValue({ data: exam() })
+      fireEvent.change(input, { target: { value: '2026-10-25T10:00' } })
+      fireEvent.click(screen.getByRole('button', { name: 'Save Exam Changes' }))
+      await waitFor(() => expect(axios.put).toHaveBeenCalled())
+      expect(axios.put.mock.calls[0][1].startTime).toBe(new Date('2026-10-25T10:00').toISOString())
+    })
+
+    it('UI-AC23: shows rejected login and completes a successful login/logout', async () => {
+      axios.get.mockRejectedValue(new Error('No session'))
+      render(<App />)
+      fireEvent.change(await screen.findByPlaceholderText('Email'), { target: { value: instructor.email } })
+      fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'wrong' } })
+      axios.post.mockRejectedValueOnce({ response: { data: { message: 'Invalid email or password' } } })
+      fireEvent.click(screen.getByRole('button', { name: 'Login' }))
+      expect(await screen.findByText('Invalid email or password')).toBeTruthy()
+      mockAuthenticatedInstructor([])
+      axios.post.mockResolvedValue({ data: { user: instructor } })
+      fireEvent.click(screen.getByRole('button', { name: 'Login' }))
+      expect(await screen.findByText('Test Instructor')).toBeTruthy()
+      fireEvent.click(screen.getByRole('button', { name: 'Logout' }))
+      expect(await screen.findByRole('button', { name: 'Login' })).toBeTruthy()
+    })
+
     it('UI-EXAM-01: renders the empty list after loading', async () => {
       await renderInstructor([])
 
@@ -234,7 +279,7 @@ describe(
           expect.stringMatching(/\/api\/exams$/),
           expect.objectContaining({
             title: 'Algorithms Quiz',
-            startTime: '2026-10-24T12:00',
+            startTime: new Date('2026-10-24T12:00').toISOString(),
             duration: 30,
           }),
           {

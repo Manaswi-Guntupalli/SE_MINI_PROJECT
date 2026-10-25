@@ -65,7 +65,8 @@ const examSchema = new mongoose.Schema(
     duration: {
       type: Number,
       required: true,
-      min: 1,
+      min: Number.MIN_VALUE,
+      validate: Number.isFinite,
     },
 
     status: {
@@ -81,7 +82,11 @@ const examSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    optimisticConcurrency: true,
   }
 );
+
+examSchema.index({ instructorId: 1, createdAt: -1 });
+examSchema.index({ status: 1, startTime: 1 });
 
 module.exports = mongoose.model("Exam", examSchema);

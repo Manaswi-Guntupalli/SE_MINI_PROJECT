@@ -4,7 +4,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
+    if (typeof email !== "string" || typeof password !== "string" || !email.trim() || !password) {
       return res.status(400).json({
         message: "Email and password are required",
       });
@@ -34,7 +34,10 @@ const login = async (req, res) => {
       });
     }
 
+    // Rotate the session identifier and discard any previous user's CSRF token.
+    await new Promise((resolve, reject) => req.session.regenerate(error => error ? reject(error) : resolve()));
     req.session.userId = user._id.toString();
+    await new Promise((resolve, reject) => req.session.save(error => error ? reject(error) : resolve()));
 
     return res.json({
       message: "Login successful",

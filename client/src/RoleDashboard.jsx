@@ -1,0 +1,91 @@
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { browserTimeZone, displayTime } from './dateTime';
+
+export default function RoleDashboard({ user, logout, api, csrfToken }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [attempt, setAttempt] = useState(null);
+  const [account, setAccount] = useState({ name: '', email: '', password: '', role: 'Student' });
+  const endpoint = user.role === 'Admin' ? `${api}/admin/users` : `${api}/student/exams`;
+  const config = { headers: { 'X-CSRF-Token': csrfToken } };
+
+  useEffect(() => {
+    let current = true;
+    axios.get(endpoint).then(response => { if (current) setItems(response.data); })
+      .catch(() => { if (current) setError('Could not load dashboard. Refresh to retry.'); })
+      .finally(() => { if (current) setLoading(false); });
+    return () => { current = false; };
+  }, [endpoint]);
+
+  async function start(id) {
+    try {
+      setError('');
+      const response = await axios.post(`${api}/student/exams/${id}/start`, {}, config);
+      setAttempt(response.data);
+    } catch (failure) { setError(failure.response?.data?.message || 'Could not start exam'); }
+  }
+  async function createAccount(event) {
+    event.preventDefault();
+    try {
+      setError('');
+      await axios.post(endpoint, account, config);
+      setAccount({ name: '', email: '', password: '', role: 'Student' });
+      setItems((await axios.get(endpoint)).data);
+    } catch (failure) { setError(failure.response?.data?.message || 'Could not create account'); }
+  }
+  async function updateAccount(id, change) {
+    try {
+      setError('');
+      await axios.patch(`${endpoint}/${id}`, change, config);
+      setItems((await axios.get(endpoint)).data);
+    } catch (failure) { setError(failure.response?.data?.message || 'Could not update account'); }
+  }
+  return <div className="container">
+    <h1>Online Exam Portal</h1>
+    <p>Welcome, {user.name}. Signed in as {user.role}.</p>
+    <button onClick={logout}>Logout</button>
+    <section>
+      <h2>{user.role === 'Admin' ? 'Accounts' : 'Available exams'}</h2>
+      {loading && <p>Loading...</p>}
+      {error && <p role="alert" className="error">{error}</p>}
+      {!loading && !error && items.length === 0 && <p>{user.role === 'Admin' ? 'No accounts found.' : 'No exams available yet.'}</p>}
+      {items.map(item => <div className="exam-card" key={item.id || item._id}>
+        {user.role === 'Admin' ? <>
+          <p>{item.name} ({item.email}) — {item.active ? 'Active' : 'Inactive'}</p>
+          <select aria-label={`Role for ${item.email}`} value={item.role} disabled={item.id === user.id}
+            onChange={event => updateAccount(item.id, { role: event.target.value })}>
+            {['Student', 'Instructor', 'Admin'].map(role => <option key={role}>{role}</option>)}
+          </select>
+          <button disabled={item.id === user.id} onClick={() => updateAccount(item.id, { active: !item.active })}>{item.active ? 'Deactivate' : 'Activate'} {item.email}</button>
+        </> : <>
+          <strong>{item.title}</strong>
+          <p>{item.description}</p>
+          <p>Duration: {item.duration} minutes. Start: {displayTime(item.startTime)} ({browserTimeZone})</p>
+          <button onClick={() => start(item._id)}>Start or resume {item.title}</button>
+        </>}
+      </div>)}
+    </section>
+    {user.role === 'Admin' && <section><h2>Create account</h2>
+      <form onSubmit={createAccount}>
+        {['name', 'email', 'password'].map(field => <label key={field}>{field}
+          <input required aria-label={`Account ${field}`} type={field === 'name' ? 'text' : field}
+            minLength={field === 'password' ? 12 : undefined} maxLength={field === 'password' ? 72 : undefined}
+            value={account[field]} onChange={event => setAccount({ ...account, [field]: event.target.value })} />
+        </label>)}
+        <select aria-label="Account role" value={account.role} onChange={event => setAccount({ ...account, role: event.target.value })}>
+          {['Student', 'Instructor', 'Admin'].map(role => <option key={role}>{role}</option>)}
+        </select>
+        <button>Create account</button>
+      </form>
+    </section>}
+    {attempt && <section><h2>Exam started</h2>
+      <p>Deadline: {displayTime(attempt.attempt.deadline)} ({browserTimeZone})</p>
+      <p>Starting again resumes this attempt and preserves its deadline.</p>
+      {attempt.questions.map(question => <div key={question._id}><h3>{question.questionText}</h3>
+        <ul>{question.options.map(option => <li key={option._id}>{option.text}</li>)}</ul>
+      </div>)}
+    </section>}
+  </div>;
+}

@@ -32,6 +32,17 @@ router.use(requireRole("Instructor"));
 // Instructor's own exams
 router.get("/mine", getInstructorExams);
 
+router.get('/:id/results', async (req, res) => {
+  try {
+    const Exam = require('../models/Exam');
+    const Result = require('../models/Result');
+    const exam = await Exam.findById(req.params.id);
+    if (!exam) return res.status(404).json({ message: 'Exam not found' });
+    if (String(exam.instructorId) !== String(req.user._id)) return res.status(403).json({ message: 'Access denied' });
+    res.json(await Result.find({ examId: exam._id }));
+  } catch { res.status(400).json({ message: 'Could not load exam results' }); }
+});
+
 // Create draft exam
 router.post("/", requireCsrf, createExam);
 

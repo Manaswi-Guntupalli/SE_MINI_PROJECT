@@ -5,6 +5,11 @@ require("dotenv").config();
 const User = require("../models/User");
 
 const seedUsers = async () => {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('Development seed accounts are not permitted in production. Use bootstrapAdmin.js.');
+    process.exitCode = 1;
+    return;
+  }
   try {
     await mongoose.connect(process.env.MONGO_URI);
 

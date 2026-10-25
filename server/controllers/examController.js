@@ -4,8 +4,9 @@ const ownsExam = (exam, user) => {
   return exam.instructorId.toString() === user._id.toString();
 };
 
-const validateExamFields = ({ title, duration, startTime }) => {
+const validateExamFields = ({ title, description, duration, startTime }) => {
   const errors = [];
+  if (description !== undefined && typeof description !== 'string') errors.push('Description must be text');
 
   if (title !== undefined) {
     if (typeof title !== "string" || !title.trim()) {
@@ -16,7 +17,7 @@ const validateExamFields = ({ title, duration, startTime }) => {
   if (duration !== undefined) {
     const numericDuration = Number(duration);
 
-    if (!Number.isFinite(numericDuration) || numericDuration <= 0) {
+    if (!["number", "string"].includes(typeof duration) || !Number.isFinite(numericDuration) || numericDuration <= 0 || numericDuration > Number.MAX_SAFE_INTEGER / 60000) {
       errors.push("Duration must be a finite positive number");
     }
   }
@@ -25,7 +26,7 @@ const validateExamFields = ({ title, duration, startTime }) => {
     startTime !== undefined &&
     startTime !== null &&
     startTime !== "" &&
-    Number.isNaN(new Date(startTime).getTime())
+    (typeof startTime !== "string" || !/^\d{4}-\d{2}-\d{2}T.*(Z|[+-]\d{2}:\d{2})$/.test(startTime) || Number.isNaN(new Date(startTime).getTime()))
   ) {
     errors.push("Start time must be a valid date and time");
   }
@@ -57,12 +58,27 @@ const getOwnedExam = async (examId, user) => {
   return { exam };
 };
 
+const sendWriteError = (res, error, message) => {
+  if (error.name === "VersionError" || error.name === "DocumentNotFoundError") {
+    return res.status(409).json({ message: "Exam changed in another request. Reload before trying again." });
+  }
+  return res.status(400).json({ message });
+};
+
+const validOptions = options => Array.isArray(options) && options.every(option =>
+  option && typeof option === "object" && !Array.isArray(option) &&
+  typeof option.text === "string" &&
+  (option.isCorrect === undefined || typeof option.isCorrect === "boolean") &&
+  Object.keys(option).every(key => ["text", "isCorrect"].includes(key))
+);
+
 const createExam = async (req, res) => {
   try {
     const { title, description, startTime, duration } = req.body;
 
     const errors = validateExamFields({
       title,
+      description,
       duration,
       startTime,
     });
@@ -101,10 +117,7 @@ const createExam = async (req, res) => {
 
     return res.status(201).json(exam);
   } catch (error) {
-    return res.status(400).json({
-      message: "Could not create exam",
-      error: error.message,
-    });
+    return sendWriteError(res, error, "Could not create exam. Check the supplied fields.");
   }
 };
 
@@ -212,10 +225,7 @@ const updateExam = async (req, res) => {
 
     return res.json(exam);
   } catch (error) {
-    return res.status(400).json({
-      message: "Could not update exam",
-      error: error.message,
-    });
+    return sendWriteError(res, error, "Could not update exam. Check the supplied fields.");
   }
 };
 
@@ -237,7 +247,9 @@ const deleteExam = async (req, res) => {
       });
     }
 
-    await exam.deleteOne();
+    // A concurrent publication/edit increments __v. Never delete that newer state.
+    const deleted = await Exam.deleteOne({ _id: exam._id, instructorId: req.user._id, status: "Draft", __v: exam.__v });
+    if (!deleted.deletedCount) return res.status(409).json({ message: "Exam changed. Reload before deleting." });
 
     return res.json({
       message: "Exam deleted successfully",
@@ -282,9 +294,9 @@ const addQuestion = async (req, res) => {
       });
     }
 
-    if (!Array.isArray(options)) {
+    if (!validOptions(options)) {
       return res.status(400).json({
-        message: "Options must be an array",
+        message: "Options must contain text and boolean correctness flags only",
       });
     }
 
@@ -298,7 +310,7 @@ const addQuestion = async (req, res) => {
 
     const numericMarks = Number(marks);
 
-    if (!Number.isFinite(numericMarks) || numericMarks < 1) {
+    if (!["number", "string"].includes(typeof marks) || !Number.isFinite(numericMarks) || numericMarks < 1) {
       return res.status(400).json({
         message: "Marks must be a positive number",
       });
@@ -314,10 +326,7 @@ const addQuestion = async (req, res) => {
 
     return res.status(201).json(exam);
   } catch (error) {
-    return res.status(400).json({
-      message: "Could not add question",
-      error: error.message,
-    });
+    return sendWriteError(res, error, "Could not add question. Check the supplied fields.");
   }
 };
 
@@ -383,9 +392,9 @@ const updateQuestion = async (req, res) => {
     }
 
     if (req.body.options !== undefined) {
-      if (!Array.isArray(req.body.options)) {
+      if (!validOptions(req.body.options)) {
         return res.status(400).json({
-          message: "Options must be an array",
+          message: "Options must contain text and boolean correctness flags only",
         });
       }
 
@@ -404,7 +413,7 @@ const updateQuestion = async (req, res) => {
       const numericMarks = Number(req.body.marks);
 
       if (
-        !Number.isFinite(numericMarks) ||
+        !["number", "string"].includes(typeof req.body.marks) || !Number.isFinite(numericMarks) ||
         numericMarks < 1
       ) {
         return res.status(400).json({
@@ -419,10 +428,7 @@ const updateQuestion = async (req, res) => {
 
     return res.json(exam);
   } catch (error) {
-    return res.status(400).json({
-      message: "Could not update question",
-      error: error.message,
-    });
+    return sendWriteError(res, error, "Could not update question. Check the supplied fields.");
   }
 };
 
@@ -463,9 +469,7 @@ const deleteQuestion = async (req, res) => {
 
     return res.json(exam);
   } catch (error) {
-    return res.status(400).json({
-      message: "Could not delete question",
-    });
+    return sendWriteError(res, error, "Could not delete question");
   }
 };
 
@@ -561,10 +565,7 @@ const publishExam = async (req, res) => {
 
     return res.json(exam);
   } catch (error) {
-    return res.status(400).json({
-      message: "Could not publish exam",
-      error: error.message,
-    });
+    return sendWriteError(res, error, "Could not publish exam");
   }
 };
 

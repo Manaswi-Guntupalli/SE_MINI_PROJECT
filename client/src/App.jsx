@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css";
+import { browserTimeZone, toLocalInput, toUtc, displayTime } from './dateTime';
+import RoleDashboard from './RoleDashboard';
 
-const BASE_API = "http://localhost:5000/api";
+const BASE_API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const EXAM_API = `${BASE_API}/exams`;
 const AUTH_API = `${BASE_API}/auth`;
 
@@ -108,6 +110,7 @@ function App() {
 
   const login = async (event) => {
     event.preventDefault();
+    setAuthLoading(true);
 
     try {
       setLoginError("");
@@ -132,10 +135,14 @@ function App() {
         password: "",
       });
     } catch (error) {
+      setUser(null);
+      setCsrfToken('');
       setLoginError(
         error.response?.data?.message ||
           "Login failed"
       );
+    } finally {
+      setAuthLoading(false);
     }
   };
 
@@ -173,7 +180,7 @@ function App() {
         {
           title: examForm.title,
           description: examForm.description,
-          startTime: examForm.startTime || null,
+          startTime: toUtc(examForm.startTime),
           duration: Number(examForm.duration),
         },
         {
@@ -287,7 +294,7 @@ function App() {
         text,
         isCorrect:
           index ===
-          Number(questionForm.correctOption),
+          (questionForm.correctOption === null ? -1 : Number(questionForm.correctOption)),
       })
     );
 
@@ -350,7 +357,7 @@ function App() {
         (option) => option.text
       ),
       correctOption:
-        correctIndex >= 0 ? correctIndex : 0,
+        correctIndex >= 0 ? correctIndex : null,
       marks: question.marks,
     });
 
@@ -490,26 +497,7 @@ function App() {
   }
 
   if (user.role !== "Instructor") {
-    return (
-      <div className="container">
-        <h1>Online Exam Portal</h1>
-
-        <section>
-          <h2>Welcome, {user.name}</h2>
-          <p>
-            Signed in as <strong>{user.role}</strong>.
-          </p>
-          <p>
-            Instructor exam management is not
-            available for this role.
-          </p>
-
-          <button onClick={logout}>
-            Logout
-          </button>
-        </section>
-      </div>
-    );
+    return <RoleDashboard user={user} logout={logout} api={BASE_API} csrfToken={csrfToken} />;
   }
 
   return (
@@ -558,10 +546,11 @@ function App() {
             }
           />
 
-          <label>Start time (optional)</label>
+          <label htmlFor="create-start">Start time (optional) — {browserTimeZone}</label>
 
           <input
             type="datetime-local"
+            id="create-start"
             value={examForm.startTime}
             onChange={(e) =>
               setExamForm({
@@ -576,7 +565,8 @@ function App() {
           <input
             required
             type="number"
-            min="1"
+            min="0"
+            step="any"
             value={examForm.duration}
             onChange={(e) =>
               setExamForm({
@@ -604,6 +594,7 @@ function App() {
         )}
 
         {!examsLoading &&
+          !examError &&
           exams.length === 0 && (
             <p>No exams created yet.</p>
           )}
@@ -625,11 +616,7 @@ function App() {
 
               <p>
                 Start:{" "}
-                {exam.startTime
-                  ? new Date(
-                      exam.startTime
-                    ).toLocaleString()
-                  : "Not set"}
+                {displayTime(exam.startTime)} ({browserTimeZone})
               </p>
             </div>
 
@@ -676,6 +663,7 @@ function App() {
           {selectedExam.status === "Draft" && (
             <>
               <input
+                aria-label="Edit exam title"
                 value={selectedExam.title}
                 onChange={(e) =>
                   setSelectedExam({
@@ -697,22 +685,16 @@ function App() {
                 }
               />
 
-              <label>Start time (optional)</label>
+              <label htmlFor="edit-start">Start time (optional) — {browserTimeZone}</label>
 
               <input
                 type="datetime-local"
-                value={
-                  selectedExam.startTime
-                    ? selectedExam.startTime.slice(
-                        0,
-                        16
-                      )
-                    : ""
-                }
+                id="edit-start"
+                value={toLocalInput(selectedExam.startTime)}
                 onChange={(e) =>
                   setSelectedExam({
                     ...selectedExam,
-                    startTime: e.target.value,
+                    startTime: toUtc(e.target.value),
                   })
                 }
               />
@@ -721,7 +703,8 @@ function App() {
 
               <input
                 type="number"
-                min="1"
+                min="0"
+                step="any"
                 value={selectedExam.duration}
                 onChange={(e) =>
                   setSelectedExam({
@@ -767,8 +750,9 @@ function App() {
                       <input
                         type="radio"
                         name="correctOption"
+                        aria-label={`Correct option ${index + 1}`}
                         checked={
-                          Number(
+                          questionForm.correctOption !== null && Number(
                             questionForm.correctOption
                           ) === index
                         }
@@ -799,9 +783,20 @@ function App() {
                           });
                         }}
                       />
+                      <button type="button" aria-label={`Remove option ${index + 1}`} onClick={() => {
+                        setQuestionForm(current => ({ ...current,
+                          options: current.options.filter((_, position) => position !== index),
+                          correctOption: current.correctOption === index ? null :
+                            current.correctOption !== null && current.correctOption > index ? current.correctOption - 1 : current.correctOption,
+                        }));
+                      }}>Remove option</button>
                     </div>
                   )
                 )}
+
+                <button type="button" onClick={() => setQuestionForm(current => ({ ...current, options: [...current.options, ''] }))}>Add option</button>
+                <button type="button" onClick={() => setQuestionForm(current => ({ ...current, correctOption: null }))}>Clear correct answer</button>
+                <p>Drafts may be incomplete. Publication requires at least two nonblank options and exactly one correct answer.</p>
 
                 <label>Marks</label>
 
