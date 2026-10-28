@@ -9,7 +9,7 @@ const props = { api: 'http://localhost:5000/api', csrfToken: 'csrf', logout: vi.
 describe('Supporting role boundaries', () => {
   it('Student sees eligibility list, starts/resumes and receives the persisted deadline', async () => {
     axios.get.mockResolvedValue({ data: [{ _id: 'exam', title: 'Available quiz', duration: 30, startTime: null }] });
-    axios.post.mockResolvedValue({ data: { attempt: { deadline: '2026-10-25T10:00:00Z' }, questions: [{ _id: 'q', questionText: 'Question', options: [{ _id: 'o', text: 'Option' }] }] } });
+    axios.post.mockResolvedValue({ data: { attempt: { deadline: '2099-01-01T10:00:00Z' }, serverTime: '2026-10-28T10:00:00Z', questions: [{ _id: 'q', questionText: 'Question', options: [{ _id: 'o', text: 'Option' }] }] } });
     render(<RoleDashboard {...props} user={{ id: 's', name: 'Student', role: 'Student' }} />);
     fireEvent.click(await screen.findByRole('button', { name: 'Start Available quiz' }));
     expect(await screen.findByText('Exam started')).toBeTruthy();
@@ -31,7 +31,7 @@ describe('Supporting role boundaries', () => {
   it('#39 restores an owned attempt from the server after reload', async () => {
     sessionStorage.setItem('oep-attempt-s', 'attempt');
     axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/attempts/attempt')
-      ? { attempt: { _id: 'attempt', status: 'Active', deadline: '2099-01-01' }, responses: [], questions: [{ _id: 'q', questionText: 'Restored question', options: [] }] }
+      ? { attempt: { _id: 'attempt', status: 'Active', deadline: '2099-01-01' }, serverTime: '2026-10-28T10:00:00Z', responses: [], questions: [{ _id: 'q', questionText: 'Restored question', options: [] }] }
       : [] }));
     render(<RoleDashboard {...props} user={{ id: 's', role: 'Student' }} />);
     expect(await screen.findByText(/Restored question/)).toBeTruthy();

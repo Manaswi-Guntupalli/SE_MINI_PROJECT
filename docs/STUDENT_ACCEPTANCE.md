@@ -16,3 +16,8 @@ Start returns saved responses and server time. The existing unique Student/exam 
 PUT /api/student/attempts/:id/responses/:questionId requires CSRF, an owned active attempt, valid question/option IDs and expectedRevision. Response revisions advance transactionally. Conflicts reject stale updates; reload obtains the current revision. The client serializes saves, shows only acknowledged choices, provides failure/retry feedback and preserves unanswered navigation.
 
 #40 verification: 8/8 focused React tests and frontend lint passed; 13/13 focused MongoDB/API and persistence tests passed.
+
+## #46 / OEP-37
+Remaining time uses the persisted deadline and API serverTime, then performance.now() elapsed time. Polling every 15 seconds synchronizes status and can only shorten the current countdown. Missing/invalid server time locks editing. Reload reads the persisted deadline, and server writes require database time strictly before it. Browser clock changes cannot grant server time. Server-independent expiry processing and timeout requests are integrated by #47.
+
+#46 verification: 10/10 focused client tests and lint passed. Strict deadline, late writes and timeout boundaries also covered by the passing persistence suite.

@@ -4,7 +4,7 @@ import axios from 'axios';
 import ExamAttempt from './ExamAttempt';
 vi.mock('axios', () => ({ default: { put: vi.fn(), post: vi.fn(), get: vi.fn() } }));
 afterEach(() => { cleanup(); vi.resetAllMocks(); });
-const data = { attempt: { _id: 'a', status: 'Active', deadline: '2099-01-01' }, responses: [], questions: [
+const data = { attempt: { _id: 'a', status: 'Active', deadline: '2099-01-01' }, serverTime: '2026-10-28T10:00:00Z', responses: [], questions: [
   { _id: 'q1', questionText: 'First', options: [{ _id: 'o1', text: 'One' }, { _id: 'o2', text: 'Two' }] },
   { _id: 'q2', questionText: 'Second', options: [{ _id: 'o3', text: 'Three' }] },
 ] };
