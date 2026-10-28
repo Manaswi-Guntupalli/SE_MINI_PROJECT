@@ -38,7 +38,7 @@ async function startAttempt({ examId, studentId }) {
 }
 
 // The only supported answer-write boundary. Caller clocks are intentionally ignored.
-async function saveResponse({ attemptId, studentId, questionId, selectedOptionId }) {
+async function saveResponse({ attemptId, studentId, questionId, selectedOptionId, expectedRevision }) {
   return transaction(async session => {
     const student = await User.exists({ _id: studentId, role: 'Student', active: true }).session(session);
     if (!student) throw unavailable();
@@ -50,10 +50,14 @@ async function saveResponse({ attemptId, studentId, questionId, selectedOptionId
     const exam = await Exam.findOne({ _id: attempt.examId, status: 'Published' }).session(session);
     if (!exam) throw new Error('Published exam not found');
     const question = exam.questions.id(questionId);
-    if (!question) throw new Error('Question does not belong to this exam');
-    if (!question.options.id(selectedOptionId)) throw new Error('Option does not belong to this question');
+    if (!question) throw Object.assign(new Error('Question does not belong to this exam'), { status: 400 });
+    if (!question.options.id(selectedOptionId)) throw Object.assign(new Error('Option does not belong to this question'), { status: 400 });
+    const previous = await Response.findOne({ attemptId: attempt._id, questionId: question._id }).session(session);
+    if (expectedRevision !== undefined && expectedRevision !== (previous?.revision || 0)) {
+      throw Object.assign(new Error('Answer changed in another request. Reload the attempt before retrying.'), { status: 409 });
+    }
     const response = await Response.findOneAndUpdate(
-      { attemptId: attempt._id, questionId: question._id }, { $set: { selectedOptionId } },
+      { attemptId: attempt._id, questionId: question._id }, { $set: { selectedOptionId }, $inc: { revision: 1 } },
       { upsert: true, new: true, runValidators: true, session },
     );
     // Recheck database time after membership checks/upsert; failure rolls everything back.

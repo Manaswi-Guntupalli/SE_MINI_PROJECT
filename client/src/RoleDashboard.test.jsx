@@ -13,7 +13,7 @@ describe('Supporting role boundaries', () => {
     render(<RoleDashboard {...props} user={{ id: 's', name: 'Student', role: 'Student' }} />);
     fireEvent.click(await screen.findByRole('button', { name: 'Start Available quiz' }));
     expect(await screen.findByText('Exam started')).toBeTruthy();
-    expect(screen.getByText('Question')).toBeTruthy();
+    expect(screen.getByText(/Question 1 of 1: Question/)).toBeTruthy();
     expect(axios.post).toHaveBeenCalledWith('http://localhost:5000/api/student/exams/exam/start', {}, { headers: { 'X-CSRF-Token': 'csrf' } });
     expect(screen.queryByText('Accounts')).toBeNull();
   });
@@ -34,7 +34,7 @@ describe('Supporting role boundaries', () => {
       ? { attempt: { _id: 'attempt', status: 'Active', deadline: '2099-01-01' }, responses: [], questions: [{ _id: 'q', questionText: 'Restored question', options: [] }] }
       : [] }));
     render(<RoleDashboard {...props} user={{ id: 's', role: 'Student' }} />);
-    expect(await screen.findByText('Restored question')).toBeTruthy();
+    expect(await screen.findByText(/Restored question/)).toBeTruthy();
     expect(axios.get).toHaveBeenCalledWith('http://localhost:5000/api/student/attempts/attempt');
   });
   it('#38 uses server eligibility and disables scheduled and submitted exams', async () => {

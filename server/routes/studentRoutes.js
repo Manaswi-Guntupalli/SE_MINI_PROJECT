@@ -4,7 +4,7 @@ const Exam = require('../models/Exam');
 const Attempt = require('../models/Attempt');
 const Result = require('../models/Result');
 const Response = require('../models/Response');
-const { startAttempt, finalizeAttempt } = require('../services/persistenceService');
+const { startAttempt, finalizeAttempt, saveResponse } = require('../services/persistenceService');
 const { requireAuth, requireRole } = require('../middleware/authMiddleware');
 const { requireCsrf } = require('../middleware/csrfMiddleware');
 
@@ -34,7 +34,7 @@ router.get('/exams', async (req, res) => {
 router.post('/exams/:id/start', validId, requireCsrf, async (req, res) => {
   try {
     const { attempt, exam } = await startAttempt({ examId: req.params.id, studentId: req.user._id });
-    const responses = await Response.find({ attemptId: attempt._id }).select('questionId selectedOptionId');
+    const responses = await Response.find({ attemptId: attempt._id }).select('questionId selectedOptionId revision');
     res.json({ attempt, responses, questions: questionsWithoutAnswers(exam), serverTime: new Date() });
   } catch (error) { res.status(error.status || 500).json({ message: error.status ? error.message : 'Could not start exam' }); }
 });
@@ -44,9 +44,19 @@ router.get('/attempts/:id', validId, async (req, res) => {
     if (!attempt) return res.status(404).json({ message: 'Attempt not found' });
     if (attempt.status === 'Active' && attempt.deadline <= new Date()) attempt = await finalizeAttempt({ attemptId: attempt._id, studentId: req.user._id, reason: 'Timeout' });
     const exam = await Exam.findById(attempt.examId);
-    const responses = await Response.find({ attemptId: attempt._id }).select('questionId selectedOptionId');
+    const responses = await Response.find({ attemptId: attempt._id }).select('questionId selectedOptionId revision');
     res.json({ attempt, responses, questions: exam ? questionsWithoutAnswers(exam) : [], serverTime: new Date() });
   } catch { res.status(500).json({ message: 'Could not load attempt' }); }
+});
+router.put('/attempts/:id/responses/:questionId', validId, requireCsrf, async (req, res) => {
+  const { selectedOptionId, expectedRevision } = req.body;
+  if (!mongoose.isObjectIdOrHexString(req.params.questionId) || !mongoose.isObjectIdOrHexString(selectedOptionId)
+    || !Number.isSafeInteger(expectedRevision) || expectedRevision < 0) return res.status(400).json({ message: 'Valid question, option and expectedRevision are required' });
+  try {
+    const response = await saveResponse({ attemptId: req.params.id, studentId: req.user._id,
+      questionId: req.params.questionId, selectedOptionId, expectedRevision });
+    res.json({ response, serverTime: new Date() });
+  } catch (error) { res.status(error.status || 500).json({ message: error.status ? error.message : 'Could not save answer' }); }
 });
 router.get('/results', async (req, res) => {
   try { res.json(await Result.find({ studentId: req.user._id })); }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import ExamAttempt from './ExamAttempt';
 import { browserTimeZone, displayTime } from './dateTime';
 
 export default function RoleDashboard({ user, logout, api, csrfToken }) {
@@ -95,12 +96,6 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
         <button>Create account</button>
       </form>
     </section>}
-    {attempt && <section><h2>{attempt.attempt.status === 'Submitted' ? 'Exam submitted' : 'Exam started'}</h2>
-      <p>Deadline: {displayTime(attempt.attempt.deadline)} ({browserTimeZone})</p>
-      <p>Starting again resumes this attempt and preserves its deadline.</p>
-      {attempt.questions.map(question => <div key={question._id}><h3>{question.questionText}</h3>
-        <ul>{question.options.map(option => <li key={option._id}>{option.text}</li>)}</ul>
-      </div>)}
-    </section>}
+    {attempt && <ExamAttempt key={attempt.attempt._id} data={attempt} api={api} csrfToken={csrfToken} />}
   </div>;
 }

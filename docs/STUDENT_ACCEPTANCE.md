@@ -11,3 +11,8 @@ Verification commands and execution results are recorded below as each stacked t
 Start returns saved responses and server time. The existing unique Student/exam index makes concurrent start idempotent. The dashboard remembers only the attempt identifier per signed-in user and reloads the protected server resource; questions, answers and deadlines remain authoritative on the server. Expired start/read finalizes through the shared timeout transition.
 
 #39 verification: dashboard 6/6; MongoDB acceptance and persistence 46/46 passed.
+
+## #40 / OEP-31
+PUT /api/student/attempts/:id/responses/:questionId requires CSRF, an owned active attempt, valid question/option IDs and expectedRevision. Response revisions advance transactionally. Conflicts reject stale updates; reload obtains the current revision. The client serializes saves, shows only acknowledged choices, provides failure/retry feedback and preserves unanswered navigation.
+
+#40 verification: 8/8 focused React tests and frontend lint passed; 13/13 focused MongoDB/API and persistence tests passed.
