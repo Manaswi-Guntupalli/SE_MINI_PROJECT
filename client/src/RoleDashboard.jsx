@@ -63,7 +63,10 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
           <strong>{item.title}</strong>
           <p>{item.description}</p>
           <p>Duration: {item.duration} minutes. Start: {displayTime(item.startTime)} ({browserTimeZone})</p>
-          <button onClick={() => start(item._id)}>Start or resume {item.title}</button>
+          <p>Status: {item.attemptStatus || 'Not started'}</p>
+          <button disabled={item.canStart === false && !item.canResume} onClick={() => start(item._id)}>
+            {item.canResume ? 'Resume' : item.attemptStatus === 'Submitted' ? 'Submitted' : item.attemptStatus === 'Expired' ? 'Expired' : 'Start'} {item.title}
+          </button>
         </>}
       </div>)}
     </section>

@@ -153,8 +153,10 @@ describe('Acceptance criteria #21 #23 #24 #33–#37', () => {
     const draft = await exam({ questions: [content] });
     const { agent, token } = await login(users.Student);
     const list = await agent.get('/api/student/exams');
-    expect(new Set(list.body.map(value => value._id))).toEqual(new Set([available.id, arrived.id]));
+    expect(new Set(list.body.map(value => value._id))).toEqual(new Set([available.id, arrived.id, future.id]));
     expect(JSON.stringify(list.body)).not.toMatch(/isCorrect|instructorId|questions/);
+    expect(list.body.find(item => item._id === future.id).canStart).toBe(false);
+    expect(list.body.find(item => item._id === available.id).canStart).toBe(true);
     for (const item of [future, draft]) expect((await agent.post(`/api/student/exams/${item.id}/start`).set('X-CSRF-Token', token).send({})).status).toBe(404);
     const starts = await Promise.all(Array.from({ length: 4 }, () => agent.post(`/api/student/exams/${available.id}/start`).set('X-CSRF-Token', token).send({ studentId: users.otherStudent.id, deadline: '2099-01-01' })));
     for (const response of starts) {

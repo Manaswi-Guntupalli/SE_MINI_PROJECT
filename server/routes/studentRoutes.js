@@ -4,7 +4,7 @@ const Exam = require('../models/Exam');
 const Attempt = require('../models/Attempt');
 const Result = require('../models/Result');
 const Response = require('../models/Response');
-const { eligible, startAttempt } = require('../services/persistenceService');
+const { startAttempt } = require('../services/persistenceService');
 const { requireAuth, requireRole } = require('../middleware/authMiddleware');
 const { requireCsrf } = require('../middleware/csrfMiddleware');
 
@@ -20,7 +20,15 @@ const questionsWithoutAnswers = exam => exam.questions.map(question => ({
 router.get('/exams', async (req, res) => {
   try {
     // Explicit allowlist prevents authoring metadata or answer keys from leaking.
-    res.json(await Exam.find(eligible(new Date())).select('_id title description duration startTime').sort({ startTime: 1 }));
+    const now = new Date();
+    const exams = await Exam.find({ status: 'Published' }).select('_id title description duration startTime').sort({ startTime: 1 }).lean();
+    const attempts = await Attempt.find({ studentId: req.user._id, examId: { $in: exams.map(exam => exam._id) } }).lean();
+    res.json(exams.map(exam => {
+      const attempt = attempts.find(value => String(value.examId) === String(exam._id));
+      const attemptStatus = attempt?.status === 'Submitted' ? 'Submitted' : attempt ? (attempt.deadline <= now ? 'Expired' : 'Active') : 'Not started';
+      return { ...exam, serverTime: now, attemptId: attempt?._id || null, attemptStatus,
+        canStart: !attempt && (!exam.startTime || exam.startTime <= now), canResume: attemptStatus === 'Active' };
+    }));
   } catch { res.status(500).json({ message: 'Could not load available exams' }); }
 });
 router.post('/exams/:id/start', validId, requireCsrf, async (req, res) => {

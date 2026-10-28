@@ -11,7 +11,7 @@ describe('Supporting role boundaries', () => {
     axios.get.mockResolvedValue({ data: [{ _id: 'exam', title: 'Available quiz', duration: 30, startTime: null }] });
     axios.post.mockResolvedValue({ data: { attempt: { deadline: '2026-10-25T10:00:00Z' }, questions: [{ _id: 'q', questionText: 'Question', options: [{ _id: 'o', text: 'Option' }] }] } });
     render(<RoleDashboard {...props} user={{ id: 's', name: 'Student', role: 'Student' }} />);
-    fireEvent.click(await screen.findByRole('button', { name: 'Start or resume Available quiz' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Start Available quiz' }));
     expect(await screen.findByText('Exam started')).toBeTruthy();
     expect(screen.getByText('Question')).toBeTruthy();
     expect(axios.post).toHaveBeenCalledWith('http://localhost:5000/api/student/exams/exam/start', {}, { headers: { 'X-CSRF-Token': 'csrf' } });
@@ -25,8 +25,19 @@ describe('Supporting role boundaries', () => {
     axios.get.mockResolvedValue({ data: [{ _id: 'exam', title: 'Quiz', duration: 1 }] });
     axios.post.mockRejectedValue({ response: { data: { message: 'Exam is not available' } } });
     render(<RoleDashboard {...props} user={{ role: 'Student' }} />);
-    fireEvent.click(await screen.findByRole('button', { name: 'Start or resume Quiz' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Start Quiz' }));
     expect(await screen.findByRole('alert')).toHaveProperty('textContent', 'Exam is not available');
+  });
+  it('#38 uses server eligibility and disables scheduled and submitted exams', async () => {
+    axios.get.mockResolvedValue({ data: [
+      { _id: 'future', title: 'Future', canStart: false, attemptStatus: 'Not started' },
+      { _id: 'done', title: 'Done', canStart: false, attemptStatus: 'Submitted' },
+      { _id: 'active', title: 'Active', canStart: false, canResume: true, attemptStatus: 'Active' },
+    ] });
+    render(<RoleDashboard {...props} user={{ role: 'Student' }} />);
+    expect((await screen.findByRole('button', { name: 'Start Future' })).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: 'Submitted Done' }).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: 'Resume Active' }).disabled).toBe(false);
   });
   it('Admin can update another account but own access controls are disabled', async () => {
     axios.get.mockResolvedValue({ data: [{ id: 'a', name: 'Admin', email: 'admin@test.invalid', role: 'Admin', active: true }, { id: 's', name: 'Student', email: 'student@test.invalid', role: 'Student', active: true }] });
