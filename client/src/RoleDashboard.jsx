@@ -7,24 +7,36 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(null);
+  const [starting, setStarting] = useState(false);
+  const attemptKey = `oep-attempt-${user.id}`;
   const [account, setAccount] = useState({ name: '', email: '', password: '', role: 'Student' });
   const endpoint = user.role === 'Admin' ? `${api}/admin/users` : `${api}/student/exams`;
   const config = { headers: { 'X-CSRF-Token': csrfToken } };
 
   useEffect(() => {
     let current = true;
-    axios.get(endpoint).then(response => { if (current) setItems(response.data); })
+    axios.get(endpoint).then(async response => {
+      if (current) setItems(response.data);
+      const id = user.role === 'Student' && sessionStorage.getItem(attemptKey);
+      if (id) {
+        const restored = await axios.get(`${api}/student/attempts/${id}`);
+        if (current) setAttempt(restored.data);
+      }
+    })
       .catch(() => { if (current) setError('Could not load dashboard. Refresh to retry.'); })
       .finally(() => { if (current) setLoading(false); });
     return () => { current = false; };
-  }, [endpoint]);
+  }, [endpoint, api, attemptKey, user.role]);
 
   async function start(id) {
     try {
       setError('');
+      setStarting(true);
       const response = await axios.post(`${api}/student/exams/${id}/start`, {}, config);
       setAttempt(response.data);
+      if (response.data.attempt._id) sessionStorage.setItem(attemptKey, response.data.attempt._id);
     } catch (failure) { setError(failure.response?.data?.message || 'Could not start exam'); }
+    finally { setStarting(false); }
   }
   async function createAccount(event) {
     event.preventDefault();
@@ -64,7 +76,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
           <p>{item.description}</p>
           <p>Duration: {item.duration} minutes. Start: {displayTime(item.startTime)} ({browserTimeZone})</p>
           <p>Status: {item.attemptStatus || 'Not started'}</p>
-          <button disabled={item.canStart === false && !item.canResume} onClick={() => start(item._id)}>
+          <button disabled={starting || (item.canStart === false && !item.canResume)} onClick={() => start(item._id)}>
             {item.canResume ? 'Resume' : item.attemptStatus === 'Submitted' ? 'Submitted' : item.attemptStatus === 'Expired' ? 'Expired' : 'Start'} {item.title}
           </button>
         </>}
@@ -83,7 +95,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
         <button>Create account</button>
       </form>
     </section>}
-    {attempt && <section><h2>Exam started</h2>
+    {attempt && <section><h2>{attempt.attempt.status === 'Submitted' ? 'Exam submitted' : 'Exam started'}</h2>
       <p>Deadline: {displayTime(attempt.attempt.deadline)} ({browserTimeZone})</p>
       <p>Starting again resumes this attempt and preserves its deadline.</p>
       {attempt.questions.map(question => <div key={question._id}><h3>{question.questionText}</h3>

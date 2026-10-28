@@ -30,6 +30,9 @@ async function startAttempt({ examId, studentId }) {
     if (error.code !== 11000) throw error;
     attempt = await Attempt.findOne(query);
   }
+  if (attempt.status === 'Active' && attempt.deadline <= new Date()) {
+    await finalizeAttempt({ attemptId: attempt._id, studentId, reason: 'Timeout' });
+  }
   if (attempt.status !== 'Active' || attempt.deadline <= new Date()) throw Object.assign(new Error('This attempt has ended'), { status: 409 });
   return { attempt, exam };
 }

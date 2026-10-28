@@ -3,7 +3,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import axios from 'axios';
 import RoleDashboard from './RoleDashboard';
 vi.mock('axios', () => ({ default: { get: vi.fn(), post: vi.fn(), patch: vi.fn() } }));
-afterEach(() => { cleanup(); vi.resetAllMocks(); });
+afterEach(() => { cleanup(); sessionStorage.clear(); vi.resetAllMocks(); });
 const props = { api: 'http://localhost:5000/api', csrfToken: 'csrf', logout: vi.fn() };
 
 describe('Supporting role boundaries', () => {
@@ -27,6 +27,15 @@ describe('Supporting role boundaries', () => {
     render(<RoleDashboard {...props} user={{ role: 'Student' }} />);
     fireEvent.click(await screen.findByRole('button', { name: 'Start Quiz' }));
     expect(await screen.findByRole('alert')).toHaveProperty('textContent', 'Exam is not available');
+  });
+  it('#39 restores an owned attempt from the server after reload', async () => {
+    sessionStorage.setItem('oep-attempt-s', 'attempt');
+    axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/attempts/attempt')
+      ? { attempt: { _id: 'attempt', status: 'Active', deadline: '2099-01-01' }, responses: [], questions: [{ _id: 'q', questionText: 'Restored question', options: [] }] }
+      : [] }));
+    render(<RoleDashboard {...props} user={{ id: 's', role: 'Student' }} />);
+    expect(await screen.findByText('Restored question')).toBeTruthy();
+    expect(axios.get).toHaveBeenCalledWith('http://localhost:5000/api/student/attempts/attempt');
   });
   it('#38 uses server eligibility and disables scheduled and submitted exams', async () => {
     axios.get.mockResolvedValue({ data: [

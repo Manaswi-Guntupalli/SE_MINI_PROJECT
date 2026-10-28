@@ -4,7 +4,7 @@ const Exam = require('../models/Exam');
 const Attempt = require('../models/Attempt');
 const Result = require('../models/Result');
 const Response = require('../models/Response');
-const { startAttempt } = require('../services/persistenceService');
+const { startAttempt, finalizeAttempt } = require('../services/persistenceService');
 const { requireAuth, requireRole } = require('../middleware/authMiddleware');
 const { requireCsrf } = require('../middleware/csrfMiddleware');
 
@@ -34,16 +34,18 @@ router.get('/exams', async (req, res) => {
 router.post('/exams/:id/start', validId, requireCsrf, async (req, res) => {
   try {
     const { attempt, exam } = await startAttempt({ examId: req.params.id, studentId: req.user._id });
-    res.json({ attempt, questions: questionsWithoutAnswers(exam) });
+    const responses = await Response.find({ attemptId: attempt._id }).select('questionId selectedOptionId');
+    res.json({ attempt, responses, questions: questionsWithoutAnswers(exam), serverTime: new Date() });
   } catch (error) { res.status(error.status || 500).json({ message: error.status ? error.message : 'Could not start exam' }); }
 });
 router.get('/attempts/:id', validId, async (req, res) => {
   try {
-    const attempt = await Attempt.findOne({ _id: req.params.id, studentId: req.user._id });
+    let attempt = await Attempt.findOne({ _id: req.params.id, studentId: req.user._id });
     if (!attempt) return res.status(404).json({ message: 'Attempt not found' });
+    if (attempt.status === 'Active' && attempt.deadline <= new Date()) attempt = await finalizeAttempt({ attemptId: attempt._id, studentId: req.user._id, reason: 'Timeout' });
     const exam = await Exam.findById(attempt.examId);
     const responses = await Response.find({ attemptId: attempt._id }).select('questionId selectedOptionId');
-    res.json({ attempt, responses, questions: exam ? questionsWithoutAnswers(exam) : [] });
+    res.json({ attempt, responses, questions: exam ? questionsWithoutAnswers(exam) : [], serverTime: new Date() });
   } catch { res.status(500).json({ message: 'Could not load attempt' }); }
 });
 router.get('/results', async (req, res) => {
