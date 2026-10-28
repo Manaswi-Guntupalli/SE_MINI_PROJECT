@@ -73,3 +73,24 @@ describe('Supporting role boundaries', () => {
     await waitFor(() => expect(screen.getByLabelText('Account password').value).toBe(''));
   });
 });
+
+it('#47 clears the resume pointer on submission so dashboard refresh/reload cannot reopen it', async () => {
+  sessionStorage.setItem('oep-attempt-s', 'attempt');
+  axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/attempts/attempt')
+    ? { attempt: { _id: 'attempt', status: 'Active', deadline: '2099-01-01' }, serverTime: '2026-10-28T10:00:00Z', responses: [], questions: [] }
+    : [] }));
+  axios.post.mockResolvedValue({ data: { attempt: { status: 'Submitted', evaluationStatus: 'Evaluated' } } });
+  const propsForStudent = { ...props, user: { id: 's', role: 'Student' } };
+  const { unmount } = render(<RoleDashboard {...propsForStudent} />);
+  fireEvent.click(await screen.findByText('Submit examination'));
+  fireEvent.click(screen.getByText('Confirm submission'));
+  await screen.findByText('Exam submitted');
+  await waitFor(() => expect(sessionStorage.getItem('oep-attempt-s')).toBeNull());
+  expect(screen.queryByRole('timer')).toBeNull();
+  expect(axios.get.mock.calls.filter(([url]) => url.endsWith('/attempts/attempt'))).toHaveLength(1);
+  unmount();
+  render(<RoleDashboard {...propsForStudent} />);
+  await screen.findByText('No exams available yet.');
+  expect(screen.queryByText('Exam started')).toBeNull();
+  expect(screen.queryByRole('timer')).toBeNull();
+});

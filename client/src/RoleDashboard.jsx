@@ -101,6 +101,6 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
       </form>
     </Panel>}
     {user.role === 'Student' && <ResultsPanel endpoint={`${api}/student/results`} refreshKey={reload} />}
-    {attempt && <ExamAttempt key={attempt.attempt._id} data={attempt} api={api} csrfToken={csrfToken} onSubmitted={() => setReload(value => value + 1)} />}
+    {attempt && <ExamAttempt key={attempt.attempt._id} data={attempt} api={api} csrfToken={csrfToken} onSubmitted={() => { sessionStorage.removeItem(attemptKey); setReload(value => value + 1); }} onClose={destination => { setAttempt(null); requestAnimationFrame(() => document.getElementById(destination)?.scrollIntoView?.({ block: 'start' })); }} />}
   </AppShell>;
 }

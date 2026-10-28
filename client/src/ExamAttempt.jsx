@@ -4,8 +4,11 @@ import axios from 'axios';
 import { synchronizeClock, remainingTime, formatRemaining } from './examClock';
 import { browserTimeZone, displayTime } from './dateTime';
 
-export default function ExamAttempt({ data, api, csrfToken, onSubmitted }) {
+export default function ExamAttempt({ data, api, csrfToken, onSubmitted, onClose }) {
   const busy = useRef(false);
+  const submitted = useRef(data.attempt.status === 'Submitted');
+  const notified = useRef(false);
+  const completionHeading = useRef(null);
   const [saving, setSaving] = useState(false);
   const [clock, setClock] = useState(() => synchronizeClock(data.attempt.deadline, data.serverTime));
   const [remaining, setRemaining] = useState(() => remainingTime(clock));
@@ -22,10 +25,11 @@ export default function ExamAttempt({ data, api, csrfToken, onSubmitted }) {
     setSubmitError('');
     try {
       const result = await axios.post(`${api}/student/attempts/${data.attempt._id}/submit`, { reason }, { headers: { 'X-CSRF-Token': csrfToken } });
-      setStatus(result.data.attempt.status);
+      if (result.data.attempt.status !== 'Submitted') throw new Error('Submission was not confirmed');
+      submitted.current = true;
+      setStatus('Submitted');
       setEvaluationStatus(result.data.attempt.evaluationStatus);
       setConfirming(false);
-      onSubmitted?.();
     } catch (error) { setSubmitError(error.response?.data?.message || 'Submission failed. Retry; saved answers remain on the server.'); }
     finally { setSubmitting(false); }
   }
@@ -35,17 +39,29 @@ export default function ExamAttempt({ data, api, csrfToken, onSubmitted }) {
     void submit('Timeout');
   });
   useEffect(() => {
+    if (status !== 'Submitted' || notified.current) return;
+    notified.current = true;
+    completionHeading.current?.focus();
+    completionHeading.current?.scrollIntoView?.({ block: 'start' });
+    onSubmitted?.();
+  }, [status, onSubmitted]);
+  useEffect(() => {
+    if (status === 'Submitted') return;
     const tick = () => setRemaining(remainingTime(clock));
     const timer = setInterval(tick, 250);
     tick();
     return () => clearInterval(timer);
-  }, [clock]);
+  }, [clock, status]);
   useEffect(() => {
+    if (status === 'Submitted' && evaluationStatus === 'Evaluated') return;
     let current = true;
     async function synchronize() {
       try {
         const result = await axios.get(`${api}/student/attempts/${data.attempt._id}`);
         if (!current) return;
+        // A read started before submission must never reopen the completed UI.
+        if (submitted.current && result.data.attempt.status !== 'Submitted') return;
+        if (result.data.attempt.status === 'Submitted') submitted.current = true;
         const next = synchronizeClock(result.data.attempt.deadline, result.data.serverTime);
         setClock(previous => ({ ...next, remaining: Math.min(next.remaining, remainingTime(previous)) }));
         setStatus(result.data.attempt.status);
@@ -55,7 +71,7 @@ export default function ExamAttempt({ data, api, csrfToken, onSubmitted }) {
     }
     const timer = setInterval(synchronize, 15000);
     return () => { current = false; clearInterval(timer); };
-  }, [api, data.attempt._id]);
+  }, [api, data.attempt._id, status, evaluationStatus]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState(() => Object.fromEntries((data.responses || []).map(value => [value.questionId, value])));
   const [failed, setFailed] = useState(null);
@@ -79,6 +95,13 @@ export default function ExamAttempt({ data, api, csrfToken, onSubmitted }) {
       setMessage(error.response?.data?.message || 'Answer was not saved. Retry while time remains.');
     } finally { busy.current = false; setSaving(false); }
   }
+  if (status === 'Submitted') return <Panel id="examination" aria-label="Submission complete">
+    <h2 ref={completionHeading} tabIndex={-1}>Exam submitted</h2>
+    <Feedback>{evaluationStatus === 'Evaluated' ? 'Evaluation complete. Your result is available.' : 'Submitted. Evaluation pending; the server will retry automatically.'}</Feedback>
+    <p>Your examination is closed. Your saved responses have been finalized.</p>
+    <a className="button" href="#results" onClick={() => onClose?.('results')}>View my results</a>
+    {onClose && <Button className="secondary" onClick={() => onClose('available-exams')}>Back to available exams</Button>}
+  </Panel>;
   return <Panel id="examination" aria-label="Examination">
     <h2>{status === 'Submitted' ? 'Exam submitted' : 'Exam started'}</h2>
     <p role="timer" aria-label="Time remaining">Time remaining: {formatRemaining(remaining)}</p>

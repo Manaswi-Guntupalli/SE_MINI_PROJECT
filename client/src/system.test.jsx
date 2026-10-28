@@ -88,6 +88,9 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   fireEvent.click(screen.getByRole('button', { name: 'Submit examination' }));
   fireEvent.click(screen.getByRole('button', { name: 'Confirm submission' }));
   await screen.findByText('Exam submitted');
+  expect(screen.queryByRole('timer')).toBeNull();
+  expect(screen.queryByRole('navigation', { name: 'Question navigation' })).toBeNull();
+  expect(screen.queryByRole('radio')).toBeNull();
   const submitted = await Attempt.findOne({ examId: stored._id });
   expect(submitted.status).toBe('Submitted');
   expect(submitted.evaluationStatus).toBe('Evaluated');
