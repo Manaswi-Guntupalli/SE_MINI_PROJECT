@@ -4,10 +4,11 @@ const Exam = require('../models/Exam');
 const Attempt = require('../models/Attempt');
 const Result = require('../models/Result');
 const Response = require('../models/Response');
-const { startAttempt, finalizeAttempt, saveResponse } = require('../services/persistenceService');
+const { startAttempt, saveResponse } = require('../services/persistenceService');
 const { requireAuth, requireRole } = require('../middleware/authMiddleware');
 const { requireCsrf } = require('../middleware/csrfMiddleware');
 
+const { submitAttempt } = require('../services/submissionService');
 const router = express.Router();
 router.use(requireAuth, requireRole('Student'));
 const validId = (req, res, next) => mongoose.isObjectIdOrHexString(req.params.id)
@@ -42,11 +43,18 @@ router.get('/attempts/:id', validId, async (req, res) => {
   try {
     let attempt = await Attempt.findOne({ _id: req.params.id, studentId: req.user._id });
     if (!attempt) return res.status(404).json({ message: 'Attempt not found' });
-    if (attempt.status === 'Active' && attempt.deadline <= new Date()) attempt = await finalizeAttempt({ attemptId: attempt._id, studentId: req.user._id, reason: 'Timeout' });
+    if (attempt.status === 'Active' && attempt.deadline <= new Date()) attempt = await submitAttempt({ attemptId: attempt._id, studentId: req.user._id, reason: 'Timeout' });
     const exam = await Exam.findById(attempt.examId);
     const responses = await Response.find({ attemptId: attempt._id }).select('questionId selectedOptionId revision');
     res.json({ attempt, responses, questions: exam ? questionsWithoutAnswers(exam) : [], serverTime: new Date() });
   } catch { res.status(500).json({ message: 'Could not load attempt' }); }
+});
+router.post('/attempts/:id/submit', validId, requireCsrf, async (req, res) => {
+  if (req.body.reason !== undefined && !['Manual', 'Timeout'].includes(req.body.reason)) return res.status(400).json({ message: 'Invalid submission reason' });
+  try {
+    const attempt = await submitAttempt({ attemptId: req.params.id, studentId: req.user._id, reason: req.body.reason || 'Manual' });
+    res.json({ attempt, serverTime: new Date() });
+  } catch (error) { res.status(error.status || 500).json({ message: error.status ? error.message : 'Could not submit exam' }); }
 });
 router.put('/attempts/:id/responses/:questionId', validId, requireCsrf, async (req, res) => {
   const { selectedOptionId, expectedRevision } = req.body;

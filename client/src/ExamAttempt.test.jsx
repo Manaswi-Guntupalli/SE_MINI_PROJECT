@@ -28,3 +28,27 @@ it('#40 reports failure and retries without claiming the answer was saved', asyn
   fireEvent.click(screen.getByText('Retry answer save'));
   await waitFor(() => expect(screen.getByLabelText('Two').checked).toBe(true));
 });
+
+it('#47 confirms submission only after saves finish and shows evaluation pending', async () => {
+  let resolveSave;
+  axios.put.mockImplementation(() => new Promise(resolve => { resolveSave = resolve; }));
+  axios.post.mockResolvedValue({ data: { attempt: { status: 'Submitted', evaluationStatus: 'Pending' } } });
+  render(<ExamAttempt data={data} api="/api" csrfToken="token" />);
+  fireEvent.click(screen.getByLabelText('One'));
+  expect(screen.getByText('Submit examination').disabled).toBe(true);
+  resolveSave({ data: { response: { selectedOptionId: 'o1', revision: 1 } } });
+  await screen.findByText('Answer saved');
+  fireEvent.click(screen.getByText('Submit examination'));
+  expect(screen.getByRole('dialog')).toBeTruthy();
+  fireEvent.click(screen.getByText('Confirm submission'));
+  expect(await screen.findByText(/Evaluation pending/)).toBeTruthy();
+  expect(screen.getByLabelText('One').matches(':disabled')).toBe(true);
+  expect(axios.post).toHaveBeenCalledWith('/api/student/attempts/a/submit', { reason: 'Manual' }, expect.anything());
+});
+it('#46 #47 expired content locks answers and requests timeout submission', async () => {
+  axios.post.mockResolvedValue({ data: { attempt: { status: 'Submitted', evaluationStatus: 'Evaluated' } } });
+  render(<ExamAttempt data={{ ...data, serverTime: '2099-01-02' }} api="/api" csrfToken="token" />);
+  expect(screen.getByLabelText('One').matches(':disabled')).toBe(true);
+  await screen.findByText('Exam submitted');
+  expect(axios.post).toHaveBeenCalledWith('/api/student/attempts/a/submit', { reason: 'Timeout' }, expect.anything());
+});

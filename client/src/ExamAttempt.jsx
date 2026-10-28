@@ -4,10 +4,34 @@ import { synchronizeClock, remainingTime, formatRemaining } from './examClock';
 import { browserTimeZone, displayTime } from './dateTime';
 
 export default function ExamAttempt({ data, api, csrfToken }) {
+  const busy = useRef(false);
+  const [saving, setSaving] = useState(false);
   const [clock, setClock] = useState(() => synchronizeClock(data.attempt.deadline, data.serverTime));
   const [remaining, setRemaining] = useState(() => remainingTime(clock));
   const [timerError, setTimerError] = useState('');
   const [status, setStatus] = useState(data.attempt.status);
+  const [evaluationStatus, setEvaluationStatus] = useState(data.attempt.evaluationStatus);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [confirming, setConfirming] = useState(false);
+  const timeoutRequested = useRef(false);
+  async function submit(reason) {
+    if (busy.current || submitting) return;
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      const result = await axios.post(`${api}/student/attempts/${data.attempt._id}/submit`, { reason }, { headers: { 'X-CSRF-Token': csrfToken } });
+      setStatus(result.data.attempt.status);
+      setEvaluationStatus(result.data.attempt.evaluationStatus);
+      setConfirming(false);
+    } catch (error) { setSubmitError(error.response?.data?.message || 'Submission failed. Retry; saved answers remain on the server.'); }
+    finally { setSubmitting(false); }
+  }
+  useEffect(() => {
+    if (remaining > 0 || status === 'Submitted' || timeoutRequested.current || saving) return;
+    timeoutRequested.current = true;
+    void submit('Timeout');
+  });
   useEffect(() => {
     const tick = () => setRemaining(remainingTime(clock));
     const timer = setInterval(tick, 250);
@@ -23,6 +47,7 @@ export default function ExamAttempt({ data, api, csrfToken }) {
         const next = synchronizeClock(result.data.attempt.deadline, result.data.serverTime);
         setClock(previous => ({ ...next, remaining: Math.min(next.remaining, remainingTime(previous)) }));
         setStatus(result.data.attempt.status);
+        setEvaluationStatus(result.data.attempt.evaluationStatus);
         setTimerError('');
       } catch { if (current) setTimerError('Could not synchronize timer. The original deadline still applies.'); }
     }
@@ -31,12 +56,10 @@ export default function ExamAttempt({ data, api, csrfToken }) {
   }, [api, data.attempt._id]);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState(() => Object.fromEntries((data.responses || []).map(value => [value.questionId, value])));
-  const [saving, setSaving] = useState(false);
   const [failed, setFailed] = useState(null);
   const [message, setMessage] = useState('');
-  const busy = useRef(false);
   const question = data.questions[index];
-  const active = status !== 'Submitted' && remaining > 0;
+  const active = status !== 'Submitted' && remaining > 0 && !submitting && !confirming;
   async function save(questionId, selectedOptionId) {
     if (busy.current || !active || remainingTime(clock) <= 0) return;
     busy.current = true;
@@ -61,6 +84,9 @@ export default function ExamAttempt({ data, api, csrfToken }) {
     {remaining === 0 && status !== 'Submitted' && <p role="status">Time expired. Answer editing is locked; awaiting server finalization.</p>}
     <p>Deadline: {displayTime(data.attempt.deadline)} ({browserTimeZone})</p>
     <p>{Object.keys(answers).length} of {data.questions.length} answers saved</p>
+    {status === 'Submitted' && <p role="status">{evaluationStatus === 'Evaluated' ? 'Evaluation complete. Your result is available.' : 'Submitted. Evaluation pending; the server will retry automatically.'}</p>}
+    {submitError && <p role="alert">{submitError}</p>}
+    {submitError && remaining === 0 && status !== 'Submitted' && <button disabled={submitting} onClick={() => submit('Timeout')}>Retry submission</button>}
     {message && <p role={failed ? 'alert' : 'status'}>{message}</p>}
     {failed && active && <button disabled={saving} onClick={() => save(failed.questionId, failed.selectedOptionId)}>Retry answer save</button>}
     {question && <fieldset disabled={!active || saving}>
@@ -76,5 +102,14 @@ export default function ExamAttempt({ data, api, csrfToken }) {
       {data.questions.map((item, position) => <button key={item._id} aria-current={index === position ? 'step' : undefined}
         onClick={() => setIndex(position)} aria-label={`Question ${position + 1}, ${answers[item._id] ? 'answered' : 'unanswered'}`}>{position + 1}</button>)}
     </nav>
+    {status !== 'Submitted' && remaining > 0 && <button disabled={saving || submitting} onClick={() => setConfirming(true)}>Submit examination</button>}
+    {confirming && <div role="dialog" aria-modal="true" aria-labelledby="submit-heading">
+      <h3 id="submit-heading">Submit examination?</h3>
+      <p>{Object.keys(answers).length} answers saved. {data.questions.length - Object.keys(answers).length} unanswered.</p>
+      <p>Only successfully saved responses will be submitted. This action ends your attempt.</p>
+      {failed && <p role="alert">An answer failed to save. Cancel to retry it while time remains.</p>}
+      <button autoFocus disabled={submitting} onClick={() => setConfirming(false)}>Cancel submission</button>
+      <button disabled={saving || submitting} onClick={() => submit(remainingTime(clock) > 0 ? 'Manual' : 'Timeout')}>Confirm submission</button>
+    </div>}
   </section>;
 }

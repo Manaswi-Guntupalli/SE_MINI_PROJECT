@@ -31,7 +31,7 @@ async function startAttempt({ examId, studentId }) {
     attempt = await Attempt.findOne(query);
   }
   if (attempt.status === 'Active' && attempt.deadline <= new Date()) {
-    await finalizeAttempt({ attemptId: attempt._id, studentId, reason: 'Timeout' });
+    await require('./submissionService').submitAttempt({ attemptId: attempt._id, studentId, reason: 'Timeout' });
   }
   if (attempt.status !== 'Active' || attempt.deadline <= new Date()) throw Object.assign(new Error('This attempt has ended'), { status: 409 });
   return { attempt, exam };
@@ -73,7 +73,7 @@ async function finalizeAttempt({ attemptId, studentId, reason }) {
   if (!['Manual', 'Timeout'].includes(reason)) throw new Error('Invalid submission reason');
   return transaction(async session => {
     const attempt = await Attempt.findOne({ _id: attemptId, studentId }).session(session);
-    if (!attempt) throw new Error('Attempt not found');
+    if (!attempt) throw Object.assign(new Error('Attempt not found'), { status: 404 });
     if (attempt.status === 'Submitted') return attempt;
     const condition = reason === 'Manual' ? { $gt: ['$deadline', '$$NOW'] } : { $lte: ['$deadline', '$$NOW'] };
     const submitted = await Attempt.findOneAndUpdate(

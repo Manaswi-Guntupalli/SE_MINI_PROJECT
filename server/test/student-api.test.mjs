@@ -1,5 +1,5 @@
 import { createRequire } from 'node:module';
-import { beforeAll, afterAll, beforeEach, it, expect } from 'vitest';
+import { beforeAll, afterAll, beforeEach, it, expect, vi } from 'vitest';
 import request from 'supertest';
 import { connectTestDatabase, closeTestDatabase } from './database.mjs';
 const require = createRequire(import.meta.url);
@@ -51,4 +51,58 @@ it('#40 validates membership, CSRF, ownership and the strict deadline', async ()
   await Attempt.collection.updateOne({ _id: new (require('mongoose').Types.ObjectId)(attempt._id) }, { $set: { studentId: student._id, deadline: new Date() } });
   expect((await save(0)).status).toBe(409);
   expect(await Response.countDocuments()).toBe(0);
+});
+
+const { submitAttempt, processExpiredAttempts, startExpiryWorker } = require('../services/submissionService');
+it('#47 manual submission is idempotent, evaluates saved answers and blocks later writes', async () => {
+  await save(0);
+  const submit = () => agent.post(`/api/student/attempts/${attempt._id}/submit`).set('X-CSRF-Token', token).send({ reason: 'Manual' });
+  const results = await Promise.all([submit(), submit(), save(1, 1)]);
+  expect(results[0].status).toBe(200);
+  expect(results[1].status).toBe(200);
+  expect(results[0].body.attempt.submittedAt).toBe(results[1].body.attempt.submittedAt);
+  expect(await Result.countDocuments()).toBe(1);
+  expect((await save(2)).status).toBe(409);
+  const response = (await Response.findOne()).selectedOptionId;
+  expect((await Result.findOne()).score).toBe(String(response) === exam.questions[0].options[0].id ? 1 : 0);
+  expect((await agent.get('/api/student/results')).body).toHaveLength(1);
+});
+it('#47 server worker finalizes browser-closed expiry and recovers evaluation failure without reopening', async () => {
+  await save(0);
+  await Attempt.collection.updateOne({ _id: new (require('mongoose').Types.ObjectId)(attempt._id) }, { $set: { deadline: new Date(Date.now() - 1) } });
+  await processExpiredAttempts({ evaluate: async () => { throw new Error('evaluation unavailable'); } });
+  let stored = await Attempt.findById(attempt._id);
+  expect(stored.status).toBe('Submitted');
+  expect(stored.submissionReason).toBe('Timeout');
+  expect(stored.evaluationStatus).toBe('Pending');
+  const timestamp = stored.submittedAt;
+  await processExpiredAttempts();
+  stored = await Attempt.findById(attempt._id);
+  expect(stored.evaluationStatus).toBe('Evaluated');
+  expect(stored.submittedAt).toEqual(timestamp);
+  expect(await Result.countDocuments()).toBe(1);
+});
+it('#47 manual and timeout races at expiry have the same durable outcome', async () => {
+  await Attempt.collection.updateOne({ _id: new (require('mongoose').Types.ObjectId)(attempt._id) }, { $set: { deadline: new Date(Date.now() - 1) } });
+  const outcomes = await Promise.all(['Manual', 'Timeout'].map(reason => submitAttempt({ attemptId: attempt._id, studentId: student._id, reason })));
+  expect(outcomes[0].submittedAt).toEqual(outcomes[1].submittedAt);
+  expect(outcomes[0].submissionReason).toBe('Timeout');
+  expect(await Result.countDocuments()).toBe(1);
+});
+it('#47 rejects foreign submission and early timeout', async () => {
+  expect((await agent.post(`/api/student/attempts/${attempt._id}/submit`).set('X-CSRF-Token', token).send({ reason: 'Timeout' })).status).toBe(409);
+  await Attempt.collection.updateOne({ _id: new (require('mongoose').Types.ObjectId)(attempt._id) }, { $set: { studentId: exam.instructorId } });
+  expect((await agent.post(`/api/student/attempts/${attempt._id}/submit`).set('X-CSRF-Token', token).send({})).status).toBe(404);
+});
+it('#47 expiry scheduler runs within its configured interval and stops cleanly', async () => {
+  vi.useFakeTimers();
+  const process = vi.fn().mockResolvedValue(0);
+  const stop = startExpiryWorker({ intervalMs: 100, process });
+  try {
+    await vi.advanceTimersByTimeAsync(100);
+    expect(process).toHaveBeenCalledTimes(2);
+    stop();
+    await vi.advanceTimersByTimeAsync(200);
+    expect(process).toHaveBeenCalledTimes(2);
+  } finally { stop(); vi.useRealTimers(); }
 });
