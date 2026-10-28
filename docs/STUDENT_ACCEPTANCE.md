@@ -33,3 +33,6 @@ OEP-39 handoff is evaluateAttempt in submissionService: it reads only finalized 
 
 ## #65 / shared UI integration
 The six branches are stacked in order: feature/OEP-29-available-exams, feature/OEP-30-start-exam, feature/OEP-31-answer-navigation, feature/OEP-37-exam-timer, feature/OEP-38-submit-exam, feature/issue-65-shared-portal-ui. Only the last branch has a PR, targeting develop per repository workflow. The stack starts from existing integration/sprint-1-review commit d3062a7; that prerequisite history is also included until separately integrated into develop. #53 is excluded. See [shared design system and walkthrough](UI_DESIGN_SYSTEM.md) for UI evidence and the pending visual review.
+
+## Development startup smoke check
+On 28 October 2026, actual development startup exposed a process-variable shadow in the expiry worker's default interval expression. Renamed the injected worker callback while preserving its test seam. Added a default-configuration regression test: student API suite 8/8 passed and backend syntax build passed. Live local MongoDB replica-set checks, frontend HTTP 200, API health, Student sign-in, protected exam listing and logout passed. Existing demo accounts were retained; the development database had zero published examinations. No seed/reset was run.

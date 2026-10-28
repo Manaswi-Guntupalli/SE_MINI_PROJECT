@@ -106,3 +106,15 @@ it('#47 expiry scheduler runs within its configured interval and stops cleanly',
     expect(process).toHaveBeenCalledTimes(2);
   } finally { stop(); vi.useRealTimers(); }
 });
+
+it('#47 production worker reads the default interval without shadowing the Node process', async () => {
+  vi.useFakeTimers();
+  vi.stubEnv('EXAM_EXPIRY_INTERVAL_MS', '5000');
+  const processPass = vi.fn().mockResolvedValue(0);
+  let stop;
+  try {
+    stop = startExpiryWorker({ process: processPass });
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(processPass).toHaveBeenCalledTimes(2);
+  } finally { stop?.(); vi.useRealTimers(); vi.unstubAllEnvs(); }
+});

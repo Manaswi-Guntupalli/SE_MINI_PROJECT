@@ -36,14 +36,14 @@ async function processExpiredAttempts({ evaluate = evaluateAttempt } = {}) {
   }
   return expired.length;
 }
-function startExpiryWorker({ intervalMs = Number(process.env.EXAM_EXPIRY_INTERVAL_MS || 5000), process = processExpiredAttempts } = {}) {
+function startExpiryWorker({ intervalMs = Number(process.env.EXAM_EXPIRY_INTERVAL_MS || 5000), process: runPass = processExpiredAttempts } = {}) {
   if (!Number.isSafeInteger(intervalMs) || intervalMs < 100 || intervalMs > 60000) throw new Error('EXAM_EXPIRY_INTERVAL_MS must be 100?60000');
   let running = false;
   let stopped = false;
   async function tick() {
     if (running || stopped) return;
     running = true;
-    try { await process(); } catch { console.error('Exam expiry processing failed; will retry.'); }
+    try { await runPass(); } catch { console.error('Exam expiry processing failed; will retry.'); }
     finally { running = false; }
   }
   const timer = setInterval(tick, intervalMs);
