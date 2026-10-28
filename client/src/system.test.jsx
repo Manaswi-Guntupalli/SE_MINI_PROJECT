@@ -53,7 +53,8 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   fireEvent.click(await screen.findByRole('button', { name: 'Open' }));
   fireEvent.change(await screen.findByLabelText('Edit exam title'), { target: { value: 'System revised quiz' } });
   fireEvent.click(screen.getByRole('button', { name: 'Save Exam Changes' }));
-  await screen.findByText('System revised quiz');
+  await screen.findByText('Draft updated successfully');
+  fireEvent.click(screen.getByRole('tab', { name: 'Questions' }));
   fireEvent.change(screen.getByPlaceholderText('Question'), { target: { value: 'Which answer is correct?' } });
   fireEvent.change(screen.getByPlaceholderText('Option 1'), { target: { value: 'Correct response' } });
   fireEvent.change(screen.getByPlaceholderText('Option 2'), { target: { value: 'Incorrect response' } });
@@ -95,6 +96,8 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
   await signIn('instructor');
   fireEvent.click(await screen.findByRole('button', { name: 'Open' }));
+  await screen.findByRole('tab', { name: 'Results' });
+  fireEvent.click(screen.getByRole('tab', { name: 'Results' }));
   await screen.findByRole('heading', { name: 'Exam results' });
   await screen.findByText('1 / 1');
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));

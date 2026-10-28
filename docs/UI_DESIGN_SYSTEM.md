@@ -35,3 +35,9 @@ CSS review covers 375px mobile, 768px tablet and 1440px desktop targets: content
 Frontend: 34/34 tests passed, including the real cross-role HTTP/MongoDB workflow; lint and production build passed. Backend: 83/83 tests passed; JavaScript build/syntax check passed. Local Node was 22.21.0; the repository's GitHub Actions matrix uses the required Node 24 on Ubuntu and Windows. Final GitHub checks and teammate review are reported in the PR rather than inferred from local checks.
 
 Machine-readable [local verification evidence](evidence/sprint-2-2026-10-28/verification.json) records the actual JUnit totals.
+
+## Instructor exam navigation follow-up
+
+Opening an examination now replaces the create/list dashboard with a dedicated management view, defaulting to Details. Back to My Exams (or the contextual My exams navigation link) returns to the list. Only one accessible tab panel is visible at a time: Details, Questions, or Results. Arrow keys wrap between tabs; Home/End select the first/last tab. Focus and scroll move to the exam heading on open and back to the list heading on return. Local field edits survive tab switches; changes still require the existing Save actions. Returning to the list clears the question editor, and reopening reads the saved server definition.
+
+Published Details are read-only. Draft Results explains when results become available, and the protected results API is loaded only when the Results tab is selected for a published exam. The existing publish action remains available across the draft tabs. No routing library or backend API changes were introduced. Automated coverage verifies separate-view behavior, keyboard switching, field preservation, read-only publication, lazy results, and the complete HTTP/MongoDB workflow through the tabs.

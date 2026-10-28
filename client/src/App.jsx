@@ -1,5 +1,5 @@
 import { Button, Input, Textarea, Panel, Feedback, Loading, AppShell, ConfirmDialog, StatusBadge } from './ui';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "./App.css";
 import { browserTimeZone, toLocalInput, toUtc, displayTime } from './dateTime';
@@ -36,6 +36,37 @@ function App() {
 
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState(null);
+  const [examTab, setExamTab] = useState('details');
+  const [openingExam, setOpeningExam] = useState(false);
+  const examHeading = useRef(null);
+  const listHeading = useRef(null);
+  const wasExamOpen = useRef(false);
+  const selectedExamId = selectedExam?._id;
+  useEffect(() => {
+    const heading = selectedExamId ? examHeading.current : wasExamOpen.current ? listHeading.current : null;
+    heading?.focus();
+    heading?.scrollIntoView?.({ block: 'start' });
+    wasExamOpen.current = !!selectedExamId;
+  }, [selectedExamId]);
+  function backToExams() {
+    setSelectedExam(null);
+    setExamError('');
+    setNotice('');
+    setEditingQuestionId(null);
+    setQuestionForm(emptyQuestionForm);
+    setExamTab('details');
+  }
+  function navigateTabs(event) {
+    const tabs = ['details', 'questions', 'results'];
+    const position = tabs.indexOf(examTab);
+    const next = event.key === 'ArrowRight' ? (position + 1) % tabs.length
+      : event.key === 'ArrowLeft' ? (position + tabs.length - 1) % tabs.length
+      : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : null;
+    if (next === null) return;
+    event.preventDefault();
+    setExamTab(tabs[next]);
+    document.getElementById(`exam-tab-${tabs[next]}`)?.focus();
+  }
   const [examsLoading, setExamsLoading] = useState(false);
   const [examError, setExamError] = useState("");
 
@@ -200,14 +231,17 @@ function App() {
   };
 
   const selectExam = async (id) => {
+    setOpeningExam(true);
     try {
       setExamError("");
+      setNotice('');
 
       const response = await axios.get(
         `${EXAM_API}/${id}`
       );
 
       setSelectedExam(response.data);
+      setExamTab('details');
       setEditingQuestionId(null);
       setQuestionForm(emptyQuestionForm);
     } catch (error) {
@@ -215,7 +249,7 @@ function App() {
         error.response?.data?.message ||
           "Could not open exam"
       );
-    }
+    } finally { setOpeningExam(false); }
   };
 
   const updateExam = async () => {
@@ -470,12 +504,17 @@ function App() {
   }
 
   return (
-    <AppShell user={user} logout={logout}>
+    <AppShell user={user} logout={logout}
+      navigationLinks={selectedExam ? [['my-exams', 'My exams']] : undefined}
+      onNavigate={selectedExam ? backToExams : undefined}>
       <Feedback>{notice}</Feedback>
+      <Feedback error>{examError}</Feedback>
+      {openingExam && <Loading>Opening examination...</Loading>}
       {confirmation && <ConfirmDialog title={confirmation.title} busy={confirmBusy} cancelLabel="Cancel" confirmLabel={confirmation.label || 'Delete'}
         onCancel={() => setConfirmation(null)} onConfirm={async () => { setConfirmBusy(true); try { await confirmation.action(); setConfirmation(null); } finally { setConfirmBusy(false); } }}>
         <p>{confirmation.message || 'This removes the selected draft content. Published examinations remain protected.'}</p>
       </ConfirmDialog>}
+      {!selectedExam && <>
       <Panel id="create-exam">
         <h2>Create Exam</h2>
 
@@ -541,11 +580,11 @@ function App() {
       </Panel>
 
       <Panel id="my-exams">
-        <h2>My Exams</h2>
+        <h2 ref={listHeading} tabIndex={-1}>My Exams</h2>
 
         {examsLoading && <Loading>Loading exams...</Loading>}
 
-        {examError && <><Feedback error>{examError}</Feedback><Button onClick={loadExams}>Refresh exams</Button></>}
+        {examError && <Button onClick={loadExams}>Refresh exams</Button>}
 
         {!examsLoading &&
           !examError &&
@@ -574,6 +613,7 @@ function App() {
 
             <div className="actions">
               <Button
+                disabled={openingExam}
                 onClick={() =>
                   selectExam(exam._id)
                 }
@@ -596,20 +636,24 @@ function App() {
         ))}
       </Panel>
 
+      </>}
+
       {selectedExam && (
-        <Panel>
-          <h2 id="manage-exam">Manage Exam</h2>
-
-          <p>
-            Status:{" "}
-            <strong>
-              {selectedExam.status}
-            </strong>
-          </p>
-
-
-          {selectedExam.status === "Draft" && (
-            <>
+        <Panel aria-label="Manage examination">
+          <Button className="secondary" onClick={backToExams}>Back to My Exams</Button>
+          <div className="exam-view-heading">
+            <div><h2 id="manage-exam" ref={examHeading} tabIndex={-1}>Manage Exam</h2><p>{selectedExam.title}</p></div>
+            <StatusBadge>{selectedExam.status}</StatusBadge>
+          </div>
+          <div role="tablist" aria-label="Examination sections" className="exam-tabs">
+            {['details', 'questions', 'results'].map(tab => <Button key={tab} id={`exam-tab-${tab}`}
+              role="tab" aria-selected={examTab === tab} aria-controls={`exam-panel-${tab}`}
+              tabIndex={examTab === tab ? 0 : -1} onClick={() => setExamTab(tab)} onKeyDown={navigateTabs}>
+              {tab === 'details' ? 'Details' : tab === 'questions' ? 'Questions' : 'Results'}
+            </Button>)}
+          </div>
+          <div role="tabpanel" tabIndex={0} id="exam-panel-details" aria-labelledby="exam-tab-details" hidden={examTab !== 'details'} className="exam-tab-panel">
+            {selectedExam.status === 'Draft' ? <div className="exam-details-form">
               <Input
                 aria-label="Edit exam title"
                 value={selectedExam.title}
@@ -667,8 +711,15 @@ function App() {
                 Save Exam Changes
               </Button>
 
-              <hr />
-
+            </div> : <dl className="exam-details-summary">
+              <dt>Title</dt><dd>{selectedExam.title}</dd>
+              <dt>Description</dt><dd>{selectedExam.description || 'No description provided.'}</dd>
+              <dt>Start time</dt><dd>{displayTime(selectedExam.startTime)} ({browserTimeZone})</dd>
+              <dt>Duration</dt><dd>{selectedExam.duration} minutes</dd>
+            </dl>}
+          </div>
+          <div role="tabpanel" tabIndex={0} id="exam-panel-questions" aria-labelledby="exam-tab-questions" hidden={examTab !== 'questions'} className="exam-tab-panel">
+            {selectedExam.status === 'Draft' && <>
               <h3>
                 {editingQuestionId
                   ? "Edit MCQ"
@@ -779,10 +830,7 @@ function App() {
                   </Button>
                 )}
               </form>
-            </>
-          )}
-
-          {selectedExam.status === 'Published' && <ResultsPanel endpoint={`${EXAM_API}/${selectedExam._id}/results`} instructor />}
+            </>}
           <h3>Questions</h3>
 
           {selectedExam.questions.length ===
@@ -847,6 +895,13 @@ function App() {
             )
           )}
 
+          </div>
+          <div role="tabpanel" tabIndex={0} id="exam-panel-results" aria-labelledby="exam-tab-results" hidden={examTab !== 'results'} className="exam-tab-panel">
+            {examTab === 'results' && (selectedExam.status === 'Published'
+              ? <ResultsPanel endpoint={`${EXAM_API}/${selectedExam._id}/results`} instructor />
+              : <p className="empty-state">Results will be available after this examination is published and students submit their attempts.</p>)}
+          </div>
+          <div className="exam-view-actions">
           {selectedExam.status ===
             "Draft" && (
             <Button
@@ -856,6 +911,7 @@ function App() {
               Publish Exam
             </Button>
           )}
+          </div>
         </Panel>
       )}
     </AppShell>

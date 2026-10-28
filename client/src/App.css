@@ -67,3 +67,18 @@ dialog h3 { margin-bottom: var(--space-4); }
   .app-footer { padding: var(--space-4); }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; } }
+
+/* A selected examination replaces the dashboard; one section is shown at a time. */
+.exam-view-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4); margin-block: var(--space-6); }
+.exam-view-heading p { color: var(--muted); overflow-wrap: anywhere; }
+.exam-tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); padding-bottom: var(--space-3); border-bottom: 1px solid var(--border); margin-bottom: var(--space-6); }
+.exam-tabs .button, .button.secondary { color: var(--primary); background: var(--surface); }
+.exam-tabs .button[aria-selected="true"] { background: var(--primary); color: white; }
+.exam-tabs .button:hover:not(:disabled), .button.secondary:hover:not(:disabled) { background: var(--primary-soft); color: var(--primary-hover); }
+.exam-tab-panel[hidden] { display: none; }
+.exam-details-form { display: grid; gap: var(--space-3); }
+.exam-details-summary { display: grid; grid-template-columns: minmax(100px, 160px) minmax(0, 1fr); gap: var(--space-3); }
+.exam-details-summary dt { font-weight: 600; }
+.exam-details-summary dd { margin: 0; overflow-wrap: anywhere; }
+.exam-view-actions { display: flex; justify-content: flex-end; margin-top: var(--space-6); }
+@media (max-width: 700px) { .exam-tabs .button { flex: 1; } .exam-details-summary { grid-template-columns: minmax(0, 1fr); } }

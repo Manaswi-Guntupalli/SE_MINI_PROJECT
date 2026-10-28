@@ -175,6 +175,7 @@ describe(
   () => {
     it('UI-AC35: removes the correct option without silently choosing another and supports adding replacements', async () => {
       await openExam(exam({ questions: [question()] }))
+      fireEvent.click(screen.getByRole('tab', { name: 'Questions' }))
       fireEvent.click(screen.getByRole('button', { name: 'Edit Question' }))
       fireEvent.click(screen.getByRole('button', { name: 'Remove option 1' }))
       expect(screen.getAllByRole('radio').every(radio => !radio.checked)).toBe(true)
@@ -410,6 +411,7 @@ describe(
 
     it('UI-MCQ-01: submits question text and options with one selected answer', async () => {
       await openExam()
+      fireEvent.click(screen.getByRole('tab', { name: 'Questions' }))
 
       axios.post.mockResolvedValue({
         data: exam({
@@ -504,6 +506,7 @@ describe(
         }),
       })
 
+      fireEvent.click(screen.getByRole('tab', { name: 'Questions' }))
       fireEvent.click(
         screen.getByRole('button', {
           name: 'Edit Question',
@@ -620,9 +623,53 @@ describe(
         ).toBeNull()
       }
 
+      fireEvent.click(screen.getByRole('tab', { name: 'Questions' }))
       expect(
         screen.getByText('1. 2 + 2?')
       ).toBeTruthy()
     })
   }
 )
+
+it('#65 Open replaces the dashboard, defaults to Details and Back restores the list', async () => {
+  await openExam();
+  expect(screen.queryByRole('heading', { name: 'My Exams' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Create Exam' })).toBeNull();
+  expect(screen.getByRole('tab', { name: 'Details' }).getAttribute('aria-selected')).toBe('true');
+  expect(screen.getAllByRole('tabpanel')).toHaveLength(1);
+  expect(document.activeElement).toBe(screen.getByRole('heading', { name: 'Manage Exam' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Back to My Exams' }));
+  expect(screen.getByRole('heading', { name: 'My Exams' })).toBeTruthy();
+  expect(screen.queryByRole('tablist')).toBeNull();
+  expect(document.activeElement).toBe(screen.getByRole('heading', { name: 'My Exams' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Open' }));
+  await screen.findByRole('tab', { name: 'Details' });
+  expect(screen.getByRole('tab', { name: 'Details' }).getAttribute('aria-selected')).toBe('true');
+});
+it('#65 keyboard tab navigation preserves edits and draft Results never calls the results API', async () => {
+  await openExam();
+  fireEvent.change(screen.getByLabelText('Edit exam title'), { target: { value: 'Unsaved title' } });
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Details' }), { key: 'ArrowRight' });
+  expect(screen.getByRole('tab', { name: 'Questions' }).getAttribute('aria-selected')).toBe('true');
+  expect(screen.queryByRole('button', { name: 'Save Exam Changes' })).toBeNull();
+  fireEvent.change(screen.getByPlaceholderText('Question'), { target: { value: 'Unsaved question' } });
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Questions' }), { key: 'End' });
+  expect(await screen.findByText(/Results will be available after/)).toBeTruthy();
+  expect(axios.get.mock.calls.some(([url]) => url.endsWith('/results'))).toBe(false);
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Results' }), { key: 'Home' });
+  expect(screen.getByLabelText('Edit exam title').value).toBe('Unsaved title');
+  fireEvent.click(screen.getByRole('tab', { name: 'Questions' }));
+  expect(screen.getByPlaceholderText('Question').value).toBe('Unsaved question');
+});
+it('#65 published Details are read-only and Results load only when selected', async () => {
+  await openExam(exam({ status: 'Published', questions: [question()] }));
+  expect(screen.queryByRole('textbox', { name: 'Edit exam title' })).toBeNull();
+  expect(screen.getByText('30 minutes')).toBeTruthy();
+  expect(axios.get.mock.calls.some(([url]) => url.endsWith('/results'))).toBe(false);
+  axios.get.mockResolvedValue({ data: [] });
+  fireEvent.click(screen.getByRole('tab', { name: 'Results' }));
+  expect(await screen.findByText('No evaluated results yet.')).toBeTruthy();
+  expect(axios.get).toHaveBeenCalledWith(expect.stringMatching(/exam-1\/results$/));
+  fireEvent.click(screen.getByRole('link', { name: 'My exams' }));
+  expect(screen.getByRole('heading', { name: 'My Exams' })).toBeTruthy();
+});
