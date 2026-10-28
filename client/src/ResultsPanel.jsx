@@ -22,6 +22,6 @@ export default function ResultsPanel({ endpoint, instructor = false, refreshKey 
     <Button disabled={loading} onClick={() => setReload(value => value + 1)}>Refresh results</Button></div>
     {loading ? <Loading>Loading results...</Loading> : error ? <Feedback error>{error}</Feedback> : results.length === 0 ? <p className="empty-state">No evaluated results yet.</p>
       : <div className="table-scroll"><table><caption>{instructor ? 'Results for this owned examination' : 'Your evaluated examinations'}</caption><thead><tr><th scope="col">{instructor ? 'Student' : 'Examination'}</th><th scope="col">Score</th><th scope="col">Status</th></tr></thead>
-        <tbody>{results.map(result => <tr key={result._id}><td>{instructor ? result.studentId : result.examId}</td><td>{result.score} / {result.maximum}</td><td><StatusBadge>{result.status}</StatusBadge></td></tr>)}</tbody></table></div>}
+        <tbody>{results.map(result => <tr key={result._id}><td>{instructor ? <><strong>{result.student?.name || 'Student unavailable'}</strong>{result.student?.email && <small>{result.student.email}</small>}</> : result.examId}</td><td>{result.score} / {result.maximum}</td><td><StatusBadge>{result.status}</StatusBadge></td></tr>)}</tbody></table></div>}
   </Panel>;
 }

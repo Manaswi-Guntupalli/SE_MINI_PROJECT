@@ -39,7 +39,12 @@ router.get('/:id/results', async (req, res) => {
     const exam = await Exam.findById(req.params.id);
     if (!exam) return res.status(404).json({ message: 'Exam not found' });
     if (String(exam.instructorId) !== String(req.user._id)) return res.status(403).json({ message: 'Access denied' });
-    res.json(await Result.find({ examId: exam._id }));
+    const results = await Result.find({ examId: exam._id }).lean();
+    // Join public identity fields only after checking the exam owner's access.
+    const User = require('../models/User');
+    const students = await User.find({ _id: { $in: results.map(result => result.studentId) } }).select('_id name email').lean();
+    const identities = new Map(students.map(student => [String(student._id), { name: student.name, email: student.email }]));
+    res.json(results.map(result => ({ ...result, student: identities.get(String(result.studentId)) || null })));
   } catch { res.status(400).json({ message: 'Could not load exam results' }); }
 });
 

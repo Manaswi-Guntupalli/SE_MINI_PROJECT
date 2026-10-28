@@ -103,6 +103,8 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   fireEvent.click(screen.getByRole('tab', { name: 'Results' }));
   await screen.findByRole('heading', { name: 'Exam results' });
   await screen.findByText('1 / 1');
+  expect(screen.getByText('System Student')).toBeTruthy();
+  expect(screen.getByText('student@system.invalid')).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
   await signIn('admin');
   await screen.findByRole('heading', { name: 'Accounts' });
