@@ -45,7 +45,7 @@ Follow the [development workflow and verification guide](docs/DEVELOPMENT_WORKFL
 
 The assigned developer raises the PR and the repository owner reviews and merges it. GitHub Actions is the project's sole CI provider. The [application CI implementation in PR #58](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/58) runs locked MERN installs, build/lint, real MongoDB API tests and React component tests on Ubuntu and Windows for pushes and PRs, with its commands and execution evidence documented in that PR. [Repository checks](.github/workflows/repository-checks.yml) separately verify whitespace and Markdown links. No local CI server is required. Deployment and smoke-test work remains under #45; a passing CI run is not a deployed application.
 
-The current instructor workflow is a prototype with known authentication, ownership and validation gaps. Read the [Sprint 1 acceptance review](docs/SPRINT_1_ACCEPTANCE_REVIEW.md) before treating a green prototype build as full Release 1 acceptance.
+The instructor workflow and shared access checks have an updated [acceptance record](docs/INSTRUCTOR_ACCEPTANCE.md). The [original Sprint 1 review](docs/SPRINT_1_ACCEPTANCE_REVIEW.md) describes the earlier prototype. Passing automated checks does not replace teammate review or establish acceptance of the separate student submission/evaluation work.
 
 ## Two-sprint delivery plan
 
@@ -63,3 +63,81 @@ The [Release 1 scope and permissions agreement](docs/RELEASE_1_AGREEMENT.md) rec
 
 ## Documentation
 Documentation lives in [docs/](docs/). The project is planned and delivered iteratively using Agile practices.
+
+Current shared implementation contracts: [Domain model](docs/DOMAIN_MODEL.md), [Field Layout](docs/OEP-18_Field_Layout.md), [software design](docs/07_Software_Design.md), [database setup](docs/DATABASE_SETUP.md) and [foundation/persistence acceptance](docs/PERSISTENCE_ACCEPTANCE.md). The original Field Layout XLSX and Part 1 submissions remain historical proposals; the current specifications explicitly reconcile storage/naming choices and await team review.
+
+## Local development setup
+
+### Prerequisites
+Install the following before running the project:
+- Node.js and npm
+- Git
+- Access to a MongoDB database
+
+### 1. Clone and open the repository
+```bash
+git clone https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT.git
+cd SE_MINI_PROJECT
+```
+
+### 2. Install the locked dependencies
+
+Use **Node 24**, as recorded in `.node-version` and both package manifests.
+
+```powershell
+npm ci --prefix server
+npm ci --prefix client
+Copy-Item server/.env.example server/.env
+```
+
+Edit the ignored `server/.env`: set `MONGO_URI` to your local replica set or Atlas database and replace `SESSION_SECRET` with a randomly generated secret. Generate one with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. The example uses `mongodb://127.0.0.1:27018/online_exam_portal?replicaSet=oep-dev`. A standalone MongoDB service is insufficient for transactional persistence. Do not use a production database for development or tests.
+
+### 3. Start the database and application in three terminals
+
+```powershell
+npm run db:dev --prefix server
+```
+
+This starts a separate loopback-only MongoDB replica set on port 27018, initializes it, and persists its data in ignored `server/.local-mongodb/`. It does not change or stop your existing MongoDB service on 27017. Install `mongod` first; the helper discovers the standard Windows installation or accepts `MONGOD_BINARY`. Keep this terminal open. See [database setup](docs/DATABASE_SETUP.md) for Atlas, verification, initialization and troubleshooting.
+
+```powershell
+cd server
+npm start
+```
+
+```powershell
+cd client
+npm run dev -- --host localhost --port 5173 --strictPort
+```
+
+Open **http://localhost:5173**. The API health response is at **http://localhost:5000/**. Keep `localhost` consistent: the credential-aware CORS allowlist defaults to `http://localhost:5173`. Frontend `VITE_API_URL` may override the default `http://localhost:5000/api`; see `client/.env.example`. Restart Vite after changing its environment.
+
+Run `npm run db:check --prefix server` to verify connectivity, replica-set topology and every model's indexes. The backend refuses a standalone database rather than starting with unusable transaction endpoints.
+
+### 4. Development accounts
+
+For a local demonstration only, run `npm run seed --prefix server`. This creates or resets test accounts in the configured database, so do not run it against a database containing real accounts. Production seeding is blocked.
+
+| Role | Email | Development password |
+|---|---|---|
+| Instructor | instructor@test.com | Instructor123! |
+| Second Instructor | instructor2@test.com | Instructor234! |
+| Student | student@test.com | Student123! |
+| Admin | admin@test.com | Admin123! |
+
+The second Instructor starts with a separate owned-exam list. Admin accounts do not inherit Instructor or Student permissions. Inactive accounts cannot log in. Every teammate must perform startup and record their own result before #21 can be fully accepted.
+
+### 5. Verification
+
+```powershell
+npm test --prefix server
+npm test --prefix client
+npm run lint --prefix client
+npm run build --prefix client
+npm run build --prefix server
+npm run audit:sprint1 --prefix server
+```
+
+Backend Vitest suites start an isolated real MongoDB process and never read your application database. On a machine with MongoDB already installed, avoid a binary download by setting `$env:MONGOMS_SYSTEM_BINARY` to its absolute `mongod.exe` path and `$env:MONGOMS_SYSTEM_BINARY_VERSION_CHECK='false'`. Otherwise the test runner downloads its pinned MongoDB binary on first run. The older optional Jest suite requires `NODE_ENV=test`, `SESSION_SECRET` and a dedicated `MONGO_URI` containing `online_exam_portal_test`; it clears users/exams in that test database.
+
+See [current acceptance evidence](docs/INSTRUCTOR_ACCEPTANCE.md) and [session and API contract](docs/AUTH_AND_EXAM_API.md). The student workflow now includes published exam eligibility/status, persisted start/resume, versioned answer saves, server-synchronized timing, manual/timeout submission and evaluation retry. See [student acceptance evidence](docs/STUDENT_ACCEPTANCE.md) and the [shared UI design system and review walkthrough](docs/UI_DESIGN_SYSTEM.md). Independent review and visual viewport verification remain pending.

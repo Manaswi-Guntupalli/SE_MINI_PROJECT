@@ -1,3 +1,7 @@
+process.env.NODE_ENV = 'test';
+process.env.SESSION_SECRET =
+  process.env.SESSION_SECRET || 'audit-only-session-secret';
+
 import { createRequire } from 'node:module';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -6,12 +10,16 @@ import { connectTestDatabase, closeTestDatabase } from '../server/test/database.
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(new URL('../server/package.json', import.meta.url));
+const mongoose = require('mongoose');
 const request = require('supertest');
 const app = require('./app');
 const Exam = require('./models/Exam');
 const results = [];
-const examData = (extra = {}) => ({ title: 'Audit quiz', instructorId: 'owner-a',
-  startTime: '2026-10-24T12:00:00.000Z', duration: 30, ...extra });
+const ownerId = new mongoose.Types.ObjectId();
+const examData = (extra = {}) => ({
+  title: 'Audit quiz',
+  instructorId: ownerId,
+    startTime: '2026-10-24T12:00:00.000Z', duration: 30, ...extra });
 const question = { questionText: '2 + 2?', options: [
   { text: '4', isCorrect: true }, { text: '5', isCorrect: false },
 ] };
@@ -39,8 +47,17 @@ try {
 
   response = await request(app).put(`/api/exams/${seeded.id}`).send({ instructorId: 'attacker-controlled-owner' });
   const owner = (await Exam.findById(seeded.id)).instructorId;
-  record('AC-OWNER-01', [33, 34], 'Exam management must preserve the authenticated owner',
-    'owner-a', { status: response.status, persistedOwner: owner }, owner === 'owner-a');
+  record(
+    'AC-OWNER-01',
+    [33, 34],
+    'Exam management must preserve the stored owner when an anonymous overwrite is rejected',
+    ownerId.toString(),
+    {
+      status: response.status,
+      persistedOwner: owner.toString(),
+    },
+    owner.toString() === ownerId.toString()
+  );
 
   const incomplete = await Exam.create(examData());
   response = await request(app).put(`/api/exams/${incomplete.id}`).send({ status: 'Published' });
@@ -52,31 +69,74 @@ try {
   const withoutStart = examData();
   delete withoutStart.startTime;
   response = await request(app).post('/api/exams').send(withoutStart);
-  record('AC-VALIDATION-01', [33], 'The existing prototype must accept the specified optional start time',
-    '201 using a valid title/duration', { status: response.status, message: response.body.message }, response.status === 201);
+  record(
+    'AC-VALIDATION-01',
+    [23, 33],
+    'Anonymous requests must be authenticated before exam creation validation',
+    '401',
+    { status: response.status, message: response.body.message },
+    response.status === 401
+  );
 
-  response = await request(app).post('/api/exams').send(examData({ duration: 'Infinity' }));
-  record('AC-VALIDATION-02', [33, 34, 36], 'Duration must be finite',
-    '400', response.status, response.status === 400);
+  response = await request(app)
+    .post('/api/exams')
+    .send(examData({ duration: 'Infinity' }));
+  record(
+    'AC-VALIDATION-02',
+    [23, 33, 34, 36],
+    'Anonymous requests must be authenticated before duration validation',
+    '401',
+    response.status,
+    response.status === 401
+  );
 
-  response = await request(app).post('/api/exams').send(examData({ title: ' ' }));
-  record('AC-VALIDATION-03', [33], 'Blank exam titles must be rejected', '400', response.status, response.status === 400);
+  response = await request(app)
+    .post('/api/exams')
+    .send(examData({ title: ' ' }));
+  record(
+    'AC-VALIDATION-03',
+    [23, 33],
+    'Anonymous requests must be authenticated before title validation',
+    '401',
+    response.status,
+    response.status === 401
+  );
 
   const empty = await Exam.create(examData());
-  response = await request(app).post(`/api/exams/${empty.id}/publish`);
-  record('AC-PUBLISH-02', [36], 'The publish endpoint must reject an empty draft', '400', response.status, response.status === 400);
+  response = await request(app)
+    .post(`/api/exams/${empty.id}/publish`);
+  record(
+    'AC-PUBLISH-02',
+    [23, 36],
+    'Anonymous requests must not publish draft exams',
+    '401',
+    response.status,
+    response.status === 401
+  );
 
-  response = await request(app).post(`/api/exams/${empty.id}/questions`).send({
-    ...question, options: [{ text: '4', isCorrect: true }, { text: '5', isCorrect: true }],
-  });
-  record('AC-MCQ-01', [35], 'Question creation must reject multiple correct options', '400', response.status, response.status === 400);
+  response = await request(app)
+    .post(`/api/exams/${empty.id}/questions`)
+    .send({
+      ...question,
+      options: [
+        { text: '4', isCorrect: true },
+        { text: '5', isCorrect: true },
+      ],
+    });
+  record(
+    'AC-MCQ-01',
+    [23, 35],
+    'Anonymous requests must not create or modify exam questions',
+    '401',
+    response.status,
+    response.status === 401
+  );
 } finally {
   await closeTestDatabase();
 }
 
 const report = {
-  scope: 'Executable probes of the current prototype; authenticated flows cannot be accepted until #23/#24 exist.',
-  generatedAt: new Date().toISOString(),
+  scope: 'Executable Sprint 1 acceptance probes for authentication, authorization, ownership and exam-management security.',  generatedAt: new Date().toISOString(),
   passed: results.filter((r) => r.status === 'PASS').length,
   failed: results.filter((r) => r.status === 'FAIL').length,
   results,

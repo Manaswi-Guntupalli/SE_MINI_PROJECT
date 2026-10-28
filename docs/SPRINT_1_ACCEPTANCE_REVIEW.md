@@ -1,5 +1,7 @@
 # Sprint 1 acceptance review
 
+> Historical review of the 24 October prototype. The current working-tree implementation has authentication, ownership and validation fixes. Use [the current eight-issue acceptance record](INSTRUCTOR_ACCEPTANCE.md) for the latest verified scope and remaining human acceptance gates. Preserve the findings below as evidence of the earlier reviewed commit.
+
 Reviewed on 24 October 2026 against `develop` commit `0e0582ecdb5b97c101666de7a60d10359013f0be` and the existing GitHub issue acceptance criteria. Tanusha's [PR #57](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/57) is merged, but **the instructor prototype does not yet meet all Sprint 1 acceptance criteria**. Authentication, authorization and several exam rules remain incomplete. This review does not change issue states, assignments, estimates, priorities or epic relationships.
 
 ## Evidence and scope

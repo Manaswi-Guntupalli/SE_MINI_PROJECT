@@ -12,6 +12,6 @@ if (existsSync(path)) {
 } else {
   summary += 'Acceptance diagnostics were not reached; inspect the failed stage and uploaded reports.\n';
 }
-summary += '\nSee docs/SPRINT_1_ACCEPTANCE_REVIEW.md for the full acceptance review and docs/CI.md for commands/evidence.\n';
+summary += '\nSee docs/PERSISTENCE_ACCEPTANCE.md for the integrated acceptance mapping and docs/CI.md for commands/evidence. The original prototype review is historical.\n';
 if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
 console.log(summary);
