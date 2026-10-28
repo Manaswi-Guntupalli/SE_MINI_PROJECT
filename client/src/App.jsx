@@ -1,8 +1,10 @@
+import { Button, Input, Textarea, Panel, Feedback, Loading, AppShell, ConfirmDialog, StatusBadge } from './ui';
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css";
 import { browserTimeZone, toLocalInput, toUtc, displayTime } from './dateTime';
 import RoleDashboard from './RoleDashboard';
+import ResultsPanel from './ResultsPanel';
 
 const BASE_API = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 const EXAM_API = `${BASE_API}/exams`;
@@ -18,6 +20,9 @@ const emptyQuestionForm = {
 };
 
 function App() {
+  const [confirmation, setConfirmation] = useState(null);
+  const [confirmBusy, setConfirmBusy] = useState(false);
+  const [notice, setNotice] = useState('');
   const [user, setUser] = useState(null);
   const [csrfToken, setCsrfToken] = useState("");
   const [authLoading, setAuthLoading] = useState(true);
@@ -147,21 +152,7 @@ function App() {
   };
 
   const logout = async () => {
-    try {
-      await axios.post(
-        `${AUTH_API}/logout`,
-        {},
-        {
-          headers: csrfHeaders,
-        }
-      );
-    } catch (error) {
-      alert(
-        error.response?.data?.message ||
-          "Could not log out"
-      );
-      return;
-    }
+    await axios.post(`${AUTH_API}/logout`, {}, { headers: csrfHeaders });
 
     setUser(null);
     setCsrfToken("");
@@ -197,7 +188,7 @@ function App() {
 
       await loadExams();
 
-      alert("Exam created successfully");
+      setNotice("Exam created successfully");
     } catch (error) {
       const message =
         error.response?.data?.errors?.join("\n") ||
@@ -247,7 +238,7 @@ function App() {
       setSelectedExam(response.data);
       await loadExams();
 
-      alert("Draft updated successfully");
+      setNotice("Draft updated successfully");
     } catch (error) {
       const message =
         error.response?.data?.errors?.join("\n") ||
@@ -259,10 +250,6 @@ function App() {
   };
 
   const deleteExam = async (id) => {
-    if (!window.confirm("Delete this draft exam?")) {
-      return;
-    }
-
     try {
       setExamError("");
 
@@ -279,7 +266,7 @@ function App() {
 
       await loadExams();
 
-      alert("Exam deleted successfully");
+      setNotice("Exam deleted successfully");
     } catch (error) {
       setExamError(
         error.response?.data?.message ||
@@ -322,7 +309,7 @@ function App() {
           }
         );
 
-        alert("Question updated successfully");
+        setNotice("Question updated successfully");
       } else {
         response = await axios.post(
           `${EXAM_API}/${selectedExam._id}/questions`,
@@ -332,7 +319,7 @@ function App() {
           }
         );
 
-        alert("Question added successfully");
+        setNotice("Question added successfully");
       }
 
       setSelectedExam(response.data);
@@ -370,10 +357,6 @@ function App() {
   };
 
   const deleteQuestion = async (questionId) => {
-    if (!window.confirm("Delete this question?")) {
-      return;
-    }
-
     try {
       setExamError("");
 
@@ -390,7 +373,7 @@ function App() {
         cancelEditingQuestion();
       }
 
-      alert("Question deleted successfully");
+      setNotice("Question deleted successfully");
     } catch (error) {
       setExamError(
         error.response?.data?.message ||
@@ -400,14 +383,6 @@ function App() {
   };
 
   const publishExam = async () => {
-    if (
-      !window.confirm(
-        "Publish this exam? It cannot be edited afterwards."
-      )
-    ) {
-      return;
-    }
-
     try {
       setExamError("");
 
@@ -422,7 +397,7 @@ function App() {
       setSelectedExam(response.data);
       await loadExams();
 
-      alert("Exam published successfully");
+      setNotice("Exam published successfully");
     } catch (error) {
       const message =
         error.response?.data?.errors?.join("\n") ||
@@ -430,32 +405,29 @@ function App() {
         "Could not publish exam";
 
       setExamError(message);
-      alert(message);
     }
   };
 
   if (authLoading) {
     return (
-      <div className="container">
-        <h1>Online Exam Portal</h1>
-        <p>Loading...</p>
-      </div>
+      <AppShell><Loading /></AppShell>
     );
   }
 
   if (!user) {
     return (
-      <div className="container">
-        <h1>Online Exam Portal</h1>
-        <p className="subtitle">Login</p>
+      <AppShell>
+        <p className="eyebrow">WELCOME BACK</p><h2>Your next step starts here.</h2>
+        <p className="subtitle">Sign in to access your workspace.</p>
 
-        <section>
+        <Panel>
           <h2>Sign In</h2>
 
           <form onSubmit={login}>
-            <label>Email</label>
-            <input
+            <label htmlFor="login-email">Email</label>
+            <Input
               type="email"
+              id="login-email" autoComplete="username"
               required
               placeholder="Email"
               value={loginForm.email}
@@ -467,9 +439,10 @@ function App() {
               }
             />
 
-            <label>Password</label>
-            <input
+            <label htmlFor="login-password">Password</label>
+            <Input
               type="password"
+              id="login-password" autoComplete="current-password"
               required
               placeholder="Password"
               value={loginForm.password}
@@ -481,18 +454,14 @@ function App() {
               }
             />
 
-            {loginError && (
-              <p className="error">
-                {loginError}
-              </p>
-            )}
+            <Feedback error>{loginError}</Feedback>
 
-            <button type="submit">
+            <Button type="submit">
               Login
-            </button>
+            </Button>
           </form>
-        </section>
-      </div>
+        </Panel>
+      </AppShell>
     );
   }
 
@@ -501,29 +470,17 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <h1>Online Exam Portal</h1>
-
-      <p className="subtitle">
-        Instructor - Exam & Question Management
-      </p>
-
-      <section>
-        <p>
-          Signed in as <strong>{user.name}</strong>{" "}
-          ({user.email})
-        </p>
-
-        <button onClick={logout}>
-          Logout
-        </button>
-      </section>
-
-      <section>
+    <AppShell user={user} logout={logout}>
+      <Feedback>{notice}</Feedback>
+      {confirmation && <ConfirmDialog title={confirmation.title} busy={confirmBusy} cancelLabel="Cancel" confirmLabel={confirmation.label || 'Delete'}
+        onCancel={() => setConfirmation(null)} onConfirm={async () => { setConfirmBusy(true); try { await confirmation.action(); setConfirmation(null); } finally { setConfirmBusy(false); } }}>
+        <p>{confirmation.message || 'This removes the selected draft content. Published examinations remain protected.'}</p>
+      </ConfirmDialog>}
+      <Panel id="create-exam">
         <h2>Create Exam</h2>
 
         <form onSubmit={createExam}>
-          <input
+          <Input
             required
             placeholder="Exam title"
             value={examForm.title}
@@ -535,7 +492,7 @@ function App() {
             }
           />
 
-          <textarea
+          <Textarea
             placeholder="Description"
             value={examForm.description}
             onChange={(e) =>
@@ -548,7 +505,7 @@ function App() {
 
           <label htmlFor="create-start">Start time (optional) — {browserTimeZone}</label>
 
-          <input
+          <Input
             type="datetime-local"
             id="create-start"
             value={examForm.startTime}
@@ -560,11 +517,12 @@ function App() {
             }
           />
 
-          <label>Duration (minutes)</label>
+          <label htmlFor="create-duration">Duration (minutes)</label>
 
-          <input
+          <Input
             required
             type="number"
+            id="create-duration"
             min="0"
             step="any"
             value={examForm.duration}
@@ -576,22 +534,18 @@ function App() {
             }
           />
 
-          <button type="submit">
+          <Button type="submit">
             Create Exam
-          </button>
+          </Button>
         </form>
-      </section>
+      </Panel>
 
-      <section>
+      <Panel id="my-exams">
         <h2>My Exams</h2>
 
-        {examsLoading && <p>Loading exams...</p>}
+        {examsLoading && <Loading>Loading exams...</Loading>}
 
-        {examError && (
-          <p className="error">
-            {examError}
-          </p>
-        )}
+        {examError && <><Feedback error>{examError}</Feedback><Button onClick={loadExams}>Refresh exams</Button></>}
 
         {!examsLoading &&
           !examError &&
@@ -606,9 +560,7 @@ function App() {
           >
             <div>
               <strong>{exam.title}</strong>{" "}
-              <span className="status">
-                {exam.status}
-              </span>
+              <StatusBadge>{exam.status}</StatusBadge>
 
               <p>
                 Duration: {exam.duration} minutes
@@ -621,32 +573,32 @@ function App() {
             </div>
 
             <div className="actions">
-              <button
+              <Button
                 onClick={() =>
                   selectExam(exam._id)
                 }
               >
                 Open
-              </button>
+              </Button>
 
               {exam.status === "Draft" && (
-                <button
+                <Button
                   className="danger"
                   onClick={() =>
-                    deleteExam(exam._id)
+                    setConfirmation({ title: 'Delete draft exam?', action: () => deleteExam(exam._id) })
                   }
                 >
                   Delete
-                </button>
+                </Button>
               )}
             </div>
           </div>
         ))}
-      </section>
+      </Panel>
 
       {selectedExam && (
-        <section>
-          <h2>Manage Exam</h2>
+        <Panel>
+          <h2 id="manage-exam">Manage Exam</h2>
 
           <p>
             Status:{" "}
@@ -654,15 +606,11 @@ function App() {
               {selectedExam.status}
             </strong>
           </p>
-          {examError && (
-            <p className="error">
-              {examError}
-            </p>
-          )}
+
 
           {selectedExam.status === "Draft" && (
             <>
-              <input
+              <Input
                 aria-label="Edit exam title"
                 value={selectedExam.title}
                 onChange={(e) =>
@@ -673,7 +621,7 @@ function App() {
                 }
               />
 
-              <textarea
+              <Textarea
                 value={
                   selectedExam.description || ""
                 }
@@ -687,7 +635,7 @@ function App() {
 
               <label htmlFor="edit-start">Start time (optional) — {browserTimeZone}</label>
 
-              <input
+              <Input
                 type="datetime-local"
                 id="edit-start"
                 value={toLocalInput(selectedExam.startTime)}
@@ -699,10 +647,11 @@ function App() {
                 }
               />
 
-              <label>Duration (minutes)</label>
+              <label htmlFor="edit-duration">Duration (minutes)</label>
 
-              <input
+              <Input
                 type="number"
+                id="edit-duration"
                 min="0"
                 step="any"
                 value={selectedExam.duration}
@@ -714,9 +663,9 @@ function App() {
                 }
               />
 
-              <button onClick={updateExam}>
+              <Button onClick={updateExam}>
                 Save Exam Changes
-              </button>
+              </Button>
 
               <hr />
 
@@ -727,7 +676,7 @@ function App() {
               </h3>
 
               <form onSubmit={saveQuestion}>
-                <input
+                <Input
                   placeholder="Question"
                   value={
                     questionForm.questionText
@@ -747,7 +696,7 @@ function App() {
                       className="option-row"
                       key={index}
                     >
-                      <input
+                      <Input
                         type="radio"
                         name="correctOption"
                         aria-label={`Correct option ${index + 1}`}
@@ -764,7 +713,7 @@ function App() {
                         }
                       />
 
-                      <input
+                      <Input
                         placeholder={`Option ${
                           index + 1
                         }`}
@@ -783,25 +732,26 @@ function App() {
                           });
                         }}
                       />
-                      <button type="button" aria-label={`Remove option ${index + 1}`} onClick={() => {
+                      <Button type="button" aria-label={`Remove option ${index + 1}`} onClick={() => {
                         setQuestionForm(current => ({ ...current,
                           options: current.options.filter((_, position) => position !== index),
                           correctOption: current.correctOption === index ? null :
                             current.correctOption !== null && current.correctOption > index ? current.correctOption - 1 : current.correctOption,
                         }));
-                      }}>Remove option</button>
+                      }}>Remove option</Button>
                     </div>
                   )
                 )}
 
-                <button type="button" onClick={() => setQuestionForm(current => ({ ...current, options: [...current.options, ''] }))}>Add option</button>
-                <button type="button" onClick={() => setQuestionForm(current => ({ ...current, correctOption: null }))}>Clear correct answer</button>
+                <Button type="button" onClick={() => setQuestionForm(current => ({ ...current, options: [...current.options, ''] }))}>Add option</Button>
+                <Button type="button" onClick={() => setQuestionForm(current => ({ ...current, correctOption: null }))}>Clear correct answer</Button>
                 <p>Drafts may be incomplete. Publication requires at least two nonblank options and exactly one correct answer.</p>
 
-                <label>Marks</label>
+                <label htmlFor="question-marks">Marks</label>
 
-                <input
+                <Input
                   type="number"
+                  id="question-marks"
                   min="1"
                   value={questionForm.marks}
                   onChange={(e) =>
@@ -812,26 +762,27 @@ function App() {
                   }
                 />
 
-                <button type="submit">
+                <Button type="submit">
                   {editingQuestionId
                     ? "Save Question Changes"
                     : "Add Question"}
-                </button>
+                </Button>
 
                 {editingQuestionId && (
-                  <button
+                  <Button
                     type="button"
                     onClick={
                       cancelEditingQuestion
                     }
                   >
                     Cancel Edit
-                  </button>
+                  </Button>
                 )}
               </form>
             </>
           )}
 
+          {selectedExam.status === 'Published' && <ResultsPanel endpoint={`${EXAM_API}/${selectedExam._id}/results`} instructor />}
           <h3>Questions</h3>
 
           {selectedExam.questions.length ===
@@ -872,7 +823,7 @@ function App() {
                 {selectedExam.status ===
                   "Draft" && (
                   <div className="actions">
-                    <button
+                    <Button
                       onClick={() =>
                         startEditingQuestion(
                           question
@@ -880,18 +831,16 @@ function App() {
                       }
                     >
                       Edit Question
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                       className="danger"
                       onClick={() =>
-                        deleteQuestion(
-                          question._id
-                        )
+                        setConfirmation({ title: 'Delete question?', action: () => deleteQuestion(question._id) })
                       }
                     >
                       Delete Question
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -900,16 +849,16 @@ function App() {
 
           {selectedExam.status ===
             "Draft" && (
-            <button
+            <Button
               className="publish"
-              onClick={publishExam}
+              onClick={() => setConfirmation({ title: 'Publish examination?', label: 'Confirm publication', message: 'Published questions and answer keys cannot be changed. Students will be able to start when eligible.', action: publishExam })}
             >
               Publish Exam
-            </button>
+            </Button>
           )}
-        </section>
+        </Panel>
       )}
-    </div>
+    </AppShell>
   );
 }
 

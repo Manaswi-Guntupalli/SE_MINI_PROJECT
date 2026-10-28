@@ -30,3 +30,6 @@ The production server starts a nonoverlapping expiry worker on database connecti
 OEP-39 handoff is evaluateAttempt in submissionService: it reads only finalized responses and awards one point per correct MCQ through persistResult. Evaluation failure is isolated from finalization and remains Pending for server retry. No answers reopen. Existing protected Student/Instructor result reads remain in place.
 
 #47 verification: full backend 83/83; full frontend 27/27 including React-to-HTTP-to-MongoDB save/reload/submit; frontend lint and both builds passed.
+
+## #65 / shared UI integration
+The six branches are stacked in order: feature/OEP-29-available-exams, feature/OEP-30-start-exam, feature/OEP-31-answer-navigation, feature/OEP-37-exam-timer, feature/OEP-38-submit-exam, feature/issue-65-shared-portal-ui. Only the last branch has a PR, targeting develop per repository workflow. The stack starts from existing integration/sprint-1-review commit d3062a7; that prerequisite history is also included until separately integrated into develop. #53 is excluded. See [shared design system and walkthrough](UI_DESIGN_SYSTEM.md) for UI evidence and the pending visual review.

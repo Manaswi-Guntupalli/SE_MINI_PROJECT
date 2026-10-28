@@ -62,6 +62,7 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   fireEvent.click(screen.getByRole('button', { name: 'Add Question' }));
   await screen.findByText('1. Which answer is correct?');
   fireEvent.click(screen.getByRole('button', { name: 'Publish Exam' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Confirm publication' }));
   await waitFor(() => expect(screen.queryByRole('button', { name: 'Publish Exam' })).toBeNull());
   const stored = await Exam.findOne({ title: 'System revised quiz' });
   expect(stored.status).toBe('Published');
@@ -89,6 +90,13 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   const submitted = await Attempt.findOne({ examId: stored._id });
   expect(submitted.status).toBe('Submitted');
   expect(submitted.evaluationStatus).toBe('Evaluated');
+  fireEvent.click(screen.getByRole('button', { name: 'Refresh results' }));
+  await screen.findByText('1 / 1');
+  fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
+  await signIn('instructor');
+  fireEvent.click(await screen.findByRole('button', { name: 'Open' }));
+  await screen.findByRole('heading', { name: 'Exam results' });
+  await screen.findByText('1 / 1');
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
   await signIn('admin');
   await screen.findByRole('heading', { name: 'Accounts' });

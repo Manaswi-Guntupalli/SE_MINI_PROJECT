@@ -1,9 +1,10 @@
+import { Button, Input, Panel, Feedback, ConfirmDialog } from './ui';
 import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { synchronizeClock, remainingTime, formatRemaining } from './examClock';
 import { browserTimeZone, displayTime } from './dateTime';
 
-export default function ExamAttempt({ data, api, csrfToken }) {
+export default function ExamAttempt({ data, api, csrfToken, onSubmitted }) {
   const busy = useRef(false);
   const [saving, setSaving] = useState(false);
   const [clock, setClock] = useState(() => synchronizeClock(data.attempt.deadline, data.serverTime));
@@ -24,6 +25,7 @@ export default function ExamAttempt({ data, api, csrfToken }) {
       setStatus(result.data.attempt.status);
       setEvaluationStatus(result.data.attempt.evaluationStatus);
       setConfirming(false);
+      onSubmitted?.();
     } catch (error) { setSubmitError(error.response?.data?.message || 'Submission failed. Retry; saved answers remain on the server.'); }
     finally { setSubmitting(false); }
   }
@@ -65,7 +67,7 @@ export default function ExamAttempt({ data, api, csrfToken }) {
     busy.current = true;
     setSaving(true);
     setFailed(null);
-    setMessage('Saving answer?');
+    setMessage('Saving answer...');
     try {
       const result = await axios.put(`${api}/student/attempts/${data.attempt._id}/responses/${questionId}`,
         { selectedOptionId, expectedRevision: answers[questionId]?.revision || 0 },
@@ -77,39 +79,37 @@ export default function ExamAttempt({ data, api, csrfToken }) {
       setMessage(error.response?.data?.message || 'Answer was not saved. Retry while time remains.');
     } finally { busy.current = false; setSaving(false); }
   }
-  return <section aria-label="Examination">
+  return <Panel id="examination" aria-label="Examination">
     <h2>{status === 'Submitted' ? 'Exam submitted' : 'Exam started'}</h2>
     <p role="timer" aria-label="Time remaining">Time remaining: {formatRemaining(remaining)}</p>
-    {timerError && <p role="alert">{timerError}</p>}
+    <Feedback error>{timerError}</Feedback>
     {remaining === 0 && status !== 'Submitted' && <p role="status">Time expired. Answer editing is locked; awaiting server finalization.</p>}
     <p>Deadline: {displayTime(data.attempt.deadline)} ({browserTimeZone})</p>
     <p>{Object.keys(answers).length} of {data.questions.length} answers saved</p>
     {status === 'Submitted' && <p role="status">{evaluationStatus === 'Evaluated' ? 'Evaluation complete. Your result is available.' : 'Submitted. Evaluation pending; the server will retry automatically.'}</p>}
-    {submitError && <p role="alert">{submitError}</p>}
-    {submitError && remaining === 0 && status !== 'Submitted' && <button disabled={submitting} onClick={() => submit('Timeout')}>Retry submission</button>}
-    {message && <p role={failed ? 'alert' : 'status'}>{message}</p>}
-    {failed && active && <button disabled={saving} onClick={() => save(failed.questionId, failed.selectedOptionId)}>Retry answer save</button>}
+    <Feedback error>{submitError}</Feedback>
+    {submitError && remaining === 0 && status !== 'Submitted' && <Button disabled={submitting} onClick={() => submit('Timeout')}>Retry submission</Button>}
+    <Feedback error={!!failed}>{message}</Feedback>
+    {failed && active && <Button disabled={saving} onClick={() => save(failed.questionId, failed.selectedOptionId)}>Retry answer save</Button>}
     {question && <fieldset disabled={!active || saving}>
       <legend>Question {index + 1} of {data.questions.length}: {question.questionText}</legend>
       {question.options.map(option => <label className="answer-option" key={option._id}>
-        <input type="radio" name={`answer-${question._id}`} checked={answers[question._id]?.selectedOptionId === option._id}
+        <Input type="radio" name={`answer-${question._id}`} checked={answers[question._id]?.selectedOptionId === option._id}
           onChange={() => save(question._id, option._id)} />{option.text}
       </label>)}
     </fieldset>}
     <nav aria-label="Question navigation">
-      <button disabled={index === 0} onClick={() => setIndex(value => value - 1)}>Previous question</button>
-      <button disabled={index >= data.questions.length - 1} onClick={() => setIndex(value => value + 1)}>Next question</button>
-      {data.questions.map((item, position) => <button key={item._id} aria-current={index === position ? 'step' : undefined}
-        onClick={() => setIndex(position)} aria-label={`Question ${position + 1}, ${answers[item._id] ? 'answered' : 'unanswered'}`}>{position + 1}</button>)}
+      <Button disabled={index === 0} onClick={() => setIndex(value => value - 1)}>Previous question</Button>
+      <Button disabled={index >= data.questions.length - 1} onClick={() => setIndex(value => value + 1)}>Next question</Button>
+      {data.questions.map((item, position) => <Button key={item._id} aria-current={index === position ? 'step' : undefined}
+        onClick={() => setIndex(position)} aria-label={`Question ${position + 1}, ${answers[item._id] ? 'answered' : 'unanswered'}`}>{position + 1}</Button>)}
     </nav>
-    {status !== 'Submitted' && remaining > 0 && <button disabled={saving || submitting} onClick={() => setConfirming(true)}>Submit examination</button>}
-    {confirming && <div role="dialog" aria-modal="true" aria-labelledby="submit-heading">
-      <h3 id="submit-heading">Submit examination?</h3>
+    {status !== 'Submitted' && remaining > 0 && <Button disabled={saving || submitting} onClick={() => setConfirming(true)}>Submit examination</Button>}
+    {confirming && <ConfirmDialog title="Submit examination?" busy={saving || submitting}
+      onCancel={() => setConfirming(false)} onConfirm={() => submit(remainingTime(clock) > 0 ? 'Manual' : 'Timeout')} confirmLabel="Confirm submission">
       <p>{Object.keys(answers).length} answers saved. {data.questions.length - Object.keys(answers).length} unanswered.</p>
       <p>Only successfully saved responses will be submitted. This action ends your attempt.</p>
-      {failed && <p role="alert">An answer failed to save. Cancel to retry it while time remains.</p>}
-      <button autoFocus disabled={submitting} onClick={() => setConfirming(false)}>Cancel submission</button>
-      <button disabled={saving || submitting} onClick={() => submit(remainingTime(clock) > 0 ? 'Manual' : 'Timeout')}>Confirm submission</button>
-    </div>}
-  </section>;
+      {failed && <Feedback error>An answer failed to save. Cancel to retry it while time remains.</Feedback>}
+    </ConfirmDialog>}
+  </Panel>;
 }

@@ -12,6 +12,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react'
 import axios from 'axios'
 import App from './App'
@@ -361,7 +362,6 @@ describe(
     })
 
     it('UI-EXAM-06: cancels deletion without sending a destructive request', async () => {
-      window.confirm.mockReturnValue(false)
 
       await renderInstructor([exam()])
 
@@ -371,9 +371,8 @@ describe(
         })
       )
 
-      expect(
-        window.confirm
-      ).toHaveBeenCalledOnce()
+      fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Cancel' }))
+      expect(screen.queryByRole('dialog')).toBeNull()
 
       expect(
         axios.delete
@@ -393,6 +392,7 @@ describe(
         })
       )
 
+      fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Delete' }))
       await waitFor(() =>
         expect(axios.delete).toHaveBeenCalledWith(
           expect.stringMatching(
@@ -567,6 +567,7 @@ describe(
         })
       )
 
+      fireEvent.click(screen.getByRole('button', { name: 'Confirm publication' }))
       await waitFor(() =>
         expect(axios.post).toHaveBeenCalledWith(
           expect.stringMatching(

@@ -18,7 +18,7 @@ describe('Supporting role boundaries', () => {
     expect(screen.queryByText('Accounts')).toBeNull();
   });
   it('Student sees an explicit empty state and start errors', async () => {
-    axios.get.mockResolvedValueOnce({ data: [] });
+    axios.get.mockResolvedValue({ data: [] });
     const { unmount } = render(<RoleDashboard {...props} user={{ role: 'Student' }} />);
     expect(await screen.findByText('No exams available yet.')).toBeTruthy();
     unmount();
