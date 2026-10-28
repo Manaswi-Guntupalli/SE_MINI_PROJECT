@@ -181,7 +181,15 @@ describe('Acceptance criteria #21 #23 #24 #33–#37', () => {
     expect((await other.agent.get(`/api/student/attempts/${attempt.id}`)).status).toBe(404);
     expect((await other.agent.get(`/api/student/results/${result.id}`)).status).toBe(404);
     expect((await other.agent.get('/api/student/results')).body).toEqual([]);
-    expect((await instructor.agent.get(`/api/exams/${published.id}/results`)).body[0]._id).toBe(result.id);
+    const instructorResults = await instructor.agent.get(`/api/exams/${published.id}/results`);
+    expect(instructorResults.body[0]._id).toBe(result.id);
+    expect(instructorResults.body[0].studentId).toBe(users.Student.id);
+    expect(instructorResults.body[0].student).toEqual({ name: users.Student.name, email: users.Student.email });
+    expect(JSON.stringify(instructorResults.body)).not.toMatch(/passwordHash|isCorrect/);
+    const foreignInstructor = await login(users.otherInstructor);
+    expect((await foreignInstructor.agent.get(`/api/exams/${published.id}/results`)).status).toBe(403);
+    expect((await student.agent.get(`/api/exams/${published.id}/results`)).status).toBe(403);
+    expect((await student.agent.get('/api/student/results')).body[0].student).toBeUndefined();
     expect((await admin.agent.get('/api/student/exams')).status).toBe(403);
     expect((await instructor.agent.get('/api/admin/users')).status).toBe(403);
     expect((await student.agent.get('/api/admin/users')).status).toBe(403);
