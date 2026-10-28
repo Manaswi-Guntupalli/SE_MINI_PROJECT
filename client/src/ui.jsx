@@ -30,8 +30,8 @@ export function AppShell({ user, logout, children, navigationLinks, onNavigate }
     : user?.role === 'Student' ? [['available-exams', 'Exams'], ['examination', 'Current attempt'], ['results', 'Results']] : []);
   return <>
     <a className="skip-link" href="#main-content">Skip to content</a>
-    <header className="app-header"><div className="brand"><span className="brand-mark" aria-hidden="true">O</span>
-      <div><h1>Online Exam Portal</h1><p>{user ? `${user.role} workspace` : 'Learn. Prepare. Achieve.'}</p></div></div>
+    <header className="app-header"><div className="brand">
+      <div><h1>Online Exam Portal</h1><p>{user ? `${user.role} workspace` : 'Examinations and results'}</p></div></div>
       {user && <div className="account-summary"><span><strong>{user.name}</strong><small>{user.email}</small></span><Button disabled={loggingOut} onClick={signOut}>Logout</Button></div>}
     </header>
     {user && <nav className="app-nav" aria-label={`${user.role} navigation`}>{links.map(([id, label]) => <a key={id} href={`#${id}`} onClick={onNavigate ? event => { event.preventDefault(); onNavigate(id); } : undefined}>{label}</a>)}</nav>}

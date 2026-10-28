@@ -451,9 +451,6 @@ function App() {
   if (!user) {
     return (
       <AppShell>
-        <p className="eyebrow">WELCOME BACK</p><h2>Your next step starts here.</h2>
-        <p className="subtitle">Sign in to access your workspace.</p>
-
         <Panel>
           <h2>Sign In</h2>
 
