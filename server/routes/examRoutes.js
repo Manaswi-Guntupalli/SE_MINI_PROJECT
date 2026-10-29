@@ -34,13 +34,21 @@ router.get("/mine", getInstructorExams);
 
 router.get('/:id/results', async (req, res) => {
   try {
+    const mongoose = require('mongoose');
     const Exam = require('../models/Exam');
     const Result = require('../models/Result');
+    const Attempt = require('../models/Attempt');
+    if (!mongoose.isObjectIdOrHexString(req.params.id)) return res.status(400).json({ message: 'Invalid exam identifier' });
     const exam = await Exam.findById(req.params.id);
     if (!exam) return res.status(404).json({ message: 'Exam not found' });
     if (String(exam.instructorId) !== String(req.user._id)) return res.status(403).json({ message: 'Access denied' });
-    res.json(await Result.find({ examId: exam._id }));
-  } catch { res.status(400).json({ message: 'Could not load exam results' }); }
+    const [results, pending] = await Promise.all([
+      Result.find({ examId: exam._id }).populate('studentId', 'name email').sort({ createdAt: -1 }).lean(),
+      Attempt.find({ examId: exam._id, status: 'Submitted', evaluationStatus: 'Pending' })
+        .populate('studentId', 'name email').sort({ submittedAt: -1 }).lean(),
+    ]);
+    return res.json({ results, pending });
+  } catch { return res.status(500).json({ message: 'Could not load exam results' }); }
 });
 
 // Create draft exam
