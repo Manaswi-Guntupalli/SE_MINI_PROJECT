@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { browserTimeZone, displayTime } from './dateTime';
 
@@ -11,6 +11,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   const [results, setResults] = useState([]);
   const [resultMessage, setResultMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const autoSubmitRequested = useRef(null);
   const [account, setAccount] = useState({ name: '', email: '', password: '', role: 'Student' });
   const endpoint = user.role === 'Admin' ? `${api}/admin/users` : `${api}/student/exams`;
   const config = { headers: { 'X-CSRF-Token': csrfToken } };
@@ -64,8 +65,19 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   useEffect(() => {
     if (!attempt?.attempt?._id || !attempt?.attempt?.deadline || attempt.attempt.status !== 'Active') return undefined;
     const delay = new Date(attempt.attempt.deadline).getTime() - Date.now();
-    if (delay <= 0) { submitAttempt(); return undefined; }
-    const timer = setTimeout(() => submitAttempt(), delay + 100);
+    if (delay <= 0) {
+      if (autoSubmitRequested.current !== attempt.attempt._id) {
+        autoSubmitRequested.current = attempt.attempt._id;
+        void submitAttempt();
+      }
+      return undefined;
+    }
+    const timer = setTimeout(() => {
+      if (autoSubmitRequested.current !== attempt.attempt._id) {
+        autoSubmitRequested.current = attempt.attempt._id;
+        void submitAttempt();
+      }
+    }, delay + 100);
     return () => clearTimeout(timer);
   }, [attempt?.attempt?._id, attempt?.attempt?.deadline, submitting]);
 
