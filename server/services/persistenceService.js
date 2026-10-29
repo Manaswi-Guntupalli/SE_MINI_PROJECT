@@ -47,8 +47,8 @@ async function saveResponse({ attemptId, studentId, questionId, selectedOptionId
     const exam = await Exam.findOne({ _id: attempt.examId, status: 'Published' }).session(session);
     if (!exam) throw new Error('Published exam not found');
     const question = exam.questions.id(questionId);
-    if (!question) throw new Error('Question does not belong to this exam');
-    if (!question.options.id(selectedOptionId)) throw new Error('Option does not belong to this question');
+    if (!question) throw Object.assign(new Error('Question does not belong to this exam'), { status: 400 });
+    if (!question.options.id(selectedOptionId)) throw Object.assign(new Error('Option does not belong to this question'), { status: 400 });
     const response = await Response.findOneAndUpdate(
       { attemptId: attempt._id, questionId: question._id }, { $set: { selectedOptionId } },
       { upsert: true, new: true, runValidators: true, session },

@@ -1,0 +1,11 @@
+
+Running 2 tests using 1 worker
+
+  ✓  1 e2e\release1.spec.mjs:16:1 › OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin (12.7s)
+  ✓  2 e2e\release1.spec.mjs:85:1 › OEP44-ST-02: closing the browser does not stop server timeout evaluation (4.9s)
+
+  2 passed (45.7s)
+[WebServer] (node:6276) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+(node:35360) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

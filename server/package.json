@@ -12,7 +12,9 @@
     "seed": "node scripts/seedUsers.js",
     "test": "vitest run",
     "test:ci": "vitest run --coverage",
-    "test:security": "jest tests/security.test.js --runInBand",    "build": "node ../scripts/check-server-syntax.mjs",
+    "test:security": "vitest run test/acceptance.test.mjs test/results-workflow.test.mjs",
+    "test:scoring": "node --test tests/evaluationService.test.js",
+    "build": "node ../scripts/check-server-syntax.mjs",
     "audit:sprint1": "node ../scripts/audit-sprint1.mjs"
   },
   "dependencies": {

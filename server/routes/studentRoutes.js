@@ -37,7 +37,7 @@ router.post('/attempts/:id/responses', validId, requireCsrf, async (req, res) =>
     }
     const response = await saveResponse({ attemptId: req.params.id, studentId: req.user._id, questionId, selectedOptionId });
     return res.json({ response });
-  } catch (error) { return res.status(error.status || 400).json({ message: error.message || 'Could not save answer' }); }
+  } catch (error) { return res.status(error.status || 500).json({ message: error.status ? error.message : 'Could not save answer. Please retry.' }); }
 });
 router.post('/attempts/:id/submit', validId, requireCsrf, async (req, res) => {
   try {

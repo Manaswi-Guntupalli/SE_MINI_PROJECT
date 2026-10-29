@@ -1,5 +1,11 @@
 # GitHub Actions application CI
 
+**2026-10-29 update:** the prototype counts and missing-feature notes below describe
+the historical Sprint 1 baseline. Current Release 1 functional/security suites,
+real-browser commands, measured coverage and execution evidence are recorded in
+[OEP-44](OEP44_TEST_REPORT.md) and the [OEP-19 executed RTM](OEP-19_Release1_RTM.md).
+Browser-suite CI wiring remains OEP-35; local passes are not hosted CI evidence.
+
 This contribution implements the repository work for [#42](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/42) and [#44](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/44). GitHub Actions is the sole CI provider and executes the committed scripts; no local CI server setup is required. The existing repository/documentation workflow remains separate. **Application CI verifies the implemented prototype, not full Release 1 acceptance**; the [acceptance review](SPRINT_1_ACCEPTANCE_REVIEW.md) records missing authentication and other defects.
 
 ## Recorded tools and reproducible commands
