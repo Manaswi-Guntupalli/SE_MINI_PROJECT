@@ -14,6 +14,7 @@ mongoose
     if (!topology.setName && topology.msg !== 'isdbgrid') throw Object.assign(new Error('Replica set required'), { code: 'OEP_REPLICA_REQUIRED' });
     await Promise.all(['User', 'Exam', 'Attempt', 'Response', 'Result'].map(name => require(`./models/${name}`).init()));
     const app = require('./app');
+    require('./services/evaluationWorker').startEvaluationWorker();
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });

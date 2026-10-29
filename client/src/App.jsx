@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "./App.css";
 import { browserTimeZone, toLocalInput, toUtc, displayTime } from './dateTime';
@@ -34,6 +34,7 @@ function App() {
   const [examResults, setExamResults] = useState(null);
   const [resultsLoading, setResultsLoading] = useState(false);
   const [resultsError, setResultsError] = useState("");
+  const resultsRequest = useRef(0);
   const [examsLoading, setExamsLoading] = useState(false);
   const [examError, setExamError] = useState("");
 
@@ -65,16 +66,19 @@ function App() {
   };
 
   const loadExamResults = async (examId) => {
+    const request = ++resultsRequest.current;
     try {
       setResultsLoading(true);
       setResultsError("");
+      setExamResults(null);
       const response = await axios.get(`${EXAM_API}/${examId}/results`);
-      setExamResults(response.data);
+      if (request === resultsRequest.current) setExamResults(response.data);
     } catch (error) {
+      if (request !== resultsRequest.current) return;
       setResultsError(error.response?.data?.message || "Could not load results");
       setExamResults(null);
     } finally {
-      setResultsLoading(false);
+      if (request === resultsRequest.current) setResultsLoading(false);
     }
   };
 
@@ -181,6 +185,10 @@ function App() {
     }
 
     setUser(null);
+    ++resultsRequest.current;
+    setExamResults(null);
+    setResultsError("");
+    setResultsLoading(false);
     setCsrfToken("");
     setExams([]);
     setSelectedExam(null);
@@ -226,6 +234,10 @@ function App() {
   };
 
   const selectExam = async (id) => {
+    ++resultsRequest.current;
+    setExamResults(null);
+    setResultsError("");
+    setResultsLoading(false);
     try {
       setExamError("");
 

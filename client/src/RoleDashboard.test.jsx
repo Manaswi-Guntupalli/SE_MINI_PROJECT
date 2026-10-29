@@ -6,6 +6,65 @@ vi.mock('axios', () => ({ default: { get: vi.fn(), post: vi.fn(), patch: vi.fn()
 afterEach(() => { cleanup(); vi.resetAllMocks(); });
 const props = { api: 'http://localhost:5000/api', csrfToken: 'csrf', logout: vi.fn() };
 
+describe('OEP-40 persisted result states', () => {
+  it('closes answer entry when submission persisted but scoring failed', async () => {
+    let submitted = false;
+    axios.get.mockImplementation(url => {
+      if (url.endsWith('/student/exams')) return Promise.resolve({ data: [{ _id: 'exam', title: 'Retry quiz', duration: 30 }] });
+      if (url.endsWith('/attempts/attempt')) return Promise.resolve({ data: { attempt: { status: 'Submitted' }, result: null } });
+      if (url.endsWith('/pending-results')) return Promise.resolve({ data: submitted ? [{ _id: 'attempt', examTitle: 'Retry quiz' }] : [] });
+      return Promise.resolve({ data: [] });
+    });
+    axios.post.mockImplementation(url => {
+      if (url.endsWith('/start')) return Promise.resolve({ data: { attempt: { _id: 'attempt', status: 'Active', deadline: new Date(Date.now() + 60000).toISOString() }, questions: [] } });
+      submitted = true;
+      return Promise.reject(new Error('evaluation unavailable'));
+    });
+    render(<RoleDashboard {...props} user={{ role: 'Student' }} />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Start or resume Retry quiz' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Submit examination' }));
+    await screen.findByText('Submission saved. Evaluation pending.');
+    expect(screen.queryByText('Exam started')).toBeNull();
+    await screen.findByText(/Your submitted answers are saved/);
+  });
+  it('shows results loading, pending evaluations and persisted scores after refresh/remount', async () => {
+    let finish;
+    let evaluated = false;
+    axios.get.mockImplementation(url => {
+      if (url.endsWith('/student/exams')) return Promise.resolve({ data: [] });
+      if (url.endsWith('/pending-results')) return Promise.resolve({ data: evaluated ? [] : [{ _id: 'attempt', examTitle: 'Pending quiz' }] });
+      if (!evaluated) return new Promise(resolve => { finish = resolve; });
+      return Promise.resolve({ data: [{ _id: 'result', examTitle: 'Pending quiz', score: 2, maximum: 3, status: 'Evaluated' }] });
+    });
+    const user = { role: 'Student', name: 'Student' };
+    const view = render(<RoleDashboard {...props} user={user} />);
+    expect(screen.getByText('Loading results...')).toBeTruthy();
+    expect(screen.queryByText('No evaluated results yet. Submitted results will appear here.')).toBeNull();
+    await waitFor(() => expect(finish).toBeTypeOf('function'));
+    finish({ data: [] });
+    await screen.findByText(/Evaluation pending/);
+    expect(screen.queryByText('No evaluated results yet. Submitted results will appear here.')).toBeNull();
+    evaluated = true;
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh results' }));
+    await screen.findByText('Score: 2 / 3');
+    expect(screen.queryByText(/Evaluation pending/)).toBeNull();
+    view.unmount();
+    render(<RoleDashboard {...props} user={user} />);
+    await screen.findByText('Score: 2 / 3');
+  });
+  it('shows a result API failure and recovers with explicit unavailable state on retry', async () => {
+    let failed = true;
+    axios.get.mockImplementation(url => url.endsWith('/student/results') && failed
+      ? Promise.reject(new Error('offline')) : Promise.resolve({ data: [] }));
+    render(<RoleDashboard {...props} user={{ role: 'Student' }} />);
+    await screen.findByText('Could not load results. Please retry.');
+    expect(screen.queryByText('No evaluated results yet. Submitted results will appear here.')).toBeNull();
+    failed = false;
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh results' }));
+    await screen.findByText('No evaluated results yet. Submitted results will appear here.');
+  });
+});
+
 describe('Supporting role boundaries', () => {
   it('Student sees eligibility list, starts/resumes and receives the persisted deadline', async () => {
     axios.get.mockResolvedValue({ data: [{ _id: 'exam', title: 'Available quiz', duration: 30, startTime: null }] });

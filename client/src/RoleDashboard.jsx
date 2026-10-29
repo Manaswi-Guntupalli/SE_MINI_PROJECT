@@ -9,6 +9,9 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   const [attempt, setAttempt] = useState(null);
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState([]);
+  const [pendingResults, setPendingResults] = useState([]);
+  const [resultsLoading, setResultsLoading] = useState(true);
+  const [resultsError, setResultsError] = useState('');
   const [resultMessage, setResultMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const autoSubmitRequested = useRef(null);
@@ -17,12 +20,18 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   const config = { headers: { 'X-CSRF-Token': csrfToken } };
 
   const loadResults = useCallback(async () => {
+    setResultsLoading(true);
+    setResultsError('');
     try {
-      const response = await axios.get(`${api}/student/results`);
+      const [response, pending] = await Promise.all([
+        axios.get(`${api}/student/results`), axios.get(`${api}/student/pending-results`),
+      ]);
       setResults(Array.isArray(response.data) ? response.data : []);
-      setResultMessage('');
+      setPendingResults(Array.isArray(pending?.data) ? pending.data : []);
     } catch (failure) {
-      setResultMessage(failure.response?.data?.message || 'Could not load results. Refresh to retry.');
+      setResultsError(failure.response?.data?.message || 'Could not load results. Please retry.');
+    } finally {
+      setResultsLoading(false);
     }
   }, [api]);
 
@@ -56,12 +65,23 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
     if (!attempt || submitting) return;
     setSubmitting(true);
     try {
-      const response = await axios.post(`${api}/student/attempts/${attempt.attempt._id}/submit`, {}, config);
+      const response = await axios.post(`${api}/student/attempts/${attempt.attempt._id}/submit`, {}, { headers: { 'X-CSRF-Token': csrfToken } });
       setResultMessage(`Evaluation complete: ${response.data.result.score} / ${response.data.result.maximum}`);
       setAttempt(null);
       await loadResults();
     } catch (failure) {
       setError(failure.response?.data?.message || 'Could not submit exam. Your saved answers are retained; retry submission.');
+      // Submission is durable even when scoring fails. Do not leave saved
+      // submitted answers editable while the server retries evaluation.
+      try {
+        const saved = await axios.get(`${api}/student/attempts/${attempt.attempt._id}`);
+        if (saved.data.attempt.status === 'Submitted') {
+          setAttempt(null);
+          setError('');
+          setResultMessage(saved.data.result ? 'Evaluation complete.' : 'Submission saved. Evaluation pending.');
+          await loadResults();
+        }
+      } catch { /* Keep the original error and allow a submission retry. */ }
     } finally {
       setSubmitting(false);
     }
@@ -70,7 +90,6 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   useEffect(() => {
     if (!attempt?.attempt?._id || !attempt?.attempt?.deadline || attempt.attempt.status !== 'Active') return undefined;
     // The deadline is server-authoritative; compare it with the browser clock to schedule timeout.
-    // eslint-disable-next-line react-hooks/purity
     const delay = new Date(attempt.attempt.deadline).getTime() - Date.now();
     if (delay <= 0) {
       if (autoSubmitRequested.current !== attempt.attempt._id) {
@@ -132,13 +151,21 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
     </section>
     {user.role === 'Student' && <section>
       <h2>My examination results</h2>
+      <button onClick={loadResults} disabled={resultsLoading}>Refresh results</button>
+      {resultsLoading && <p role="status">Loading results...</p>}
+      {resultsError && <p role="alert">{resultsError}</p>}
       {resultMessage && <p role="status">{resultMessage}</p>}
-      {results.length === 0 ? <p>No evaluated results yet. Submitted results will appear here.</p> : results.map(result =>
+      {!resultsLoading && !resultsError && results.length === 0 && pendingResults.length === 0 && <p>No evaluated results yet. Submitted results will appear here.</p>}
+      {!resultsLoading && !resultsError && results.map(result =>
         <div className="exam-card" key={result._id}>
           <strong>{result.examTitle}</strong>
           <p>Score: {result.score} / {result.maximum}</p>
           <p>Status: {result.status}</p>
         </div>)}
+      {!resultsLoading && !resultsError && pendingResults.map(item => <div className="exam-card" key={item._id}>
+        <strong>{item.examTitle}</strong>
+        <p>Evaluation pending. Your submitted answers are saved; refresh results shortly.</p>
+      </div>)}
     </section>}
     {user.role === 'Admin' && <section><h2>Create account</h2>
       <form onSubmit={createAccount}>

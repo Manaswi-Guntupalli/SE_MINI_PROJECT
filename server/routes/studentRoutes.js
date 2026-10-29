@@ -73,6 +73,16 @@ router.get('/results', async (req, res) => {
     return res.json(results.map(result => ({ ...result, examTitle: titles.get(String(result.examId)) || 'Examination' })));
   } catch { return res.status(500).json({ message: 'Could not load results' }); }
 });
+router.get('/pending-results', async (req, res) => {
+  try {
+    const attempts = await Attempt.find({ studentId: req.user._id, status: 'Submitted', evaluationStatus: 'Pending' })
+      .select('_id examId submittedAt evaluationStatus').populate('examId', 'title').sort({ submittedAt: -1 }).lean();
+    return res.json(attempts.map(attempt => ({
+      _id: attempt._id, examTitle: attempt.examId?.title || 'Examination',
+      submittedAt: attempt.submittedAt, status: 'Evaluation pending',
+    })));
+  } catch { return res.status(500).json({ message: 'Could not load pending results' }); }
+});
 router.get('/results/:id', validId, async (req, res) => {
   try {
     const result = await Result.findOne({ _id: req.params.id, studentId: req.user._id });

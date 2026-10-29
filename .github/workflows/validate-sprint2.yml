@@ -28,6 +28,9 @@ jobs:
       - name: Run server unit tests
         working-directory: server
         run: node --test tests/evaluationService.test.js
+      - name: Verify evaluation and result acceptance criteria against MongoDB
+        working-directory: server
+        run: npm test
 
   client:
     runs-on: ubuntu-latest

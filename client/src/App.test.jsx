@@ -169,6 +169,58 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
+describe('OEP-41 instructor result states', () => {
+  it('shows loading, pending identities, persisted scores, empty state and API errors', async () => {
+    await openExam(exam({ status: 'Published' }));
+    let finish;
+    axios.get.mockImplementation(() => new Promise(resolve => { finish = resolve; }));
+    fireEvent.click(screen.getByRole('button', { name: 'Load student results' }));
+    expect(screen.getByText('Loading results...')).toBeTruthy();
+    finish({ data: { results: [{ _id: 'r', studentId: { name: 'Alice', email: 'alice@test.invalid' }, score: 2, maximum: 3, status: 'Evaluated' }],
+      pending: [{ _id: 'a', studentId: { name: 'Bob', email: 'bob@test.invalid' }, submittedAt: new Date().toISOString() }] } });
+    await screen.findByText('Alice');
+    expect(screen.getByText('alice@test.invalid')).toBeTruthy();
+    expect(screen.getByText('Score: 2 / 3')).toBeTruthy();
+    expect(screen.getByText('Bob')).toBeTruthy();
+    expect(screen.getByText('Evaluation pending')).toBeTruthy();
+    axios.get.mockResolvedValue({ data: { results: [], pending: [] } });
+    fireEvent.click(screen.getByRole('button', { name: 'Load student results' }));
+    await screen.findByText('No evaluated results yet.');
+    expect(screen.getByText('No pending evaluations.')).toBeTruthy();
+    axios.get.mockRejectedValue(new Error('offline'));
+    fireEvent.click(screen.getByRole('button', { name: 'Load student results' }));
+    await screen.findByText('Could not load results');
+    expect(screen.queryByText('Alice')).toBeNull();
+  });
+
+  it('clears old exam results on switching and ignores a late result response', async () => {
+    const first = exam({ status: 'Published' }), second = exam({ _id: 'exam-2', title: 'Second quiz', status: 'Published', questions: [{ ...question(), questionText: 'Second exam question' }] });
+    mockAuthenticatedInstructor([first, second]);
+    const baseGet = axios.get.getMockImplementation();
+    let finish;
+    axios.get.mockImplementation(url => {
+      if (url.endsWith('/results')) return new Promise(resolve => { finish = resolve; });
+      if (url.endsWith('/exams/exam-1')) return Promise.resolve({ data: first });
+      if (url.endsWith('/exams/exam-2')) return Promise.resolve({ data: second });
+      return baseGet(url);
+    });
+    render(<App />);
+    await screen.findByText('Test Instructor');
+    fireEvent.click((await screen.findAllByRole('button', { name: 'Open' }))[0]);
+    fireEvent.click(await screen.findByRole('button', { name: 'Load student results' }));
+    const stale = { data: { results: [{ _id: 'old', studentId: { name: 'Old student' }, score: 1, maximum: 3 }], pending: [] } };
+    finish(stale);
+    await screen.findByText('Old student');
+    fireEvent.click(screen.getByRole('button', { name: 'Load student results' }));
+    const lateResponse = finish;
+    fireEvent.click(screen.getAllByRole('button', { name: 'Open' })[1]);
+    await screen.findByText('1. Second exam question');
+    lateResponse(stale);
+    await waitFor(() => expect(screen.queryByText('Loading results...')).toBeNull());
+    expect(screen.queryByText('Old student')).toBeNull();
+  });
+});
+
 describe(
   'Authenticated Instructor exam management',
   () => {
