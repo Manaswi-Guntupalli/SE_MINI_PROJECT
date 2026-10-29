@@ -64,6 +64,8 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
 
   useEffect(() => {
     if (!attempt?.attempt?._id || !attempt?.attempt?.deadline || attempt.attempt.status !== 'Active') return undefined;
+    // The deadline is server-authoritative; compare it with the browser clock to schedule timeout.
+    // eslint-disable-next-line react-hooks/purity
     const delay = new Date(attempt.attempt.deadline).getTime() - Date.now();
     if (delay <= 0) {
       if (autoSubmitRequested.current !== attempt.attempt._id) {
