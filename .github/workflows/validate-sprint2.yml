@@ -38,6 +38,9 @@ jobs:
           node-version: 24
           cache: npm
           cache-dependency-path: client/package-lock.json
+      - name: Install backend dependencies required by system tests
+        working-directory: server
+        run: npm ci
       - name: Install client dependencies
         working-directory: client
         run: npm ci
