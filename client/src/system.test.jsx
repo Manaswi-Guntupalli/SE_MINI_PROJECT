@@ -6,7 +6,7 @@ import { afterAll, beforeAll, expect, it, vi } from 'vitest';
 import { cleanup, configure, fireEvent, render, screen, waitFor } from '@testing-library/react';
 const require = createRequire(resolve(process.cwd(), '../server/package.json'));
 const { connectTestDatabase, closeTestDatabase } = require('./test/database.mjs');
-let listener, App, Exam, Attempt, User;
+let listener, App, Exam, Attempt, User, Response, Result;
 
 beforeAll(async () => {
   // Real bcrypt/network/database calls need more than the default 1s DOM wait on CI.
@@ -17,6 +17,8 @@ beforeAll(async () => {
   User = require('./models/User');
   Exam = require('./models/Exam');
   Attempt = require('./models/Attempt');
+  Response = require('./models/Response');
+  Result = require('./models/Result');
   const bcrypt = require('bcryptjs');
   await Promise.all([User.init(), Exam.init(), Attempt.init()]);
   const passwordHash = await bcrypt.hash('SystemTest123!', 12);
@@ -77,6 +79,29 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   expect(screen.getByRole('heading', { name: '1. Which answer is correct?' })).toBeTruthy();
   expect(screen.queryByText('Edit Question')).toBeNull();
   expect(await Attempt.countDocuments({ examId: stored._id })).toBe(1);
+
+  // OEP-39/40: persist a student's answer, submit, evaluate and display only that student's result.
+  fireEvent.click(screen.getByLabelText('Correct response'));
+  await waitFor(async () => expect(await Response.countDocuments({ attemptId: (await Attempt.findOne({ examId: stored._id }))._id })).toBe(1));
+  fireEvent.click(screen.getByRole('button', { name: 'Submit examination' }));
+  await screen.findByText('Evaluation complete: 1 / 1');
+  const savedResult = await Result.findOne({ examId: stored._id });
+  expect(savedResult).toBeTruthy();
+  expect(savedResult.score).toBe(1);
+  expect(savedResult.maximum).toBe(1);
+  expect(savedResult.status).toBe('Evaluated');
+  expect(await Attempt.countDocuments({ examId: stored._id, evaluationStatus: 'Evaluated' })).toBe(1);
+  expect(await Result.countDocuments({ attemptId: savedResult.attemptId })).toBe(1);
+
+  // OEP-41: the exam's instructor can retrieve and view its evaluated result.
+  fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
+  await signIn('instructor');
+  fireEvent.click(await screen.findByRole('button', { name: 'Open' }));
+  await screen.findByRole('heading', { name: 'Manage Exam' });
+  fireEvent.click(screen.getByRole('button', { name: 'Load student results' }));
+  await screen.findByText('System Student');
+  expect(screen.getByText('Score: 1 / 1')).toBeTruthy();
+
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
   await signIn('admin');
   await screen.findByRole('heading', { name: 'Accounts' });
