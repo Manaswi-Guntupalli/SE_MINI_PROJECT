@@ -31,6 +31,9 @@ function App() {
 
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState(null);
+  const [examResults, setExamResults] = useState(null);
+  const [resultsLoading, setResultsLoading] = useState(false);
+  const [resultsError, setResultsError] = useState("");
   const [examsLoading, setExamsLoading] = useState(false);
   const [examError, setExamError] = useState("");
 
@@ -59,6 +62,20 @@ function App() {
     setCsrfToken(response.data.csrfToken);
 
     return response.data.csrfToken;
+  };
+
+  const loadExamResults = async (examId) => {
+    try {
+      setResultsLoading(true);
+      setResultsError("");
+      const response = await axios.get(`${EXAM_API}/${examId}/results`);
+      setExamResults(response.data);
+    } catch (error) {
+      setResultsError(error.response?.data?.message || "Could not load results");
+      setExamResults(null);
+    } finally {
+      setResultsLoading(false);
+    }
   };
 
   const loadExams = async () => {
@@ -830,6 +847,37 @@ function App() {
                 )}
               </form>
             </>
+          )}
+
+          {selectedExam.status === "Published" && (
+            <section>
+              <h3>Examination Results</h3>
+              <button onClick={() => loadExamResults(selectedExam._id)}>Load student results</button>
+              {resultsLoading && <p>Loading results...</p>}
+              {resultsError && <p role="alert" className="error">{resultsError}</p>}
+              {examResults && (
+                <>
+                  <h4>Evaluated results</h4>
+                  {examResults.results.length === 0 ? <p>No evaluated results yet.</p> : examResults.results.map(result => (
+                    <div className="exam-card" key={result._id}>
+                      <strong>{result.studentId?.name || "Student"}</strong>
+                      <p>{result.studentId?.email || ""}</p>
+                      <p>Score: {result.score} / {result.maximum}</p>
+                      <p>Status: {result.status}</p>
+                    </div>
+                  ))}
+                  <h4>Submitted — evaluation pending</h4>
+                  {examResults.pending.length === 0 ? <p>No pending evaluations.</p> : examResults.pending.map(item => (
+                    <div className="exam-card" key={item._id}>
+                      <strong>{item.studentId?.name || "Student"}</strong>
+                      <p>{item.studentId?.email || ""}</p>
+                      <p>Submitted: {displayTime(item.submittedAt)}</p>
+                      <p>Evaluation pending</p>
+                    </div>
+                  ))}
+                </>
+              )}
+            </section>
           )}
 
           <h3>Questions</h3>

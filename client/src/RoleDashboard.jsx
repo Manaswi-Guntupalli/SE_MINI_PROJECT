@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { browserTimeZone, displayTime } from './dateTime';
 
@@ -7,25 +7,82 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [attempt, setAttempt] = useState(null);
+  const [answers, setAnswers] = useState({});
+  const [results, setResults] = useState([]);
+  const [resultMessage, setResultMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const autoSubmitRequested = useRef(null);
   const [account, setAccount] = useState({ name: '', email: '', password: '', role: 'Student' });
   const endpoint = user.role === 'Admin' ? `${api}/admin/users` : `${api}/student/exams`;
   const config = { headers: { 'X-CSRF-Token': csrfToken } };
+
+  async function loadResults() {
+    try {
+      const response = await axios.get(`${api}/student/results`);
+      setResults(response.data);
+      setResultMessage('');
+    } catch (failure) { setResultMessage(failure.response?.data?.message || 'Could not load results. Refresh to retry.'); }
+  }
 
   useEffect(() => {
     let current = true;
     axios.get(endpoint).then(response => { if (current) setItems(response.data); })
       .catch(() => { if (current) setError('Could not load dashboard. Refresh to retry.'); })
       .finally(() => { if (current) setLoading(false); });
+    if (user.role === 'Student') void Promise.resolve().then(() => loadResults());
     return () => { current = false; };
-  }, [endpoint]);
+  }, [endpoint, user.role]);
 
   async function start(id) {
     try {
       setError('');
       const response = await axios.post(`${api}/student/exams/${id}/start`, {}, config);
       setAttempt(response.data);
+      setAnswers(Object.fromEntries((response.data.responses || []).map(r => [String(r.questionId), String(r.selectedOptionId)])));
     } catch (failure) { setError(failure.response?.data?.message || 'Could not start exam'); }
   }
+
+  async function saveAnswer(questionId, selectedOptionId) {
+    setAnswers(previous => ({ ...previous, [questionId]: selectedOptionId }));
+    try {
+      await axios.post(`${api}/student/attempts/${attempt.attempt._id}/responses`, { questionId, selectedOptionId }, config);
+      setError('');
+    } catch (failure) { setError(failure.response?.data?.message || 'Could not save answer. Please retry.'); }
+  }
+
+  async function submitAttempt() {
+    if (!attempt || submitting) return;
+    setSubmitting(true);
+    try {
+      const response = await axios.post(`${api}/student/attempts/${attempt.attempt._id}/submit`, {}, config);
+      setResultMessage(`Evaluation complete: ${response.data.result.score} / ${response.data.result.maximum}`);
+      setAttempt(null);
+      await loadResults();
+    } catch (failure) { setError(failure.response?.data?.message || 'Could not submit exam. Your saved answers are retained; retry submission.'); }
+    finally { setSubmitting(false); }
+  }
+
+  useEffect(() => {
+    if (!attempt?.attempt?._id || !attempt?.attempt?.deadline || attempt.attempt.status !== 'Active') return undefined;
+    // The deadline is server-authoritative; compare it with the browser clock to schedule timeout.
+    // eslint-disable-next-line react-hooks/purity
+    const delay = new Date(attempt.attempt.deadline).getTime() - Date.now();
+    if (delay <= 0) {
+      if (autoSubmitRequested.current !== attempt.attempt._id) {
+        autoSubmitRequested.current = attempt.attempt._id;
+        void submitAttempt();
+      }
+      return undefined;
+    }
+    const timer = setTimeout(() => {
+      if (autoSubmitRequested.current !== attempt.attempt._id) {
+        autoSubmitRequested.current = attempt.attempt._id;
+        void submitAttempt();
+      }
+    }, delay + 100);
+    return () => clearTimeout(timer);
+  }, [attempt?.attempt?._id, attempt?.attempt?.deadline, submitting]);
+
   async function createAccount(event) {
     event.preventDefault();
     try {
@@ -42,6 +99,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
       setItems((await axios.get(endpoint)).data);
     } catch (failure) { setError(failure.response?.data?.message || 'Could not update account'); }
   }
+
   return <div className="container">
     <h1>Online Exam Portal</h1>
     <p>Welcome, {user.name}. Signed in as {user.role}.</p>
@@ -67,6 +125,16 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
         </>}
       </div>)}
     </section>
+    {user.role === 'Student' && <section>
+      <h2>My examination results</h2>
+      {resultMessage && <p role="status">{resultMessage}</p>}
+      {results.length === 0 ? <p>No evaluated results yet. Submitted results will appear here.</p> : results.map(result =>
+        <div className="exam-card" key={result._id}>
+          <strong>{result.examTitle}</strong>
+          <p>Score: {result.score} / {result.maximum}</p>
+          <p>Status: {result.status}</p>
+        </div>)}
+    </section>}
     {user.role === 'Admin' && <section><h2>Create account</h2>
       <form onSubmit={createAccount}>
         {['name', 'email', 'password'].map(field => <label key={field}>{field}
@@ -80,12 +148,18 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
         <button>Create account</button>
       </form>
     </section>}
-    {attempt && <section><h2>Exam started</h2>
+    {attempt && <section>
+      <h2>Exam started</h2>
       <p>Deadline: {displayTime(attempt.attempt.deadline)} ({browserTimeZone})</p>
-      <p>Starting again resumes this attempt and preserves its deadline.</p>
-      {attempt.questions.map(question => <div key={question._id}><h3>{question.questionText}</h3>
-        <ul>{question.options.map(option => <li key={option._id}>{option.text}</li>)}</ul>
+      {attempt.questions.map((question, index) => <div className="exam-card" key={question._id}>
+        <h3>{index + 1}. {question.questionText}</h3>
+        {question.options.map(option => <label key={option._id} style={{ display: 'block', margin: '8px 0' }}>
+          <input type="radio" name={question._id} checked={answers[String(question._id)] === String(option._id)}
+            onChange={() => saveAnswer(String(question._id), String(option._id))} />
+          {option.text}
+        </label>)}
       </div>)}
+      <button onClick={submitAttempt} disabled={submitting}>{submitting ? 'Submitting…' : 'Submit examination'}</button>
     </section>}
   </div>;
 }
