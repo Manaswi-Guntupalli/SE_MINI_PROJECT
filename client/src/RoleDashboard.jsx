@@ -62,7 +62,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   }
 
   useEffect(() => {
-    if (!attempt?.attempt?.deadline || attempt.attempt.status !== 'Active') return undefined;
+    if (!attempt?.attempt?._id || !attempt?.attempt?.deadline || attempt.attempt.status !== 'Active') return undefined;
     const delay = new Date(attempt.attempt.deadline).getTime() - Date.now();
     if (delay <= 0) { submitAttempt(); return undefined; }
     const timer = setTimeout(() => submitAttempt(), delay + 100);
@@ -135,7 +135,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
       </form>
     </section>}
     {attempt && <section>
-      <h2>Examination in progress</h2>
+      <h2>Exam started</h2>
       <p>Deadline: {displayTime(attempt.attempt.deadline)} ({browserTimeZone})</p>
       {attempt.questions.map((question, index) => <div className="exam-card" key={question._id}>
         <h3>{index + 1}. {question.questionText}</h3>
