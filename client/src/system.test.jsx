@@ -23,6 +23,7 @@ beforeAll(async () => {
   await Promise.all([User.init(), Exam.init(), Attempt.init()]);
   const passwordHash = await bcrypt.hash('SystemTest123!', 12);
   for (const role of ['Instructor', 'Student', 'Admin']) await User.create({ name: `System ${role}`, email: `${role.toLowerCase()}@system.invalid`, passwordHash, role });
+  await User.create({ name: 'Other Student', email: 'otherstudent@system.invalid', passwordHash, role: 'Student' });
   const app = require('./app');
   listener = await new Promise(resolve => {
     const server = app.listen(0, 'localhost', () => resolve(server));
@@ -101,6 +102,15 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   fireEvent.click(screen.getByRole('button', { name: 'Load student results' }));
   await screen.findByText('System Student');
   expect(screen.getByText('Score: 1 / 1')).toBeTruthy();
+
+  // OEP-40 security: a different student must not see the first student's result.
+  fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
+  fireEvent.change(await screen.findByPlaceholderText('Email'), { target: { value: 'otherstudent@system.invalid' } });
+  fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'SystemTest123!' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Login' }));
+  await screen.findByText('Other Student');
+  await screen.findByText('No evaluated results yet. Submitted results will appear here.');
+  expect(screen.queryByText('Score: 1 / 1')).toBeNull();
 
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
   await signIn('admin');
