@@ -29,7 +29,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
     axios.get(endpoint).then(response => { if (current) setItems(response.data); })
       .catch(() => { if (current) setError('Could not load dashboard. Refresh to retry.'); })
       .finally(() => { if (current) setLoading(false); });
-    if (user.role === 'Student') loadResults();
+    if (user.role === 'Student') void Promise.resolve().then(() => loadResults());
     return () => { current = false; };
   }, [endpoint, user.role]);
 
