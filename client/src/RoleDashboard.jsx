@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { browserTimeZone, displayTime } from './dateTime';
 
@@ -16,13 +16,15 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   const endpoint = user.role === 'Admin' ? `${api}/admin/users` : `${api}/student/exams`;
   const config = { headers: { 'X-CSRF-Token': csrfToken } };
 
-  async function loadResults() {
+  const loadResults = useCallback(async () => {
     try {
       const response = await axios.get(`${api}/student/results`);
-      setResults(response.data);
+      setResults(Array.isArray(response.data) ? response.data : []);
       setResultMessage('');
-    } catch (failure) { setResultMessage(failure.response?.data?.message || 'Could not load results. Refresh to retry.'); }
-  }
+    } catch (failure) {
+      setResultMessage(failure.response?.data?.message || 'Could not load results. Refresh to retry.');
+    }
+  }, [api]);
 
   useEffect(() => {
     let current = true;
@@ -31,7 +33,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
       .finally(() => { if (current) setLoading(false); });
     if (user.role === 'Student') void Promise.resolve().then(() => loadResults());
     return () => { current = false; };
-  }, [endpoint, user.role]);
+  }, [endpoint, user.role, loadResults]);
 
   async function start(id) {
     try {
@@ -50,7 +52,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
     } catch (failure) { setError(failure.response?.data?.message || 'Could not save answer. Please retry.'); }
   }
 
-  async function submitAttempt() {
+  const submitAttempt = useCallback(async () => {
     if (!attempt || submitting) return;
     setSubmitting(true);
     try {
@@ -58,9 +60,12 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
       setResultMessage(`Evaluation complete: ${response.data.result.score} / ${response.data.result.maximum}`);
       setAttempt(null);
       await loadResults();
-    } catch (failure) { setError(failure.response?.data?.message || 'Could not submit exam. Your saved answers are retained; retry submission.'); }
-    finally { setSubmitting(false); }
-  }
+    } catch (failure) {
+      setError(failure.response?.data?.message || 'Could not submit exam. Your saved answers are retained; retry submission.');
+    } finally {
+      setSubmitting(false);
+    }
+  }, [api, attempt, csrfToken, loadResults, submitting]);
 
   useEffect(() => {
     if (!attempt?.attempt?._id || !attempt?.attempt?.deadline || attempt.attempt.status !== 'Active') return undefined;
@@ -81,7 +86,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
       }
     }, delay + 100);
     return () => clearTimeout(timer);
-  }, [attempt?.attempt?._id, attempt?.attempt?.deadline, submitting]);
+  }, [attempt?.attempt?._id, attempt?.attempt?.deadline, attempt?.attempt?.status, submitAttempt]);
 
   async function createAccount(event) {
     event.preventDefault();
