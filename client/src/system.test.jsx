@@ -74,7 +74,7 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   await signIn('student');
   fireEvent.click(await screen.findByRole('button', { name: 'Start or resume System revised quiz' }));
   await screen.findByText('Exam started');
-  expect(screen.getByText('Which answer is correct?')).toBeTruthy();
+  expect(screen.getByRole('heading', { name: '1. Which answer is correct?' })).toBeTruthy();
   expect(screen.queryByText('Edit Question')).toBeNull();
   expect(await Attempt.countDocuments({ examId: stored._id })).toBe(1);
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
