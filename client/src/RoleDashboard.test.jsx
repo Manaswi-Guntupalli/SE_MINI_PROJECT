@@ -13,7 +13,7 @@ describe('Supporting role boundaries', () => {
     render(<RoleDashboard {...props} user={{ id: 's', name: 'Student', role: 'Student' }} />);
     fireEvent.click(await screen.findByRole('button', { name: 'Start or resume Available quiz' }));
     expect(await screen.findByText('Exam started')).toBeTruthy();
-    expect(screen.getByText('Question')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '1. Question' })).toBeTruthy();
     expect(axios.post).toHaveBeenCalledWith('http://localhost:5000/api/student/exams/exam/start', {}, { headers: { 'X-CSRF-Token': 'csrf' } });
     expect(screen.queryByText('Accounts')).toBeNull();
   });
