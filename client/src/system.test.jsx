@@ -108,7 +108,7 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   fireEvent.change(await screen.findByPlaceholderText('Email'), { target: { value: 'otherstudent@system.invalid' } });
   fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'SystemTest123!' } });
   fireEvent.click(screen.getByRole('button', { name: 'Login' }));
-  await screen.findByText('Other Student');
+  await screen.findByText(/Welcome, Other Student/);
   await screen.findByText('No evaluated results yet. Submitted results will appear here.');
   expect(screen.queryByText('Score: 1 / 1')).toBeNull();
 
