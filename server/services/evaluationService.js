@@ -4,6 +4,23 @@ const Response = require('../models/Response');
 const Result = require('../models/Result');
 const { persistResult, finalizeAttempt } = require('./persistenceService');
 
+function evaluateAnswers(questions, answers) {
+  if (!Array.isArray(questions) || !Array.isArray(answers)) throw new Error('Questions and answers must be arrays');
+  const answerMap = new Map();
+  for (const answer of answers) {
+    const questionId = String(answer.questionId);
+    if (answerMap.has(questionId)) throw new Error('Duplicate answer for question');
+    answerMap.set(questionId, String(answer.selectedOptionId));
+  }
+  let score = 0;
+  for (const question of questions) {
+    const correct = question.options.filter(option => option.isCorrect === true);
+    if (correct.length !== 1) throw new Error('Published answer key must contain exactly one correct option per question');
+    if (answerMap.get(String(question._id)) === String(correct[0]._id)) score += 1;
+  }
+  return { score, maximumScore: questions.length };
+}
+
 async function evaluateSubmittedAttempt({ attemptId, studentId }) {
   let attempt = await Attempt.findOne({ _id: attemptId, studentId });
   if (!attempt) throw Object.assign(new Error('Attempt not found'), { status: 404 });
@@ -17,20 +34,15 @@ async function evaluateSubmittedAttempt({ attemptId, studentId }) {
   const exam = await Exam.findOne({ _id: attempt.examId, status: 'Published' });
   if (!exam) throw Object.assign(new Error('Published exam not found'), { status: 409 });
   const responses = await Response.find({ attemptId: attempt._id }).select('questionId selectedOptionId');
-  const answers = new Map(responses.map(r => [String(r.questionId), String(r.selectedOptionId)]));
-  let score = 0;
-  for (const q of exam.questions) {
-    const correct = q.options.filter(o => o.isCorrect === true);
-    if (correct.length !== 1) throw Object.assign(new Error('Published answer key is invalid'), { status: 409 });
-    if (answers.get(String(q._id)) === String(correct[0]._id)) score += 1;
-  }
-  try { return await persistResult({ attemptId: attempt._id, score, maximum: exam.questions.length }); }
-  catch (error) {
-    if (error.code === 11000) {
+  const scored = evaluateAnswers(exam.questions, responses);
+  try {
+    return await persistResult({ attemptId: attempt._id, score: scored.score, maximum: scored.maximumScore });
+  } catch (error) {
+    if (error.code === 11000 || error.code === 112 || error.hasErrorLabel?.('TransientTransactionError')) {
       const result = await Result.findOne({ attemptId: attempt._id });
       if (result) return result;
     }
     throw error;
   }
 }
-module.exports = { evaluateSubmittedAttempt };
+module.exports = { evaluateAnswers, evaluateSubmittedAttempt };
