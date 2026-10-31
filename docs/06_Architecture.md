@@ -1,8 +1,8 @@
 # Online Exam Portal
 ## High-Level Architecture
 
-**Version:** 0.1  
-**Status:** Initial Architecture Baseline  
+**Version:** 0.1
+**Status:** Initial Architecture Baseline
 **Course:** UE24CS341A - Software Engineering
 
 ---

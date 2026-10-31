@@ -141,7 +141,7 @@ it('OEP44-SEC-01: anonymous, foreign-student and wrong-role direct APIs never mu
     expect((await agent.get(`/api/student/attempts/${attempt.id}`)).status).toBe(expected);
     const submit = await agent.post(`/api/student/attempts/${attempt.id}/submit`).set('X-CSRF-Token', token).send({});
     expect(submit.status).toBe(expected);
-    const save = await agent.post(`/api/student/attempts/${attempt.id}/responses`).set('X-CSRF-Token', token).send(body);
+    const save = await agent.post(`/api/student/attempts/${attempt.id}/responses`).set('X-CSRF-Token', token).send({ ...body, expectedRevision: 0 });
     expect([401, 403, 409]).toContain(save.status);
   }
   expect((await Attempt.findById(attempt.id)).status).toBe('Active');
@@ -161,7 +161,7 @@ it.each([false, true])('OEP44-IT-02: manual/timeout races, expired=%s, repeat su
   const repeated = await Promise.all(Array.from({ length: 3 }, () => own.agent.post(`/api/student/attempts/${attempt.id}/submit`).set('X-CSRF-Token', own.token).send({ score: 999 })));
   expect(repeated.every(response => response.status === 200)).toBe(true);
   expect(new Set(repeated.map(response => response.body.result._id)).size).toBe(1);
-  const late = await own.agent.post(`/api/student/attempts/${attempt.id}/responses`).set('X-CSRF-Token', own.token).send({ questionId: exam.questions[0].id, selectedOptionId: exam.questions[0].options[1].id });
+  const late = await own.agent.post(`/api/student/attempts/${attempt.id}/responses`).set('X-CSRF-Token', own.token).send({ expectedRevision: 1, questionId: exam.questions[0].id, selectedOptionId: exam.questions[0].options[1].id });
   expect(late.status).toBe(409);
   expect((await Response.findOne()).selectedOptionId.toString()).toBe(exam.questions[0].options[0].id);
   expect(await Result.countDocuments()).toBe(1);
@@ -172,10 +172,37 @@ it('OEP44-FAIL-01: failed response storage is not acknowledged and does not expo
   const own = await login(student);
   const failure = vi.spyOn(Response, 'findOneAndUpdate').mockRejectedValueOnce(new Error('private database connection credentials'));
   try {
-    const response = await own.agent.post(`/api/student/attempts/${attempt.id}/responses`).set('X-CSRF-Token', own.token).send({ questionId: exam.questions[0].id, selectedOptionId: exam.questions[0].options[0].id });
+    const response = await own.agent.post(`/api/student/attempts/${attempt.id}/responses`).set('X-CSRF-Token', own.token).send({ expectedRevision: 0, questionId: exam.questions[0].id, selectedOptionId: exam.questions[0].options[0].id });
     expect(response.status).toBe(500);
     expect(response.body).toEqual({ message: 'Could not save answer. Please retry.' });
     expect(await Response.countDocuments()).toBe(0);
     expect((await Attempt.findById(attempt.id)).status).toBe('Active');
   } finally { failure.mockRestore(); }
+});
+
+it('AC38-LIST: own attempt status distinguishes start/resume/expired/submitted without disclosing another Student attempt', async () => {
+  const own = await login(student), stranger = await login(other);
+  const listing = async account => (await account.agent.get('/api/student/exams')).body.find(item => item._id === exam.id);
+  expect(await listing(own)).toMatchObject({ attemptStatus: 'Active' });
+  expect(await listing(stranger)).toMatchObject({ attemptStatus: 'Not started' });
+  expect(JSON.stringify(await listing(stranger))).not.toContain(attempt.id);
+  await Attempt.collection.updateOne({ _id: attempt._id }, { $set: { startedAt: new Date(Date.now() - 120000), deadline: new Date(Date.now() - 60000) } });
+  expect(await listing(own)).toMatchObject({ attemptStatus: 'Expired' });
+  await finalizeAttempt({ attemptId: attempt._id, studentId: student._id, reason: 'Timeout' });
+  expect(await listing(own)).toMatchObject({ attemptStatus: 'Submitted' });
+  expect(await listing(stranger)).toMatchObject({ attemptStatus: 'Not started' });
+});
+
+it('AC46-SYNC: start/resume and reload supply current server time without resetting the persisted deadline', async () => {
+  const own = await login(student);
+  const before = Date.now();
+  const resumed = await own.agent.post(`/api/student/exams/${exam.id}/start`).set('X-CSRF-Token', own.token).send({});
+  expect(resumed.status).toBe(200);
+  expect(Date.parse(resumed.body.serverTime)).toBeGreaterThanOrEqual(before);
+  expect(Date.parse(resumed.body.serverTime)).toBeLessThanOrEqual(Date.now());
+  expect(resumed.body.attempt.deadline).toBe(attempt.deadline.toISOString());
+  const reload = await own.agent.get(`/api/student/attempts/${attempt.id}`);
+  expect(Date.parse(reload.body.serverTime)).toBeGreaterThanOrEqual(before);
+  expect(reload.body.attempt.deadline).toBe(attempt.deadline.toISOString());
+  expect(JSON.stringify(reload.body)).not.toContain('isCorrect');
 });

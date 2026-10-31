@@ -17,6 +17,10 @@ for (const part of ['client', 'server']) {
 }
 if (!existsSync(join(root, 'client', 'dist', 'index.html'))) throw new Error('Frontend build artifact is missing');
 const audit = JSON.parse(readFileSync(join(root, 'server', 'reports', 'sprint1-acceptance.json'), 'utf8'));
+const browser = JSON.parse(readFileSync(join(root, 'client', 'reports', 'browser.json'), 'utf8'));
+if (!browser.stats.expected || browser.stats.unexpected || browser.stats.skipped || browser.stats.flaky) {
+  throw new Error('Browser acceptance report is missing clean passing tests');
+}
 const evidence = {
   generatedAt: new Date().toISOString(),
   commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
@@ -25,9 +29,10 @@ const evidence = {
   lockfiles: Object.fromEntries(['client', 'server'].map((part) => [part,
     createHash('sha256').update(readFileSync(join(root, part, 'package-lock.json'))).digest('hex')])),
   coverage,
+  browserTests: browser.stats.expected,
   releaseAcceptance: { passed: audit.passed, failed: audit.failed, diagnosticPassed: audit.failed === 0,
     formalAcceptance: 'Requires independent review, team agreement and remaining Release 1 feature acceptance' },
-  scope: 'Integrated Instructor, authentication, Admin and persistence suites. Automated diagnostics do not replace human acceptance or verify separate Student submission, background timeout and scoring features.',
+  scope: 'Integrated authentication, roles, Admin, authoring, Student attempts/submission, worker expiry and scoring/results suites, including real-browser workflows. Automated results do not replace human review or deployment acceptance.',
 };
 mkdirSync(join(root, 'ci-evidence'), { recursive: true });
 writeFileSync(join(root, 'ci-evidence', 'run.json'), JSON.stringify(evidence, null, 2) + '\n');

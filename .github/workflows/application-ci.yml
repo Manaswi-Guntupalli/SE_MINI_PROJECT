@@ -39,10 +39,14 @@ jobs:
         run: node scripts/ci.mjs preflight
       - name: Install locked frontend and backend dependencies
         run: node scripts/ci.mjs install
+      - name: Install the browser for system tests
+        run: node client/node_modules/@playwright/test/cli.js install --with-deps chromium
       - name: Build and lint application
         run: node scripts/ci.mjs build
       - name: Run backend integration and frontend component suites
         run: node scripts/ci.mjs test
+      - name: Run real-browser acceptance workflows
+        run: node scripts/ci.mjs browser
       - name: Verify real failing-test detection
         run: node scripts/ci.mjs verify-failure
       - name: Record incomplete Sprint 1 acceptance criteria
