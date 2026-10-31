@@ -43,7 +43,9 @@ const stages = {
   test() {
     npm('npm run test:ci --prefix server');
     npm('npm run test:ci --prefix client');
+    npm('npm run test:scoring --prefix server');
   },
+  browser() { npm('npm run test:browser --prefix client'); },
   'verify-failure'() { script('verify-test-failure.mjs'); },
   'verify-failure-propagate'() { script('verify-test-failure.mjs', ['--propagate']); },
   'acceptance-report'() { script('audit-sprint1.mjs', ['--report-only']); },
@@ -51,7 +53,7 @@ const stages = {
 };
 const selected = process.argv[2];
 if (selected === 'all') {
-  for (const stage of ['preflight', 'install', 'build', 'test', 'verify-failure', 'acceptance-report', 'evidence']) stages[stage]();
+  for (const stage of ['preflight', 'install', 'build', 'test', 'browser', 'verify-failure', 'acceptance-report', 'evidence']) stages[stage]();
 } else if (Object.hasOwn(stages, selected)) {
   stages[selected]();
 } else {

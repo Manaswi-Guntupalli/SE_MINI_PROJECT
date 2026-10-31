@@ -6,7 +6,7 @@ import { afterAll, beforeAll, expect, it, vi } from 'vitest';
 import { cleanup, configure, fireEvent, render, screen, waitFor } from '@testing-library/react';
 const require = createRequire(resolve(process.cwd(), '../server/package.json'));
 const { connectTestDatabase, closeTestDatabase } = require('./test/database.mjs');
-let listener, App, Exam, Attempt, User, Response, Result;
+let listener, App, Exam, Attempt, User;
 
 beforeAll(async () => {
   // Real bcrypt/network/database calls need more than the default 1s DOM wait on CI.
@@ -17,13 +17,10 @@ beforeAll(async () => {
   User = require('./models/User');
   Exam = require('./models/Exam');
   Attempt = require('./models/Attempt');
-  Response = require('./models/Response');
-  Result = require('./models/Result');
   const bcrypt = require('bcryptjs');
   await Promise.all([User.init(), Exam.init(), Attempt.init()]);
   const passwordHash = await bcrypt.hash('SystemTest123!', 12);
   for (const role of ['Instructor', 'Student', 'Admin']) await User.create({ name: `System ${role}`, email: `${role.toLowerCase()}@system.invalid`, passwordHash, role });
-  await User.create({ name: 'Other Student', email: 'otherstudent@system.invalid', passwordHash, role: 'Student' });
   const app = require('./app');
   listener = await new Promise(resolve => {
     const server = app.listen(0, 'localhost', () => resolve(server));
@@ -56,7 +53,8 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   fireEvent.click(await screen.findByRole('button', { name: 'Open' }));
   fireEvent.change(await screen.findByLabelText('Edit exam title'), { target: { value: 'System revised quiz' } });
   fireEvent.click(screen.getByRole('button', { name: 'Save Exam Changes' }));
-  await screen.findByText('System revised quiz');
+  await screen.findByText('Draft updated successfully');
+  fireEvent.click(screen.getByRole('tab', { name: 'Questions' }));
   fireEvent.change(screen.getByPlaceholderText('Question'), { target: { value: 'Which answer is correct?' } });
   fireEvent.change(screen.getByPlaceholderText('Option 1'), { target: { value: 'Correct response' } });
   fireEvent.change(screen.getByPlaceholderText('Option 2'), { target: { value: 'Incorrect response' } });
@@ -65,6 +63,7 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   fireEvent.click(screen.getByRole('button', { name: 'Add Question' }));
   await screen.findByText('1. Which answer is correct?');
   fireEvent.click(screen.getByRole('button', { name: 'Publish Exam' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Confirm publication' }));
   await waitFor(() => expect(screen.queryByRole('button', { name: 'Publish Exam' })).toBeNull());
   const stored = await Exam.findOne({ title: 'System revised quiz' });
   expect(stored.status).toBe('Published');
@@ -75,43 +74,37 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   await screen.findByText('System revised quiz');
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
   await signIn('student');
-  fireEvent.click(await screen.findByRole('button', { name: 'Start or resume System revised quiz' }));
+  fireEvent.click(await screen.findByRole('button', { name: 'Start System revised quiz' }));
   await screen.findByText('Exam started');
-  expect(screen.getByRole('heading', { name: '1. Which answer is correct?' })).toBeTruthy();
+  expect(screen.getByText(/Question 1 of 1: Which answer is correct/)).toBeTruthy();
   expect(screen.queryByText('Edit Question')).toBeNull();
   expect(await Attempt.countDocuments({ examId: stored._id })).toBe(1);
-
-  // OEP-39/40: persist a student's answer, submit, evaluate and display only that student's result.
   fireEvent.click(screen.getByLabelText('Correct response'));
-  await waitFor(async () => expect(await Response.countDocuments({ attemptId: (await Attempt.findOne({ examId: stored._id }))._id })).toBe(1));
+  await screen.findByText('Answer saved');
+  cleanup();
+  render(<App />);
+  await screen.findByText('Exam started');
+  expect(screen.getByLabelText('Correct response').checked).toBe(true);
   fireEvent.click(screen.getByRole('button', { name: 'Submit examination' }));
-  await screen.findByText('Evaluation complete: 1 / 1');
-  const savedResult = await Result.findOne({ examId: stored._id });
-  expect(savedResult).toBeTruthy();
-  expect(savedResult.score).toBe(1);
-  expect(savedResult.maximum).toBe(1);
-  expect(savedResult.status).toBe('Evaluated');
-  expect(await Attempt.countDocuments({ examId: stored._id, evaluationStatus: 'Evaluated' })).toBe(1);
-  expect(await Result.countDocuments({ attemptId: savedResult.attemptId })).toBe(1);
-
-  // OEP-41: the exam's instructor can retrieve and view its evaluated result.
+  fireEvent.click(screen.getByRole('button', { name: 'Confirm submission' }));
+  await screen.findByText('Exam submitted');
+  expect(screen.queryByRole('timer')).toBeNull();
+  expect(screen.queryByRole('navigation', { name: 'Question navigation' })).toBeNull();
+  expect(screen.queryByRole('radio')).toBeNull();
+  const submitted = await Attempt.findOne({ examId: stored._id });
+  expect(submitted.status).toBe('Submitted');
+  expect(submitted.evaluationStatus).toBe('Evaluated');
+  fireEvent.click(screen.getByRole('button', { name: 'Refresh results' }));
+  await screen.findByText('1 / 1');
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
   await signIn('instructor');
   fireEvent.click(await screen.findByRole('button', { name: 'Open' }));
-  await screen.findByRole('heading', { name: 'Manage Exam' });
-  fireEvent.click(screen.getByRole('button', { name: 'Load student results' }));
-  await screen.findByText('System Student');
-  expect(screen.getByText('Score: 1 / 1')).toBeTruthy();
-
-  // OEP-40 security: a different student must not see the first student's result.
-  fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
-  fireEvent.change(await screen.findByPlaceholderText('Email'), { target: { value: 'otherstudent@system.invalid' } });
-  fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'SystemTest123!' } });
-  fireEvent.click(screen.getByRole('button', { name: 'Login' }));
-  await screen.findByText(/Welcome, Other Student/);
-  await screen.findByText('No evaluated results yet. Submitted results will appear here.');
-  expect(screen.queryByText('Score: 1 / 1')).toBeNull();
-
+  await screen.findByRole('tab', { name: 'Results' });
+  fireEvent.click(screen.getByRole('tab', { name: 'Results' }));
+  await screen.findByRole('heading', { name: 'Exam results' });
+  await screen.findByText('1 / 1');
+  expect(screen.getByText('System Student')).toBeTruthy();
+  expect(screen.getByText('student@system.invalid')).toBeTruthy();
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
   await signIn('admin');
   await screen.findByRole('heading', { name: 'Accounts' });

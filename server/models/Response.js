@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const responseSchema = new mongoose.Schema({
   attemptId: { type: mongoose.Schema.Types.ObjectId, ref: "Attempt", required: true, immutable: true },
   questionId: { type: mongoose.Schema.Types.ObjectId, required: true, immutable: true },
+  revision: { type: Number, default: 0, min: 0 },
   selectedOptionId: { type: mongoose.Schema.Types.ObjectId, required: true },
 }, { timestamps: true });
 

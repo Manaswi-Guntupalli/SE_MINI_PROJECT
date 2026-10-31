@@ -8,7 +8,7 @@ async function login(page, role) {
   await page.getByRole('button', { name: 'Login', exact: true }).click();
 }
 async function saveChoice(page, label) {
-  const saved = page.waitForResponse(response => response.url().endsWith('/responses') && response.request().method() === 'POST');
+  const saved = page.waitForResponse(response => response.url().includes('/responses/') && response.request().method() === 'PUT');
   await page.getByLabel(label, { exact: true }).check();
   expect((await saved).status()).toBe(200);
 }
@@ -16,10 +16,15 @@ async function saveChoice(page, label) {
 test('OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin', async ({ page, browser }, testInfo) => {
   testInfo.annotations.push({ type: 'browser-version', description: browser.version() });
   await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Sign In', exact: true })).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('lavender-login.png'), fullPage: true });
   await login(page, 'instructor');
+  await expect(page.getByRole('heading', { name: 'Create Exam', exact: true })).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath('lavender-instructor.png'), fullPage: true });
   await page.getByPlaceholder('Exam title', { exact: true }).fill('Browser Release 1');
   await page.getByRole('button', { name: 'Create Exam', exact: true }).click();
   await page.getByRole('button', { name: 'Open', exact: true }).click();
+  await page.getByRole('tab', { name: 'Questions', exact: true }).click();
   for (let n = 1; n <= 3; n++) {
     await page.getByPlaceholder('Question', { exact: true }).fill(`Browser question ${n}`);
     await page.getByPlaceholder('Option 1', { exact: true }).fill(`Correct ${n}`);
@@ -31,44 +36,56 @@ test('OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload,
   }
   page.on('dialog', dialog => dialog.accept());
   await page.getByRole('button', { name: 'Publish Exam', exact: true }).click();
+  await page.getByRole('button', { name: 'Confirm publication', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Publish Exam', exact: true })).toHaveCount(0);
+  await page.screenshot({ path: testInfo.outputPath('lavender-instructor-tabs.png'), fullPage: true });
   await page.getByRole('button', { name: 'Logout', exact: true }).click();
   await login(page, 'student');
-  await page.getByRole('button', { name: 'Start or resume Browser Release 1', exact: true }).click();
+  await page.getByRole('button', { name: 'Start Browser Release 1', exact: true }).click();
+  await page.screenshot({ path: testInfo.outputPath('lavender-student.png'), fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole('timer')).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath('lavender-student-mobile.png'), fullPage: true });
+  await page.setViewportSize({ width: 1366, height: 768 });
   const deadline = await page.getByText(/^Deadline:/).textContent();
   // Navigate between question controls and change a previously acknowledged answer.
   await saveChoice(page, 'Wrong 1');
+  await page.getByRole('button', { name: 'Next question', exact: true }).click();
   await saveChoice(page, 'Wrong 2');
-  await page.getByRole('heading', { name: '1. Browser question 1', exact: true }).scrollIntoViewIfNeeded();
+  await page.getByRole('button', { name: 'Previous question', exact: true }).click();
   await saveChoice(page, 'Correct 1');
   await page.reload();
-  await page.getByRole('button', { name: 'Start or resume Browser Release 1', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Exam started', exact: true })).toBeVisible();
   await expect(page.getByLabel('Correct 1', { exact: true })).toBeChecked();
+  await page.getByRole('button', { name: 'Next question', exact: true }).click();
   await expect(page.getByLabel('Wrong 2', { exact: true })).toBeChecked();
   expect(await page.getByText(/^Deadline:/).textContent()).toBe(deadline);
   // A failed save is visible and does not replace the acknowledged database answer.
-  await page.route('**/api/student/attempts/*/responses', route => route.abort());
+  await page.route('**/api/student/attempts/*/responses/*', route => route.abort());
   await page.getByLabel('Correct 2', { exact: true }).check();
-  await expect(page.getByRole('alert')).toContainText('Could not save answer');
-  await page.unroute('**/api/student/attempts/*/responses');
+  await expect(page.getByRole('alert')).toContainText('Answer was not saved');
+  await page.unroute('**/api/student/attempts/*/responses/*');
   await page.reload();
-  await page.getByRole('button', { name: 'Start or resume Browser Release 1', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Exam started', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Next question', exact: true }).click();
   await expect(page.getByLabel('Wrong 2', { exact: true })).toBeChecked();
   await page.getByRole('button', { name: 'Submit examination', exact: true }).click();
+  await page.getByRole('button', { name: 'Confirm submission', exact: true }).click();
   // Q1 correct, Q2 wrong, Q3 unanswered.
-  await expect(page.getByText('Score: 1 / 3', { exact: true })).toBeVisible();
+  await expect(page.getByText('1 / 3', { exact: true })).toBeVisible();
   await page.reload();
-  await expect(page.getByText('Score: 1 / 3', { exact: true })).toBeVisible();
+  await expect(page.getByText('1 / 3', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Logout', exact: true }).click();
   await login(page, 'other');
-  await expect(page.getByText('No evaluated results yet. Submitted results will appear here.')).toBeVisible();
-  await expect(page.getByText('Score: 1 / 3', { exact: true })).toHaveCount(0);
+  await expect(page.getByText('No evaluated results yet.')).toBeVisible();
+  await expect(page.getByText('1 / 3', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Logout', exact: true }).click();
   await login(page, 'instructor');
   await page.getByRole('button', { name: 'Open', exact: true }).click();
-  await page.getByRole('button', { name: 'Load student results', exact: true }).click();
+  await page.getByRole('tab', { name: 'Results', exact: true }).click();
   await expect(page.getByText('student@browser.invalid', { exact: true })).toBeVisible();
-  await expect(page.getByText('Score: 1 / 3', { exact: true })).toBeVisible();
+  await expect(page.getByText('1 / 3', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Logout', exact: true }).click();
   await login(page, 'admin');
   await page.getByLabel('Account name', { exact: true }).fill('Browser New');
@@ -101,7 +118,7 @@ test('OEP44-ST-02: closing the browser does not stop server timeout evaluation',
     const page = await context.newPage();
     await page.goto('http://127.0.0.1:4173');
     await login(page, 'other');
-    await page.getByRole('button', { name: 'Start or resume Closed browser timeout', exact: true }).click();
+    await page.getByRole('button', { name: 'Start Closed browser timeout', exact: true }).click();
     await saveChoice(page, 'Timeout correct');
     const attempt = await Attempt.findOne({ examId: exam._id, studentId: student._id });
     await context.close();
@@ -113,6 +130,62 @@ test('OEP44-ST-02: closing the browser does not stop server timeout evaluation',
     expect(await Attempt.findById(attempt._id)).toMatchObject({ status: 'Submitted', submissionReason: 'Timeout', evaluationStatus: 'Evaluated' });
   } finally {
     await context.close();
+    await mongoose.disconnect();
+  }
+});
+
+test('AC40-ORDER / AC47-DRAIN: delayed saves, navigation and immediate Submit retain the latest choice end to end', async ({ page }) => {
+  const require = createRequire(new URL('../../server/package.json', import.meta.url));
+  const mongoose = require('mongoose');
+  const { uri } = JSON.parse(readFileSync(new URL('../reports/browser-fixture.json', import.meta.url), 'utf8'));
+  await mongoose.connect(uri);
+  const User = require('./models/User'), Exam = require('./models/Exam');
+  const Attempt = require('./models/Attempt'), Response = require('./models/Response'), Result = require('./models/Result');
+  let release;
+  const held = new Promise(resolve => { release = resolve; });
+  let saves = 0, submits = 0;
+  try {
+    const instructor = await User.findOne({ email: 'instructor@browser.invalid' });
+    const student = await User.findOne({ email: 'student@browser.invalid' });
+    const exam = await Exam.create({ title: 'Save order regression', duration: 30, instructorId: instructor._id, status: 'Published',
+      questions: [1, 2].map(n => ({ questionText: `Ordered question ${n}`, options: [{ text: `Ordered correct ${n}`, isCorrect: true }, { text: `Ordered wrong ${n}` }] })),
+    });
+    page.on('request', request => { if (request.url().endsWith('/submit')) submits++; });
+    await page.route('**/api/student/attempts/*/responses/*', async route => {
+      saves++;
+      if (saves === 1) await held;
+      await route.continue();
+    });
+    await page.goto('/');
+    await login(page, 'student');
+    await page.getByRole('button', { name: 'Start Save order regression', exact: true }).click();
+    await expect(page.getByRole('timer')).toContainText('Time remaining:');
+    await page.getByLabel('Ordered wrong 1', { exact: true }).check();
+    await expect.poll(() => saves).toBe(1);
+    await page.getByLabel('Ordered correct 1', { exact: true }).check();
+    await expect(page.getByText('Saving answer…', { exact: true })).toBeVisible();
+    expect(saves).toBe(1);
+    await page.getByRole('button', { name: 'Next question', exact: true }).click();
+    await expect(page.getByText('Unanswered.', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Previous question', exact: true }).click();
+    await expect(page.getByLabel('Ordered correct 1', { exact: true })).toBeChecked();
+    await page.getByRole('button', { name: 'Submit examination', exact: true }).click();
+  await page.getByRole('button', { name: 'Confirm submission', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Confirm submission', exact: true })).toBeDisabled();
+    expect(submits).toBe(0);
+    release();
+    await expect(page.getByText('1 / 2', { exact: true })).toBeVisible();
+    expect(saves).toBe(2);
+    expect(submits).toBe(1);
+    await expect(page.getByRole('button', { name: 'Submitted Save order regression', exact: true })).toBeDisabled();
+    await page.reload();
+    await expect(page.getByRole('button', { name: 'Submitted Save order regression', exact: true })).toBeDisabled();
+    const attempt = await Attempt.findOne({ examId: exam._id, studentId: student._id });
+    expect(await Response.countDocuments({ attemptId: attempt._id })).toBe(1);
+    expect(String((await Response.findOne({ attemptId: attempt._id })).selectedOptionId)).toBe(String(exam.questions[0].options[0]._id));
+    expect(await Result.countDocuments({ attemptId: attempt._id })).toBe(1);
+  } finally {
+    release();
     await mongoose.disconnect();
   }
 });

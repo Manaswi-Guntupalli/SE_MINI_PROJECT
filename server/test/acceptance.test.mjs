@@ -146,14 +146,15 @@ describe('Acceptance criteria #21 #23 #24 #33–#37', () => {
     expect((await agent.put(base).set('X-CSRF-Token', token).send({ options: content.options })).status).toBe(200);
     expect((await agent.post(`/api/exams/${draft.id}/publish`).set('X-CSRF-Token', token).send({})).status).toBe(200);
   });
-  it('AC36-01: listing and start share eligibility, hide answers and persist one unchanged deadline on concurrent resume', async () => {
+  it('AC36-01: listing exposes scheduled published exams with server start eligibility, hide answers and persist one unchanged deadline on concurrent resume', async () => {
     const available = await exam({ status: 'Published', questions: [content] });
     const arrived = await exam({ status: 'Published', startTime: new Date(Date.now() - 60000), questions: [content] });
     const future = await exam({ status: 'Published', startTime: new Date(Date.now() + 86400000), questions: [content] });
     const draft = await exam({ questions: [content] });
     const { agent, token } = await login(users.Student);
     const list = await agent.get('/api/student/exams');
-    expect(new Set(list.body.map(value => value._id))).toEqual(new Set([available.id, arrived.id]));
+    expect(new Set(list.body.map(value => value._id))).toEqual(new Set([available.id, arrived.id, future.id]));
+    expect(list.body.find(value => value._id === future.id).canStart).toBe(false);
     expect(JSON.stringify(list.body)).not.toMatch(/isCorrect|instructorId|questions/);
     for (const item of [future, draft]) expect((await agent.post(`/api/student/exams/${item.id}/start`).set('X-CSRF-Token', token).send({})).status).toBe(404);
     const starts = await Promise.all(Array.from({ length: 4 }, () => agent.post(`/api/student/exams/${available.id}/start`).set('X-CSRF-Token', token).send({ studentId: users.otherStudent.id, deadline: '2099-01-01' })));

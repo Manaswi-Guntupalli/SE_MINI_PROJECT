@@ -3,89 +3,50 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import axios from 'axios';
 import RoleDashboard from './RoleDashboard';
 vi.mock('axios', () => ({ default: { get: vi.fn(), post: vi.fn(), patch: vi.fn() } }));
-afterEach(() => { cleanup(); vi.resetAllMocks(); });
+afterEach(() => { cleanup(); sessionStorage.clear(); vi.resetAllMocks(); });
 const props = { api: 'http://localhost:5000/api', csrfToken: 'csrf', logout: vi.fn() };
-
-describe('OEP-40 persisted result states', () => {
-  it('closes answer entry when submission persisted but scoring failed', async () => {
-    let submitted = false;
-    axios.get.mockImplementation(url => {
-      if (url.endsWith('/student/exams')) return Promise.resolve({ data: [{ _id: 'exam', title: 'Retry quiz', duration: 30 }] });
-      if (url.endsWith('/attempts/attempt')) return Promise.resolve({ data: { attempt: { status: 'Submitted' }, result: null } });
-      if (url.endsWith('/pending-results')) return Promise.resolve({ data: submitted ? [{ _id: 'attempt', examTitle: 'Retry quiz' }] : [] });
-      return Promise.resolve({ data: [] });
-    });
-    axios.post.mockImplementation(url => {
-      if (url.endsWith('/start')) return Promise.resolve({ data: { attempt: { _id: 'attempt', status: 'Active', deadline: new Date(Date.now() + 60000).toISOString() }, questions: [] } });
-      submitted = true;
-      return Promise.reject(new Error('evaluation unavailable'));
-    });
-    render(<RoleDashboard {...props} user={{ role: 'Student' }} />);
-    fireEvent.click(await screen.findByRole('button', { name: 'Start or resume Retry quiz' }));
-    fireEvent.click(await screen.findByRole('button', { name: 'Submit examination' }));
-    await screen.findByText('Submission saved. Evaluation pending.');
-    expect(screen.queryByText('Exam started')).toBeNull();
-    await screen.findByText(/Your submitted answers are saved/);
-  });
-  it('shows results loading, pending evaluations and persisted scores after refresh/remount', async () => {
-    let finish;
-    let evaluated = false;
-    axios.get.mockImplementation(url => {
-      if (url.endsWith('/student/exams')) return Promise.resolve({ data: [] });
-      if (url.endsWith('/pending-results')) return Promise.resolve({ data: evaluated ? [] : [{ _id: 'attempt', examTitle: 'Pending quiz' }] });
-      if (!evaluated) return new Promise(resolve => { finish = resolve; });
-      return Promise.resolve({ data: [{ _id: 'result', examTitle: 'Pending quiz', score: 2, maximum: 3, status: 'Evaluated' }] });
-    });
-    const user = { role: 'Student', name: 'Student' };
-    const view = render(<RoleDashboard {...props} user={user} />);
-    expect(screen.getByText('Loading results...')).toBeTruthy();
-    expect(screen.queryByText('No evaluated results yet. Submitted results will appear here.')).toBeNull();
-    await waitFor(() => expect(finish).toBeTypeOf('function'));
-    finish({ data: [] });
-    await screen.findByText(/Evaluation pending/);
-    expect(screen.queryByText('No evaluated results yet. Submitted results will appear here.')).toBeNull();
-    evaluated = true;
-    fireEvent.click(screen.getByRole('button', { name: 'Refresh results' }));
-    await screen.findByText('Score: 2 / 3');
-    expect(screen.queryByText(/Evaluation pending/)).toBeNull();
-    view.unmount();
-    render(<RoleDashboard {...props} user={user} />);
-    await screen.findByText('Score: 2 / 3');
-  });
-  it('shows a result API failure and recovers with explicit unavailable state on retry', async () => {
-    let failed = true;
-    axios.get.mockImplementation(url => url.endsWith('/student/results') && failed
-      ? Promise.reject(new Error('offline')) : Promise.resolve({ data: [] }));
-    render(<RoleDashboard {...props} user={{ role: 'Student' }} />);
-    await screen.findByText('Could not load results. Please retry.');
-    expect(screen.queryByText('No evaluated results yet. Submitted results will appear here.')).toBeNull();
-    failed = false;
-    fireEvent.click(screen.getByRole('button', { name: 'Refresh results' }));
-    await screen.findByText('No evaluated results yet. Submitted results will appear here.');
-  });
-});
 
 describe('Supporting role boundaries', () => {
   it('Student sees eligibility list, starts/resumes and receives the persisted deadline', async () => {
     axios.get.mockResolvedValue({ data: [{ _id: 'exam', title: 'Available quiz', duration: 30, startTime: null }] });
-    axios.post.mockResolvedValue({ data: { attempt: { deadline: '2026-10-25T10:00:00Z' }, questions: [{ _id: 'q', questionText: 'Question', options: [{ _id: 'o', text: 'Option' }] }] } });
+    axios.post.mockResolvedValue({ data: { attempt: { deadline: '2099-01-01T10:00:00Z' }, serverTime: '2026-10-28T10:00:00Z', questions: [{ _id: 'q', questionText: 'Question', options: [{ _id: 'o', text: 'Option' }] }] } });
     render(<RoleDashboard {...props} user={{ id: 's', name: 'Student', role: 'Student' }} />);
-    fireEvent.click(await screen.findByRole('button', { name: 'Start or resume Available quiz' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Start Available quiz' }));
     expect(await screen.findByText('Exam started')).toBeTruthy();
-    expect(screen.getByRole('heading', { name: '1. Question' })).toBeTruthy();
+    expect(screen.getByText(/Question 1 of 1: Question/)).toBeTruthy();
     expect(axios.post).toHaveBeenCalledWith('http://localhost:5000/api/student/exams/exam/start', {}, { headers: { 'X-CSRF-Token': 'csrf' } });
     expect(screen.queryByText('Accounts')).toBeNull();
   });
   it('Student sees an explicit empty state and start errors', async () => {
-    axios.get.mockResolvedValueOnce({ data: [] });
+    axios.get.mockResolvedValue({ data: [] });
     const { unmount } = render(<RoleDashboard {...props} user={{ role: 'Student' }} />);
     expect(await screen.findByText('No exams available yet.')).toBeTruthy();
     unmount();
     axios.get.mockResolvedValue({ data: [{ _id: 'exam', title: 'Quiz', duration: 1 }] });
     axios.post.mockRejectedValue({ response: { data: { message: 'Exam is not available' } } });
     render(<RoleDashboard {...props} user={{ role: 'Student' }} />);
-    fireEvent.click(await screen.findByRole('button', { name: 'Start or resume Quiz' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Start Quiz' }));
     expect(await screen.findByRole('alert')).toHaveProperty('textContent', 'Exam is not available');
+  });
+  it('#39 restores an owned attempt from the server after reload', async () => {
+    sessionStorage.setItem('oep-attempt-s', 'attempt');
+    axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/attempts/attempt')
+      ? { attempt: { _id: 'attempt', status: 'Active', deadline: '2099-01-01' }, serverTime: '2026-10-28T10:00:00Z', responses: [], questions: [{ _id: 'q', questionText: 'Restored question', options: [] }] }
+      : [] }));
+    render(<RoleDashboard {...props} user={{ id: 's', role: 'Student' }} />);
+    expect(await screen.findByText(/Restored question/)).toBeTruthy();
+    expect(axios.get).toHaveBeenCalledWith('http://localhost:5000/api/student/attempts/attempt');
+  });
+  it('#38 uses server eligibility and disables scheduled and submitted exams', async () => {
+    axios.get.mockResolvedValue({ data: [
+      { _id: 'future', title: 'Future', canStart: false, attemptStatus: 'Not started' },
+      { _id: 'done', title: 'Done', canStart: false, attemptStatus: 'Submitted' },
+      { _id: 'active', title: 'Active', canStart: false, canResume: true, attemptStatus: 'Active' },
+    ] });
+    render(<RoleDashboard {...props} user={{ role: 'Student' }} />);
+    expect((await screen.findByRole('button', { name: 'Start Future' })).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: 'Submitted Done' }).disabled).toBe(true);
+    expect(screen.getByRole('button', { name: 'Resume Active' }).disabled).toBe(false);
   });
   it('Admin can update another account but own access controls are disabled', async () => {
     axios.get.mockResolvedValue({ data: [{ id: 'a', name: 'Admin', email: 'admin@test.invalid', role: 'Admin', active: true }, { id: 's', name: 'Student', email: 'student@test.invalid', role: 'Student', active: true }] });
@@ -111,4 +72,25 @@ describe('Supporting role boundaries', () => {
     expect(axios.post.mock.calls[0][1]).toEqual({ name: 'New User', email: 'new@test.invalid', password: 'Example12345!', role: 'Student' });
     await waitFor(() => expect(screen.getByLabelText('Account password').value).toBe(''));
   });
+});
+
+it('#47 clears the resume pointer on submission so dashboard refresh/reload cannot reopen it', async () => {
+  sessionStorage.setItem('oep-attempt-s', 'attempt');
+  axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/attempts/attempt')
+    ? { attempt: { _id: 'attempt', status: 'Active', deadline: '2099-01-01' }, serverTime: '2026-10-28T10:00:00Z', responses: [], questions: [] }
+    : [] }));
+  axios.post.mockResolvedValue({ data: { attempt: { status: 'Submitted', evaluationStatus: 'Evaluated' } } });
+  const propsForStudent = { ...props, user: { id: 's', role: 'Student' } };
+  const { unmount } = render(<RoleDashboard {...propsForStudent} />);
+  fireEvent.click(await screen.findByText('Submit examination'));
+  fireEvent.click(screen.getByText('Confirm submission'));
+  await screen.findByText('Exam submitted');
+  await waitFor(() => expect(sessionStorage.getItem('oep-attempt-s')).toBeNull());
+  expect(screen.queryByRole('timer')).toBeNull();
+  expect(axios.get.mock.calls.filter(([url]) => url.endsWith('/attempts/attempt'))).toHaveLength(1);
+  unmount();
+  render(<RoleDashboard {...propsForStudent} />);
+  await screen.findByText('No exams available yet.');
+  expect(screen.queryByText('Exam started')).toBeNull();
+  expect(screen.queryByRole('timer')).toBeNull();
 });

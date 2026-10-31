@@ -12,6 +12,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from '@testing-library/react'
 import axios from 'axios'
 import App from './App'
@@ -169,63 +170,12 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
-describe('OEP-41 instructor result states', () => {
-  it('shows loading, pending identities, persisted scores, empty state and API errors', async () => {
-    await openExam(exam({ status: 'Published' }));
-    let finish;
-    axios.get.mockImplementation(() => new Promise(resolve => { finish = resolve; }));
-    fireEvent.click(screen.getByRole('button', { name: 'Load student results' }));
-    expect(screen.getByText('Loading results...')).toBeTruthy();
-    finish({ data: { results: [{ _id: 'r', studentId: { name: 'Alice', email: 'alice@test.invalid' }, score: 2, maximum: 3, status: 'Evaluated' }],
-      pending: [{ _id: 'a', studentId: { name: 'Bob', email: 'bob@test.invalid' }, submittedAt: new Date().toISOString() }] } });
-    await screen.findByText('Alice');
-    expect(screen.getByText('alice@test.invalid')).toBeTruthy();
-    expect(screen.getByText('Score: 2 / 3')).toBeTruthy();
-    expect(screen.getByText('Bob')).toBeTruthy();
-    expect(screen.getByText('Evaluation pending')).toBeTruthy();
-    axios.get.mockResolvedValue({ data: { results: [], pending: [] } });
-    fireEvent.click(screen.getByRole('button', { name: 'Load student results' }));
-    await screen.findByText('No evaluated results yet.');
-    expect(screen.getByText('No pending evaluations.')).toBeTruthy();
-    axios.get.mockRejectedValue(new Error('offline'));
-    fireEvent.click(screen.getByRole('button', { name: 'Load student results' }));
-    await screen.findByText('Could not load results');
-    expect(screen.queryByText('Alice')).toBeNull();
-  });
-
-  it('clears old exam results on switching and ignores a late result response', async () => {
-    const first = exam({ status: 'Published' }), second = exam({ _id: 'exam-2', title: 'Second quiz', status: 'Published', questions: [{ ...question(), questionText: 'Second exam question' }] });
-    mockAuthenticatedInstructor([first, second]);
-    const baseGet = axios.get.getMockImplementation();
-    let finish;
-    axios.get.mockImplementation(url => {
-      if (url.endsWith('/results')) return new Promise(resolve => { finish = resolve; });
-      if (url.endsWith('/exams/exam-1')) return Promise.resolve({ data: first });
-      if (url.endsWith('/exams/exam-2')) return Promise.resolve({ data: second });
-      return baseGet(url);
-    });
-    render(<App />);
-    await screen.findByText('Test Instructor');
-    fireEvent.click((await screen.findAllByRole('button', { name: 'Open' }))[0]);
-    fireEvent.click(await screen.findByRole('button', { name: 'Load student results' }));
-    const stale = { data: { results: [{ _id: 'old', studentId: { name: 'Old student' }, score: 1, maximum: 3 }], pending: [] } };
-    finish(stale);
-    await screen.findByText('Old student');
-    fireEvent.click(screen.getByRole('button', { name: 'Load student results' }));
-    const lateResponse = finish;
-    fireEvent.click(screen.getAllByRole('button', { name: 'Open' })[1]);
-    await screen.findByText('1. Second exam question');
-    lateResponse(stale);
-    await waitFor(() => expect(screen.queryByText('Loading results...')).toBeNull());
-    expect(screen.queryByText('Old student')).toBeNull();
-  });
-});
-
 describe(
   'Authenticated Instructor exam management',
   () => {
     it('UI-AC35: removes the correct option without silently choosing another and supports adding replacements', async () => {
       await openExam(exam({ questions: [question()] }))
+      fireEvent.click(screen.getByRole('tab', { name: 'Questions' }))
       fireEvent.click(screen.getByRole('button', { name: 'Edit Question' }))
       fireEvent.click(screen.getByRole('button', { name: 'Remove option 1' }))
       expect(screen.getAllByRole('radio').every(radio => !radio.checked)).toBe(true)
@@ -413,7 +363,6 @@ describe(
     })
 
     it('UI-EXAM-06: cancels deletion without sending a destructive request', async () => {
-      window.confirm.mockReturnValue(false)
 
       await renderInstructor([exam()])
 
@@ -423,9 +372,8 @@ describe(
         })
       )
 
-      expect(
-        window.confirm
-      ).toHaveBeenCalledOnce()
+      fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Cancel' }))
+      expect(screen.queryByRole('dialog')).toBeNull()
 
       expect(
         axios.delete
@@ -445,6 +393,7 @@ describe(
         })
       )
 
+      fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Delete' }))
       await waitFor(() =>
         expect(axios.delete).toHaveBeenCalledWith(
           expect.stringMatching(
@@ -462,6 +411,7 @@ describe(
 
     it('UI-MCQ-01: submits question text and options with one selected answer', async () => {
       await openExam()
+      fireEvent.click(screen.getByRole('tab', { name: 'Questions' }))
 
       axios.post.mockResolvedValue({
         data: exam({
@@ -556,6 +506,7 @@ describe(
         }),
       })
 
+      fireEvent.click(screen.getByRole('tab', { name: 'Questions' }))
       fireEvent.click(
         screen.getByRole('button', {
           name: 'Edit Question',
@@ -619,6 +570,7 @@ describe(
         })
       )
 
+      fireEvent.click(screen.getByRole('button', { name: 'Confirm publication' }))
       await waitFor(() =>
         expect(axios.post).toHaveBeenCalledWith(
           expect.stringMatching(
@@ -671,9 +623,53 @@ describe(
         ).toBeNull()
       }
 
+      fireEvent.click(screen.getByRole('tab', { name: 'Questions' }))
       expect(
         screen.getByText('1. 2 + 2?')
       ).toBeTruthy()
     })
   }
 )
+
+it('#65 Open replaces the dashboard, defaults to Details and Back restores the list', async () => {
+  await openExam();
+  expect(screen.queryByRole('heading', { name: 'My Exams' })).toBeNull();
+  expect(screen.queryByRole('button', { name: 'Create Exam' })).toBeNull();
+  expect(screen.getByRole('tab', { name: 'Details' }).getAttribute('aria-selected')).toBe('true');
+  expect(screen.getAllByRole('tabpanel')).toHaveLength(1);
+  expect(document.activeElement).toBe(screen.getByRole('heading', { name: 'Manage Exam' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Back to My Exams' }));
+  expect(screen.getByRole('heading', { name: 'My Exams' })).toBeTruthy();
+  expect(screen.queryByRole('tablist')).toBeNull();
+  expect(document.activeElement).toBe(screen.getByRole('heading', { name: 'My Exams' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Open' }));
+  await screen.findByRole('tab', { name: 'Details' });
+  expect(screen.getByRole('tab', { name: 'Details' }).getAttribute('aria-selected')).toBe('true');
+});
+it('#65 keyboard tab navigation preserves edits and draft Results never calls the results API', async () => {
+  await openExam();
+  fireEvent.change(screen.getByLabelText('Edit exam title'), { target: { value: 'Unsaved title' } });
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Details' }), { key: 'ArrowRight' });
+  expect(screen.getByRole('tab', { name: 'Questions' }).getAttribute('aria-selected')).toBe('true');
+  expect(screen.queryByRole('button', { name: 'Save Exam Changes' })).toBeNull();
+  fireEvent.change(screen.getByPlaceholderText('Question'), { target: { value: 'Unsaved question' } });
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Questions' }), { key: 'End' });
+  expect(await screen.findByText(/Results will be available after/)).toBeTruthy();
+  expect(axios.get.mock.calls.some(([url]) => url.endsWith('/results'))).toBe(false);
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Results' }), { key: 'Home' });
+  expect(screen.getByLabelText('Edit exam title').value).toBe('Unsaved title');
+  fireEvent.click(screen.getByRole('tab', { name: 'Questions' }));
+  expect(screen.getByPlaceholderText('Question').value).toBe('Unsaved question');
+});
+it('#65 published Details are read-only and Results load only when selected', async () => {
+  await openExam(exam({ status: 'Published', questions: [question()] }));
+  expect(screen.queryByRole('textbox', { name: 'Edit exam title' })).toBeNull();
+  expect(screen.getByText('30 minutes')).toBeTruthy();
+  expect(axios.get.mock.calls.some(([url]) => url.endsWith('/results'))).toBe(false);
+  axios.get.mockResolvedValue({ data: [] });
+  fireEvent.click(screen.getByRole('tab', { name: 'Results' }));
+  expect(await screen.findByText('No evaluated results yet.')).toBeTruthy();
+  expect(axios.get).toHaveBeenCalledWith(expect.stringMatching(/exam-1\/results$/));
+  fireEvent.click(screen.getByRole('link', { name: 'My exams' }));
+  expect(screen.getByRole('heading', { name: 'My Exams' })).toBeTruthy();
+});

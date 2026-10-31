@@ -1,6 +1,6 @@
 import { appendFileSync, existsSync, readFileSync } from 'node:fs';
 
-let summary = '## Application CI\n\nRuns locked installs, backend syntax checks, frontend lint/build, real MongoDB API tests and React component tests.\n\n';
+let summary = '## Application CI\n\nRuns locked installs, backend syntax checks, frontend lint/build, real MongoDB API tests, React component tests, scoring units and real-browser acceptance workflows.\n\n';
 const path = 'server/reports/sprint1-acceptance.json';
 if (existsSync(path)) {
   const report = JSON.parse(readFileSync(path, 'utf8'));

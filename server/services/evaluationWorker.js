@@ -17,7 +17,8 @@ async function processPendingEvaluations({ onError = console.error } = {}) {
   }
 }
 
-function startEvaluationWorker({ intervalMs = 5000, onError = console.error } = {}) {
+function startEvaluationWorker({ intervalMs = Number(process.env.EXAM_EXPIRY_INTERVAL_MS || 5000), onError = console.error } = {}) {
+  if (!Number.isSafeInteger(intervalMs) || intervalMs < 100 || intervalMs > 60000) throw new Error('EXAM_EXPIRY_INTERVAL_MS must be 100–60000');
   let stopped = false;
   let timer;
   const run = async () => {
