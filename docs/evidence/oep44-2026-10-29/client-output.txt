@@ -1,0 +1,33 @@
+
+ RUN  v5.0.5 C:/Users/Manaswi G/OneDrive/Desktop/SE_MINI_PROJECT/SE_MINI_PROJECT/client
+      Coverage enabled with v8
+
+ ✓ src/RoleDashboard.test.jsx (7 tests) 602ms
+ ✓ src/App.test.jsx (16 tests) 1566ms
+   ✓ OEP-41 instructor result states (2)
+     ✓ shows loading, pending identities, persisted scores, empty state and API errors 361ms
+ ✓ src/system.test.jsx (1 test) 8255ms
+   ✓ SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB create/edit/options/publish/reload → Student start 5856ms
+
+ Test Files  3 passed (3)
+      Tests  24 passed (24)
+   Start at  15:58:12
+   Duration  11.44s (tests 63%, environment 26%, import 10%, worker 1%)
+
+JSON report written to C:/Users/Manaswi G/OneDrive/Desktop/SE_MINI_PROJECT/SE_MINI_PROJECT/client/reports/oep44-tests.json
+JUNIT report written to C:/Users/Manaswi G/OneDrive/Desktop/SE_MINI_PROJECT/SE_MINI_PROJECT/client/reports/junit.xml
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                                                       
+-------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------
+All files          |   86.08 |    75.75 |   84.26 |   86.68 |                                                                                         
+ App.jsx           |    85.2 |    72.44 |   81.13 |   85.71 | 180-184,252,282-286,306,313,371,397-398,402-424,437,457-462,571,601,710,739,827-837,948 
+ RoleDashboard.jsx |   86.48 |    78.57 |    87.5 |   87.87 | 41,61,95-99,102-104,117,124,177                                                         
+-------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------------------
+
+=============================== Coverage summary ===============================
+Statements   : 86.08% ( 297/345 )
+Branches     : 75.75% ( 175/231 )
+Functions    : 84.26% ( 75/89 )
+Lines        : 86.68% ( 280/323 )
+================================================================================

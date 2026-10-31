@@ -1,0 +1,965 @@
+{
+  "status": "passed",
+  "requirements": [
+    {
+      "requirement": "FR-01",
+      "cases": [
+        {
+          "selector": "AC23-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC23-01: rejects wrong, missing, malformed and inactive credentials without leaking password data",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC23-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC23-02: rotates sessions on login and invalidates the old cookie and CSRF token",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC23-03",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC23-03: logout clears the cookie and replay cannot access protected data",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-ST-01",
+          "matches": [
+            {
+              "suite": "browser",
+              "name": "OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-02",
+      "cases": [
+        {
+          "selector": "AC24-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC24-01: current role and active status are rechecked for an existing session",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC24-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC24-02: Student cannot call any Instructor management operation",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC24-02: Admin cannot call any Instructor management operation",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC51-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC51-01: invalid provisioning, forbidden writes and inactive Admin sessions cannot change accounts",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-ST-01",
+          "matches": [
+            {
+              "suite": "browser",
+              "name": "OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-03",
+      "cases": [
+        {
+          "selector": "IT-EXAM-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-EXAM-02: persists a new draft and reloads it from MongoDB",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "IT-EXAM-03",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-EXAM-03: rejects blank titles without inserting a partial record",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC33-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"title\":\"\"} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"description\":{}} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"duration\":0} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"duration\":-1} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"duration\":\"Infinity\"} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"duration\":true} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"duration\":[]} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"startTime\":\"bad\"} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"startTime\":\"2026-10-25T10:00\"} insert nothing",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-04",
+      "cases": [
+        {
+          "selector": "IT-EXAM-05",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-EXAM-05: saves and reloads draft edits",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "IT-EXAM-06",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-EXAM-06: deletes a draft together with its embedded question data",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC34-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC34-02: publication races reject stale edits/deletion and preserve historical attempts/results",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-05",
+      "cases": [
+        {
+          "selector": "IT-MCQ-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-MCQ-01: adds, edits and deletes an MCQ with durable changes",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "IT-MCQ-03",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-MCQ-03: rejects blank question text and leaves the draft unchanged",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "IT-MCQ-04",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-MCQ-04: rejects a question identifier belonging to a different exam",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-06",
+      "cases": [
+        {
+          "selector": "AC35-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC35-01: incomplete draft options [] cannot publish",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC35-01: incomplete draft options [{\"text\":\"a\"}] cannot publish",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC35-01: incomplete draft options [{\"text\":\"\",\"isCorrect\":true},{\"text\":\"b\"}] cannot publish",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC35-01: incomplete draft options [{\"text\":\"a\"},{\"text\":\"b\"}] cannot publish",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC35-01: incomplete draft options [{\"text\":\"a\",\"isCorrect\":true},{\"text\":\"b\",\"isCorrect\":true}] cannot publish",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC35-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC35-02: option removal clears correctness until a replacement is saved; rejects foreign option IDs",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "UI-AC35",
+          "matches": [
+            {
+              "suite": "client",
+              "name": "Authenticated Instructor exam management UI-AC35: removes the correct option without silently choosing another and supports adding replacements",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-07",
+      "cases": [
+        {
+          "selector": "IT-PUBLISH-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-PUBLISH-01: rejects publication of an empty draft",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "IT-PUBLISH-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-PUBLISH-02: rejects publication of stored questions without a correct option",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "IT-PUBLISH-03",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-PUBLISH-03: publishes valid content, persists status and never duplicates on repeat",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "IT-PUBLISH-04",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-PUBLISH-04: blocks published exam and question changes",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-08",
+      "cases": [
+        {
+          "selector": "IT-EXAM-04",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Exam API with authenticated Release 1 access IT-EXAM-04: lists only exams owned by the authenticated Instructor",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "UI-EXAM-01",
+          "matches": [
+            {
+              "suite": "client",
+              "name": "Authenticated Instructor exam management UI-EXAM-01: renders the empty list after loading",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "UI-EXAM-05",
+          "matches": [
+            {
+              "suite": "client",
+              "name": "Authenticated Instructor exam management UI-EXAM-05: reports a failed exam list request",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-09",
+      "cases": [
+        {
+          "selector": "AC36-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC36-01: listing and start share eligibility, hide answers and persist one unchanged deadline on concurrent resume",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-ST-01",
+          "matches": [
+            {
+              "suite": "browser",
+              "name": "OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-10",
+      "cases": [
+        {
+          "selector": "OEP44-IT-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP44-IT-01: concurrent starts/resume and reload retain one attempt, deadline and latest acknowledged selection",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-SEC-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP44-SEC-01: anonymous, foreign-student and wrong-role direct APIs never mutate or disclose an attempt",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-11",
+      "cases": [
+        {
+          "selector": "OEP44-IT-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP44-IT-01: concurrent starts/resume and reload retain one attempt, deadline and latest acknowledged selection",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-IT-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP44-IT-02: manual/timeout races, expired=false, repeat submission and late writes preserve one outcome",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "OEP44-IT-02: manual/timeout races, expired=true, repeat submission and late writes preserve one outcome",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-12",
+      "cases": [
+        {
+          "selector": "OEP44-IT-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP44-IT-01: concurrent starts/resume and reload retain one attempt, deadline and latest acknowledged selection",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-FAIL-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP44-FAIL-01: failed response storage is not acknowledged and does not expose database internals",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-ST-01",
+          "matches": [
+            {
+              "suite": "browser",
+              "name": "OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-13",
+      "cases": [
+        {
+          "selector": "manual submission computes",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP-39: manual submission computes correct from saved answers, ignores supplied marks and survives reload",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "OEP-39: manual submission computes wrong from saved answers, ignores supplied marks and survives reload",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "OEP-39: manual submission computes mixed from saved answers, ignores supplied marks and survives reload",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "OEP-39: manual submission computes unanswered from saved answers, ignores supplied marks and survives reload",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-IT-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP44-IT-02: manual/timeout races, expired=false, repeat submission and late writes preserve one outcome",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "OEP44-IT-02: manual/timeout races, expired=true, repeat submission and late writes preserve one outcome",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-ST-01",
+          "matches": [
+            {
+              "suite": "browser",
+              "name": "OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-14",
+      "cases": [
+        {
+          "selector": "OEP44-IT-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP44-IT-02: manual/timeout races, expired=false, repeat submission and late writes preserve one outcome",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "OEP44-IT-02: manual/timeout races, expired=true, repeat submission and late writes preserve one outcome",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-ST-02",
+          "matches": [
+            {
+              "suite": "browser",
+              "name": "OEP44-ST-02: closing the browser does not stop server timeout evaluation",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-15",
+      "cases": [
+        {
+          "selector": "manual submission computes",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP-39: manual submission computes correct from saved answers, ignores supplied marks and survives reload",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "OEP-39: manual submission computes wrong from saved answers, ignores supplied marks and survives reload",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "OEP-39: manual submission computes mixed from saved answers, ignores supplied marks and survives reload",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "OEP-39: manual submission computes unanswered from saved answers, ignores supplied marks and survives reload",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "full evaluation is idempotent",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP-39: full evaluation is idempotent under concurrency; failed evaluation retains responses and worker retries",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-ST-01",
+          "matches": [
+            {
+              "suite": "browser",
+              "name": "OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-16",
+      "cases": [
+        {
+          "selector": "AC24-04",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC24-04: student attempt/result ownership, Instructor result ownership and Admin non-inheritance",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "empty, pending, evaluated",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP-40/41: empty, pending, evaluated and direct-access privacy use persisted owned data",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-ST-01",
+          "matches": [
+            {
+              "suite": "browser",
+              "name": "OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "FR-17",
+      "cases": [
+        {
+          "selector": "AC24-03",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC24-03: foreign Instructor identifiers cannot read, write, publish or disclose results",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "empty, pending, evaluated",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP-40/41: empty, pending, evaluated and direct-access privacy use persisted owned data",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-ST-01",
+          "matches": [
+            {
+              "suite": "browser",
+              "name": "OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "OEP-SR-001",
+      "cases": [
+        {
+          "selector": "AC23-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC23-01: rejects wrong, missing, malformed and inactive credentials without leaking password data",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC51-03",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC51-03: initial Admin bootstrap hashes supplied credentials, rejects weak input and refuses repeat bootstrap",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "OEP-SR-002",
+      "cases": [
+        {
+          "selector": "AC23-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC23-02: rotates sessions on login and invalidates the old cookie and CSRF token",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC23-03",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC23-03: logout clears the cookie and replay cannot access protected data",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC23-04",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC23-04: rejects missing CSRF, cross-origin writes, malformed JSON and invalid sessions",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "OEP-SR-003",
+      "cases": [
+        {
+          "selector": "AC24-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC24-01: current role and active status are rechecked for an existing session",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC24-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC24-02: Student cannot call any Instructor management operation",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC24-02: Admin cannot call any Instructor management operation",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC51-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC51-02: Admin API demotion/deactivation revokes an existing session and preserves associated data",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "OEP-SR-004",
+      "cases": [
+        {
+          "selector": "AC24-03",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC24-03: foreign Instructor identifiers cannot read, write, publish or disclose results",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC24-04",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC24-04: student attempt/result ownership, Instructor result ownership and Admin non-inheritance",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-SEC-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP44-SEC-01: anonymous, foreign-student and wrong-role direct APIs never mutate or disclose an attempt",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "OEP-SR-005",
+      "cases": [
+        {
+          "selector": "AC36-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC36-01: listing and start share eligibility, hide answers and persist one unchanged deadline on concurrent resume",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-IT-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP44-IT-01: concurrent starts/resume and reload retain one attempt, deadline and latest acknowledged selection",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "requirement": "OEP-SR-006",
+      "cases": [
+        {
+          "selector": "AC33-02",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"title\":\"\"} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"description\":{}} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"duration\":0} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"duration\":-1} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"duration\":\"Infinity\"} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"duration\":true} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"duration\":[]} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"startTime\":\"bad\"} insert nothing",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC33-02: invalid fields {\"startTime\":\"2026-10-25T10:00\"} insert nothing",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC35-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC35-01: incomplete draft options [] cannot publish",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC35-01: incomplete draft options [{\"text\":\"a\"}] cannot publish",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC35-01: incomplete draft options [{\"text\":\"\",\"isCorrect\":true},{\"text\":\"b\"}] cannot publish",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC35-01: incomplete draft options [{\"text\":\"a\"},{\"text\":\"b\"}] cannot publish",
+              "status": "passed"
+            },
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC35-01: incomplete draft options [{\"text\":\"a\",\"isCorrect\":true},{\"text\":\"b\",\"isCorrect\":true}] cannot publish",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "AC51-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "Acceptance criteria #21 #23 #24 #33–#37 AC51-01: invalid provisioning, forbidden writes and inactive Admin sessions cannot change accounts",
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "selector": "OEP44-FAIL-01",
+          "matches": [
+            {
+              "suite": "server",
+              "name": "OEP44-FAIL-01: failed response storage is not acknowledged and does not expose database internals",
+              "status": "passed"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

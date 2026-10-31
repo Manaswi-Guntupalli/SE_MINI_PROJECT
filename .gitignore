@@ -1,0 +1,33 @@
+# Node / React dependencies and generated output
+node_modules/
+dist/
+build/
+coverage/
+reports/
+ci-evidence/
+server/.ci-negative-*/
+server/.ci-mongodb/
+server/.local-mongodb/
+*.log
+
+# Local environment secrets (allow example templates)
+.env
+.env.*
+!.env.example
+!.env.*.example
+.env/
+
+# Existing Python local artifacts
+__pycache__/
+*.pyc
+venv/
+db.sqlite3
+staticfiles/
+media/
+
+# Editor and OS files
+.vscode/
+.DS_Store
+Thumbs.db
+
+server/.env

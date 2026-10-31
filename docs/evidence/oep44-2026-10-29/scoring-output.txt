@@ -1,0 +1,13 @@
+✔ All correct answers give full marks (1.9904ms)
+✔ All wrong answers give zero marks (0.2068ms)
+✔ Mixed and unanswered questions award only correct marks (0.1758ms)
+✔ Duplicate answers are rejected (0.7884ms)
+✔ Invalid published answer key is rejected (0.6801ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 557.9591

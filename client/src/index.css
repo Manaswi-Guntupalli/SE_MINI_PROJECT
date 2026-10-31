@@ -1,0 +1,40 @@
+/* Shared Release 1 design tokens. See docs/UI_DESIGN_SYSTEM.md. */
+:root {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: #302b35; background: #faf8fb; color-scheme: light;
+  font-synthesis: none; text-rendering: optimizeLegibility;
+  --ink: #302b35; --muted: #706576; --surface: #fff; --canvas: #faf8fb;
+  --primary: #9663ba; --primary-hover: #8253a4; --primary-soft: #f0e8f5;
+  --accent-ink: #56336e; --accent-border: #cbb4db; --accent-hover: #e6d7ef;
+  --control-border: #a18cae;
+  --danger: #943e51; --danger-soft: #fcf1f3; --border: #e3dce7;
+  --focus: #70458e; --radius: 8px; --control-radius: 6px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-6: 24px; --space-8: 32px; --space-12: 48px;
+  --shadow: none;
+  line-height: 1.55; font-size: 16px;
+}
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 0; }
+a { color: var(--accent-ink); text-underline-offset: 4px; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: clamp(1.1rem, 2.2vw, 1.3rem); line-height: 1.25; letter-spacing: -.02em; }
+h2 { font-size: clamp(1.2rem, 3vw, 1.45rem); line-height: 1.3; letter-spacing: -.025em; }
+h3 { font-size: 1.1rem; }
+p + p { margin-top: var(--space-2); }
+button, input, textarea, select { font: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+button, input, textarea, select, a { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+button:disabled, input:disabled, select:disabled, fieldset:disabled { cursor: not-allowed; }
+button:disabled { opacity: .55; }
+input, textarea, select { min-width: 0; max-width: 100%; width: 100%; padding: 11px 12px;
+  border: 1px solid var(--control-border); border-radius: var(--control-radius); color: var(--ink); background: var(--surface); }
+input[type="radio"], input[type="checkbox"] { width: 20px; height: 20px; padding: 0; flex: 0 0 auto; accent-color: var(--primary); }
+textarea { resize: vertical; min-height: 100px; }
+label { display: block; font-size: .9rem; font-weight: 600; }
+label input, label select { margin-top: var(--space-2); }
+small { display: block; color: var(--muted); }
+fieldset { min-width: 0; margin: var(--space-6) 0; padding: var(--space-4); border: 1px solid var(--border); border-radius: var(--control-radius); }
+legend { max-width: 100%; font-weight: 700; padding: 0 var(--space-2); overflow-wrap: anywhere; }
+hr { border: 0; border-top: 1px solid var(--border); margin: var(--space-6) 0; }

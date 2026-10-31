@@ -1,0 +1,55 @@
+name: Validate Sprint 2 changes
+
+on:
+  pull_request:
+    branches: [develop]
+  push:
+    branches: [develop]
+
+permissions:
+  contents: read
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - name: Install server dependencies
+        working-directory: server
+        run: npm ci
+      - name: Check backend JavaScript syntax
+        working-directory: server
+        run: npm run build
+      - name: Run server unit tests
+        working-directory: server
+        run: node --test tests/evaluationService.test.js
+      - name: Verify evaluation and result acceptance criteria against MongoDB
+        working-directory: server
+        run: npm test
+
+  client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - name: Install backend dependencies required by system tests
+        working-directory: server
+        run: npm ci
+      - name: Install client dependencies
+        working-directory: client
+        run: npm ci
+      - name: Run client tests
+        working-directory: client
+        run: npm test
+      - name: Build client
+        working-directory: client
+        run: npm run build
