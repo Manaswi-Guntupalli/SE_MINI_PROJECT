@@ -1,0 +1,16 @@
+<testsuites id="" name="" tests="2" failures="0" skipped="0" errors="0" time="45.665744">
+<testsuite name="release1.spec.mjs" timestamp="2026-10-29T10:28:28.014Z" hostname="" tests="2" failures="0" skipped="0" time="17.563" errors="0">
+<testcase name="OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin" classname="release1.spec.mjs" time="12.688">
+<properties>
+<property name="browser-version" value="156.0.4314.50">
+</property>
+</properties>
+</testcase>
+<testcase name="OEP44-ST-02: closing the browser does not stop server timeout evaluation" classname="release1.spec.mjs" time="4.875">
+<properties>
+<property name="browser-version" value="156.0.4314.50">
+</property>
+</properties>
+</testcase>
+</testsuite>
+</testsuites>

@@ -1,0 +1,130 @@
+{
+  "scope": "Executable probes of the current prototype; authenticated flows cannot be accepted until #23/#24 exist.",
+  "generatedAt": "2026-10-24T05:57:17.241Z",
+  "passed": 3,
+  "failed": 7,
+  "results": [
+    {
+      "id": "AC-AUTH-01",
+      "issues": [
+        23,
+        24,
+        33
+      ],
+      "criterion": "Anonymous exam creation must be rejected",
+      "expected": "401 or 403",
+      "actual": 201,
+      "status": "FAIL"
+    },
+    {
+      "id": "AC-AUTH-02",
+      "issues": [
+        24,
+        35,
+        37
+      ],
+      "criterion": "Anonymous access must not disclose management data/answer keys",
+      "expected": "401 or 403 with no answer key",
+      "actual": {
+        "status": 200,
+        "returnedCorrectAnswerFlags": true
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "AC-AUTH-03",
+      "issues": [
+        24,
+        34
+      ],
+      "criterion": "Anonymous exam edits must be rejected",
+      "expected": "401 or 403",
+      "actual": 200,
+      "status": "FAIL"
+    },
+    {
+      "id": "AC-OWNER-01",
+      "issues": [
+        33,
+        34
+      ],
+      "criterion": "Exam management must preserve the authenticated owner",
+      "expected": "owner-a",
+      "actual": {
+        "status": 200,
+        "persistedOwner": "attacker-controlled-owner"
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "AC-PUBLISH-01",
+      "issues": [
+        34,
+        36
+      ],
+      "criterion": "Draft updates must not bypass publication validation",
+      "expected": "empty exam remains Draft",
+      "actual": {
+        "status": 200,
+        "persistedStatus": "Published",
+        "questionCount": 0
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "AC-VALIDATION-01",
+      "issues": [
+        33
+      ],
+      "criterion": "The existing prototype must accept the specified optional start time",
+      "expected": "201 using a valid title/duration",
+      "actual": {
+        "status": 400,
+        "message": "Exam validation failed: startTime: Path `startTime` is required."
+      },
+      "status": "FAIL"
+    },
+    {
+      "id": "AC-VALIDATION-02",
+      "issues": [
+        33,
+        34,
+        36
+      ],
+      "criterion": "Duration must be finite",
+      "expected": "400",
+      "actual": 201,
+      "status": "FAIL"
+    },
+    {
+      "id": "AC-VALIDATION-03",
+      "issues": [
+        33
+      ],
+      "criterion": "Blank exam titles must be rejected",
+      "expected": "400",
+      "actual": 400,
+      "status": "PASS"
+    },
+    {
+      "id": "AC-PUBLISH-02",
+      "issues": [
+        36
+      ],
+      "criterion": "The publish endpoint must reject an empty draft",
+      "expected": "400",
+      "actual": 400,
+      "status": "PASS"
+    },
+    {
+      "id": "AC-MCQ-01",
+      "issues": [
+        35
+      ],
+      "criterion": "Question creation must reject multiple correct options",
+      "expected": "400",
+      "actual": 400,
+      "status": "PASS"
+    }
+  ]
+}

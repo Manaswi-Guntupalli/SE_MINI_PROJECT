@@ -1,0 +1,118 @@
+{
+  "date": "2026-10-28",
+  "timezone": "Asia/Calcutta",
+  "runtime": "Node 22.21.0 (CI targets Node 24)",
+  "scope": [
+    38,
+    39,
+    40,
+    46,
+    47,
+    65
+  ],
+  "excluded": [
+    53
+  ],
+  "results": {
+    "client": {
+      "tests": 34,
+      "failures": 0,
+      "errors": 0,
+      "suites": [
+        {
+          "name": "src/App.test.jsx",
+          "tests": 14,
+          "failures": 0,
+          "skipped": 0
+        },
+        {
+          "name": "src/ExamAttempt.test.jsx",
+          "tests": 4,
+          "failures": 0,
+          "skipped": 0
+        },
+        {
+          "name": "src/ResultsPanel.test.jsx",
+          "tests": 2,
+          "failures": 0,
+          "skipped": 0
+        },
+        {
+          "name": "src/RoleDashboard.test.jsx",
+          "tests": 6,
+          "failures": 0,
+          "skipped": 0
+        },
+        {
+          "name": "src/examClock.test.jsx",
+          "tests": 2,
+          "failures": 0,
+          "skipped": 0
+        },
+        {
+          "name": "src/system.test.jsx",
+          "tests": 1,
+          "failures": 0,
+          "skipped": 0
+        },
+        {
+          "name": "src/ui.test.jsx",
+          "tests": 5,
+          "failures": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    "server": {
+      "tests": 83,
+      "failures": 0,
+      "errors": 0,
+      "suites": [
+        {
+          "name": "test/acceptance.test.mjs",
+          "tests": 35,
+          "failures": 0,
+          "skipped": 0
+        },
+        {
+          "name": "test/exam-api.test.mjs",
+          "tests": 15,
+          "failures": 0,
+          "skipped": 0
+        },
+        {
+          "name": "test/exam-model.test.mjs",
+          "tests": 9,
+          "failures": 0,
+          "skipped": 0
+        },
+        {
+          "name": "test/persistence-integration.test.mjs",
+          "tests": 11,
+          "failures": 0,
+          "skipped": 0
+        },
+        {
+          "name": "test/persistence-model.test.mjs",
+          "tests": 6,
+          "failures": 0,
+          "skipped": 0
+        },
+        {
+          "name": "test/student-api.test.mjs",
+          "tests": 7,
+          "failures": 0,
+          "skipped": 0
+        }
+      ]
+    }
+  },
+  "checks": {
+    "clientLint": "passed",
+    "clientBuild": "passed",
+    "serverSyntaxBuild": "passed",
+    "gitDiffCheck": "passed"
+  },
+  "visualReview": "Pending: no browser surface was available; no screenshots or viewport overflow measurements claimed.",
+  "systemWorkflow": "Real React DOM -> HTTP/session/CSRF -> Express -> isolated MongoDB replica set; Instructor authoring/publication, Student save/reload/submission/results, Instructor results, Admin account management."
+}

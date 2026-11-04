@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="24" failures="0" errors="0" time="10.4230607">
+    <testsuite name="src/App.test.jsx" timestamp="2026-10-29T10:28:24.020Z" hostname="Manaswi-Guntupalli" tests="16" failures="0" errors="0" skipped="0" time="1.5658981">
+        <testcase classname="src/App.test.jsx" name="OEP-41 instructor result states &gt; shows loading, pending identities, persisted scores, empty state and API errors" time="0.3613567">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="OEP-41 instructor result states &gt; clears old exam results on switching and ignores a late result response" time="0.1750448">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-AC35: removes the correct option without silently choosing another and supports adding replacements" time="0.2119351">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-AC33: editing the local start preserves the instant and explicitly identifies the timezone" time="0.1041118">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-AC23: shows rejected login and completes a successful login/logout" time="0.0829051">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-01: renders the empty list after loading" time="0.0315205">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-02: displays a fetched exam and its status" time="0.032377">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-03: submits exam form data with CSRF protection" time="0.0292105">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-04: displays the server validation error on a rejected create" time="0.0319252">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-05: reports a failed exam list request" time="0.0158719">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-06: cancels deletion without sending a destructive request" time="0.0322557">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-07: sends confirmed deletion with CSRF protection" time="0.0339889">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-MCQ-01: submits question text and options with one selected answer" time="0.1093197">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-MCQ-02: editing an existing question uses its own API identifier" time="0.1182736">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-PUBLISH-01: confirmed publication updates the displayed status" time="0.1036999">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-PUBLISH-02: published content has no edit or delete management actions" time="0.0887335">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/RoleDashboard.test.jsx" timestamp="2026-10-29T10:28:24.039Z" hostname="Manaswi-Guntupalli" tests="7" failures="0" errors="0" skipped="0" time="0.6023601">
+        <testcase classname="src/RoleDashboard.test.jsx" name="OEP-40 persisted result states &gt; closes answer entry when submission persisted but scoring failed" time="0.2591231">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="OEP-40 persisted result states &gt; shows results loading, pending evaluations and persisted scores after refresh/remount" time="0.0608134">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="OEP-40 persisted result states &gt; shows a result API failure and recovers with explicit unavailable state on retry" time="0.0313464">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="Supporting role boundaries &gt; Student sees eligibility list, starts/resumes and receives the persisted deadline" time="0.073693">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="Supporting role boundaries &gt; Student sees an explicit empty state and start errors" time="0.0697967">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="Supporting role boundaries &gt; Admin can update another account but own access controls are disabled" time="0.0602142">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="Supporting role boundaries &gt; Admin account creation sends validated fields and clears the password" time="0.0445625">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/system.test.jsx" timestamp="2026-10-29T10:28:24.045Z" hostname="Manaswi-Guntupalli" tests="1" failures="0" errors="0" skipped="0" time="8.2548025">
+        <testcase classname="src/system.test.jsx" name="SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB create/edit/options/publish/reload → Student start" time="5.8563129">
+        </testcase>
+    </testsuite>
+</testsuites>

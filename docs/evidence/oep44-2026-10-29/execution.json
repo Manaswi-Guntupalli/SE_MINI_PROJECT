@@ -1,0 +1,208 @@
+{
+  "task": "OEP-44 / #53",
+  "startedAt": "2026-10-29T10:26:46.700Z",
+  "node": "v24.22.1",
+  "platform": "win32/x64",
+  "timezone": "Asia/Kolkata",
+  "baseCommit": "8c5421637e4dcf2e8b529a40edafe29374013d95",
+  "sourceFiles": {
+    "client/e2e/fixture-server.mjs": "6d522e35d28b3c686d032f6a4b0753aafb147654491d4d4f77d90e1e0679c098",
+    "client/e2e/release1.spec.mjs": "e2fb2cfdd4fc71f7b165e9720fc2355d77a1cd2c91ff803c6264241f6df5d394",
+    "client/playwright.config.mjs": "e3bbf01384b6d5128ba19be731284c9d3005e8c3c21e2cf4688a4dbba08b98d6",
+    "scripts/check-release1-traceability.mjs": "997f79e002149bc37af00f79e60db4811e1f55de7998d5a71e4ce233903c8f9a",
+    "scripts/verify-release1.mjs": "6fff5533a10dc893b8f29110106a619262f0418ed62a6b0c409742a4ce4a1278",
+    ".github/workflows/application-ci.yml": "c1d052c5a16fb505d2b116f52b30b3ebd215ab042de6336c67d943f04d86b5e4",
+    ".github/workflows/repository-checks.yml": "ebe3140ad374cf00c7cc337438a3c8508a973b5c5efdc5c9d988f9eeba34d7e8",
+    ".github/workflows/validate-sprint2.yml": "2563663b618c6c702a1837dabd9131cad330df9bed03f1ec0560d523160514c3",
+    ".node-version": "7c415154bb9f8e90394317c7109261249d2c4fbd549008ae6d014ee565ee7967",
+    "client/eslint.config.js": "38822d71d23158ba4b39833583aee24565c8d0d58c25cb7a663aa90392a63ebe",
+    "client/package-lock.json": "357da0a65907eb172442147f53acf3bd73e59a09a9805a075fadf2a375ea2e15",
+    "client/package.json": "4e9c11bb25ea1eaa59e71576f7606566d2af9b47f210503d0124665c72314577",
+    "client/src/App.jsx": "f56a3caad1ca7764493a01ea6a47f9c5e41bef5a3556877fde0690b9eac78d2a",
+    "client/src/App.test.jsx": "bff2bbb76ea0aaf18100700fb91d1b50a7ba5a20733716eeb7d0367a61febee1",
+    "client/src/RoleDashboard.jsx": "08c5e0be116e1f33a38509e47b8ec00b55d187b66b4fe91abb5fb0d6c3607905",
+    "client/src/RoleDashboard.test.jsx": "7f6e2d04ec2d592de11d87198d5008a318ccd8ae7b2b168b96093c772e749605",
+    "client/src/dateTime.js": "9011aa3832b947dbf8b60f31e406d686bfc20741f763c6632df1ec8383dc8994",
+    "client/src/main.jsx": "ae81f1c01f2c8018a1ba5cf73171921c8982d90b049bb6b039ea82f8e1dec958",
+    "client/src/system.test.jsx": "f15a0e340587e08a3e84a077d66e69469833c61418b85e117c8c6fdc25cc6244",
+    "client/vite.config.js": "f58edcc886dbf642f0aad60dce0c36a378df3022aa88cec76592532b12d529cc",
+    "client/vitest.config.js": "ab3c5c452717edcc58910f590ec075b0c2f64eb23cb664667d6bcadd27bc810d",
+    "scripts/audit-sprint1.mjs": "87fff555db2fe7f12d041e535baf3cc3e1d411378b4cae98b8c3bc1a10f2ae47",
+    "scripts/check-server-syntax.mjs": "a3a7c77bde6786703df81bd3e520e4f8b0b888049844c9affe33fc19bfebadc6",
+    "scripts/ci-summary.mjs": "ef034a3d6650fa2e35126e84ec12c1b1282ddcd2bfa976ebb1955efe83f88f94",
+    "scripts/ci.mjs": "9bd4e3b59be22dfcf3dbb2646a98081d35ee7c5f6682c58f339ba344b10da1b0",
+    "scripts/verify-test-failure.mjs": "2997bd9e74a37d2c8fb57553a8e9bf2dc069011b62a6137ae2edd428168fe740",
+    "scripts/write-ci-evidence.mjs": "f8cf3e7472a2d93f25c32cf13f19b9fd7976bc69d0aa99d755dd5ee5fe4a09fc",
+    "server/app.js": "ddcaa02339659834985dcd0dc70a04c3668800eab35db9e79ea9fc55610f5ffc",
+    "server/controllers/authController.js": "877426cf91a2e97ea23dcda849a443e90007ab33c197c5cfd0163431b94cb7b7",
+    "server/controllers/examController.js": "b2f5fa9dfe21c806e2a0a5694b7614fa739d79ac2e23aa9e9a7f5344f743432c",
+    "server/middleware/authMiddleware.js": "a97cea61a15e5e87bfba66a8e0c424fba876930549966b233b8967718e3ebe18",
+    "server/middleware/csrfMiddleware.js": "1600b60f8f84fc5baaf1afcb4c48da4fc4f61d4d1b704f386c7a53be08204023",
+    "server/models/Attempt.js": "f54a1026bff965d494f7f1f82b4c1c70a79d7218fc980a440848fa34f1700af6",
+    "server/models/Exam.js": "8c90ac21eb0e1e6445b84ed23cc7fa399163a7300b4659bebb1a4f6e61f97a3d",
+    "server/models/Response.js": "05067560bba8656b37c1e332bb7becd9c47442f56cbda477caaf2a11fe2c8643",
+    "server/models/Result.js": "4948e88ee919267a4f87238271f1bbc8a7081284194e57ec6c5bdb18bddb70f0",
+    "server/models/User.js": "e9f1e3f70e5aa08fdf73b53545d8bb5abde569fbece53ef680ece0785f9526ff",
+    "server/package-lock.json": "6f6e7a5423cbf5982c71aade6b95aa63275c279f3d120d17da75d6f3e048659c",
+    "server/package.json": "e4451e72f1959035afef894c0ee1a5dc501cb35f408bcd4ae6b7fe0d5c1a118c",
+    "server/routes/adminRoutes.js": "6c9fd0ec89af80f4473a8e56e1fb0fee44e34c17be23edb0d37e477ee40f0996",
+    "server/routes/authRoutes.js": "29e2116c69145ed39d39c7e29cd48524853d237ac78b2f04074aa63c4e2eacd5",
+    "server/routes/examRoutes.js": "81655bb39011dc99f5d9aa701820f640300d50b7255d9ff328fee5b827943de9",
+    "server/routes/studentRoutes.js": "c7370c0510b8e997b0d65a5830493b065e31008dd4f8214253d301b58f57901d",
+    "server/scripts/bootstrapAdmin.js": "438d393a949da31e54c6278b0be5b25497ba1b2e8fa20c6bc07bf9ed14b1805e",
+    "server/scripts/checkDatabase.js": "b0e7bb8f5b59cf1d171871aa38c67f4a06448ec1858cae1c2fa5573dd59b8b26",
+    "server/scripts/devDatabase.js": "ec07f8940b80d533752d1098ee5a0610527a02aa91a2e1d8420efa7e2d2199d0",
+    "server/scripts/seedUsers.js": "fb98be647110fcb5c1241c8e521f55c98170cb8cad82e9eeeb54c06575a22b8a",
+    "server/server.js": "a22824e9f328cdbf32b856f80e1d65934c3c96ad5d43a7ebd70d6003a8d538e6",
+    "server/services/evaluationService.js": "a937577c4c740ec9d586798b7b9697065e477d8f03da5fb52ceab485fd8d52b3",
+    "server/services/evaluationWorker.js": "c34595bcda55055c415611a1797e002da4cad71a9f0f7220d929bfc73f267d6c",
+    "server/services/persistenceService.js": "98c363a4786572fb670d5a68f031d1e642babf0e4e92fb0f535981ea7ff84b56",
+    "server/test/acceptance.test.mjs": "5421e999cb208d8a0f8d81eb992679e2d8491022171cfe2e83387e77392461b9",
+    "server/test/database.mjs": "8082ce8b0febe9fe3f03417bdf669abf11b5cd0070fe639fcc599ccf8139d7d5",
+    "server/test/exam-api.test.mjs": "2827304e2314fab6a3baf7d3599b7f30d643dcff45d84c43a3ec85ac9b5140a0",
+    "server/test/exam-model.test.mjs": "651e745318e456c8a8b13b5cf7439cbbacad24099574d8431d719521fab8aeda",
+    "server/test/persistence-integration.test.mjs": "405eb85bd77fd9a6f88919069e3f0d63d5816f049d6e013d928763c1f9a79a94",
+    "server/test/persistence-model.test.mjs": "eee01be100ba6c908aba83232a3aece8dc4bdd80e9f28a7b57b7a8fba3ecedf4",
+    "server/test/results-workflow.test.mjs": "d96c52836acb7e6316173b4f600a3b647c79ff47a88f939576b0b7bf04d82ac3",
+    "server/tests/evaluationService.test.js": "bce763bc345f8c3f05d2268b3f9c43a129e9dd1678f611239b6373d83e7c8088",
+    "server/tests/security.test.js": "14811e277ae0c94b21161f4c5f104ac3502d60d47a9c4ecf46862dd727fcacfc",
+    "server/vitest.config.mjs": "5f49f8e7356dec128477f716cbfe169eebbcc023174462044bb235483768cc92"
+  },
+  "scope": "Functional and security acceptance, real Edge/Chromium browser, isolated MongoDB 8.0.17. No production/load/multi-browser certification.",
+  "stages": [
+    {
+      "id": "server",
+      "cwd": "server",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--coverage",
+        "--reporter=default",
+        "--reporter=json",
+        "--reporter=junit",
+        "--outputFile.json=reports/oep44-tests.json",
+        "--outputFile.junit=reports/junit.xml"
+      ],
+      "startedAt": "2026-10-29T10:26:46.789Z",
+      "finishedAt": "2026-10-29T10:28:11.135Z",
+      "exitCode": 0,
+      "log": "server-output.txt"
+    },
+    {
+      "id": "scoring",
+      "cwd": "server",
+      "command": [
+        "node",
+        "--test",
+        "tests/evaluationService.test.js"
+      ],
+      "startedAt": "2026-10-29T10:28:11.136Z",
+      "finishedAt": "2026-10-29T10:28:11.805Z",
+      "exitCode": 0,
+      "log": "scoring-output.txt"
+    },
+    {
+      "id": "client",
+      "cwd": "client",
+      "command": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--coverage",
+        "--reporter=default",
+        "--reporter=json",
+        "--reporter=junit",
+        "--outputFile.json=reports/oep44-tests.json",
+        "--outputFile.junit=reports/junit.xml"
+      ],
+      "startedAt": "2026-10-29T10:28:11.807Z",
+      "finishedAt": "2026-10-29T10:28:24.229Z",
+      "exitCode": 0,
+      "log": "client-output.txt"
+    },
+    {
+      "id": "browser",
+      "cwd": "client",
+      "command": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test"
+      ],
+      "startedAt": "2026-10-29T10:28:24.230Z",
+      "finishedAt": "2026-10-29T10:29:10.687Z",
+      "exitCode": 0,
+      "log": "browser-output.txt"
+    },
+    {
+      "id": "lint",
+      "cwd": "client",
+      "command": [
+        "node",
+        "node_modules/eslint/bin/eslint.js",
+        ".",
+        "--max-warnings=0"
+      ],
+      "startedAt": "2026-10-29T10:29:10.688Z",
+      "finishedAt": "2026-10-29T10:29:12.818Z",
+      "exitCode": 0,
+      "log": "lint-output.txt"
+    },
+    {
+      "id": "build",
+      "cwd": "client",
+      "command": [
+        "node",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "startedAt": "2026-10-29T10:29:12.819Z",
+      "finishedAt": "2026-10-29T10:29:13.444Z",
+      "exitCode": 0,
+      "log": "build-output.txt"
+    },
+    {
+      "id": "syntax",
+      "cwd": ".",
+      "command": [
+        "node",
+        "scripts/check-server-syntax.mjs"
+      ],
+      "startedAt": "2026-10-29T10:29:13.446Z",
+      "finishedAt": "2026-10-29T10:29:15.348Z",
+      "exitCode": 0,
+      "log": "syntax-output.txt"
+    },
+    {
+      "id": "negative-control",
+      "cwd": ".",
+      "command": [
+        "node",
+        "scripts/verify-test-failure.mjs"
+      ],
+      "startedAt": "2026-10-29T10:29:15.349Z",
+      "finishedAt": "2026-10-29T10:29:16.880Z",
+      "exitCode": 0,
+      "log": "negative-control-output.txt"
+    },
+    {
+      "id": "traceability",
+      "cwd": ".",
+      "command": [
+        "node",
+        "scripts/check-release1-traceability.mjs",
+        "docs\\evidence\\oep44-2026-10-29"
+      ],
+      "startedAt": "2026-10-29T10:29:16.931Z",
+      "finishedAt": "2026-10-29T10:29:17.030Z",
+      "exitCode": 0,
+      "log": "traceability-output.txt"
+    }
+  ],
+  "status": "passed",
+  "serverTests": 89,
+  "clientTests": 24,
+  "browserTests": 2,
+  "backendLineCoverage": 89.13,
+  "finishedAt": "2026-10-29T10:29:17.056Z"
+}

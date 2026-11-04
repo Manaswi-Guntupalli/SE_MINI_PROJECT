@@ -1,0 +1,1 @@
+Verified: the real test runner returned a nonzero exit code for the deliberately wrong Exam assertion.

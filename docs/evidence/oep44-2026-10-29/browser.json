@@ -1,0 +1,215 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\Manaswi G\\AppData\\Local\\npm-cache\\_npx\\ef8b185be06dfeb4\\node_modules\\node\\bin\\node.exe",
+      "C:\\Users\\Manaswi G\\OneDrive\\Desktop\\SE_MINI_PROJECT\\SE_MINI_PROJECT\\client\\node_modules\\@playwright\\test\\cli.js",
+      "test"
+    ],
+    "configFile": "C:\\Users\\Manaswi G\\OneDrive\\Desktop\\SE_MINI_PROJECT\\SE_MINI_PROJECT\\client\\playwright.config.mjs",
+    "rootDir": "C:/Users/Manaswi G/OneDrive/Desktop/SE_MINI_PROJECT/SE_MINI_PROJECT/client/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/Manaswi G/OneDrive/Desktop/SE_MINI_PROJECT/SE_MINI_PROJECT/client/reports/browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/Manaswi G/OneDrive/Desktop/SE_MINI_PROJECT/SE_MINI_PROJECT/client/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.spec.mjs"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\Manaswi G\\OneDrive\\Desktop\\SE_MINI_PROJECT\\SE_MINI_PROJECT\\client\\reports\\browser-artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "C:\\Users\\Manaswi G\\OneDrive\\Desktop\\SE_MINI_PROJECT\\SE_MINI_PROJECT\\client\\e2e",
+        "snapshotDir": "C:\\Users\\Manaswi G\\OneDrive\\Desktop\\SE_MINI_PROJECT\\SE_MINI_PROJECT\\client\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.spec.mjs",
+        "timeout": 60000,
+        "use": {
+          "baseURL": "http://127.0.0.1:4173",
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "channel": "msedge",
+          "trace": "retain-on-failure",
+          "screenshot": "only-on-failure"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "reports/browser.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "reports/browser-junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": {
+      "command": "node e2e/fixture-server.mjs",
+      "url": "http://127.0.0.1:4173",
+      "timeout": 180000,
+      "reuseExistingServer": false
+    }
+  },
+  "suites": [
+    {
+      "title": "release1.spec.mjs",
+      "file": "release1.spec.mjs",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "browser-version",
+                  "description": "156.0.4314.50"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12688,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-29T10:28:28.352Z",
+                  "annotations": [
+                    {
+                      "type": "browser-version",
+                      "description": "156.0.4314.50"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "287a5c92025f8f30320d-a91db84c60e63823adcc",
+          "file": "release1.spec.mjs",
+          "line": 16,
+          "column": 1
+        },
+        {
+          "title": "OEP44-ST-02: closing the browser does not stop server timeout evaluation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [
+                {
+                  "type": "browser-version",
+                  "description": "156.0.4314.50"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4875,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-29T10:28:41.335Z",
+                  "annotations": [
+                    {
+                      "type": "browser-version",
+                      "description": "156.0.4314.50"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "287a5c92025f8f30320d-0b0d129b3f14c4e58a75",
+          "file": "release1.spec.mjs",
+          "line": 85,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-29T10:28:24.987Z",
+    "duration": 45665.744,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

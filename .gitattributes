@@ -1,0 +1,7 @@
+# Preserve binary project documents without text conversion or whitespace checks.
+*.pdf binary
+*.docx binary
+*.xlsx binary
+# Keep original runner output intact, including padded coverage tables.
+docs/evidence/oep44-*/*-output.txt -whitespace
+docs/sprint1[[:space:]]video.mp4 filter=lfs diff=lfs merge=lfs -text
