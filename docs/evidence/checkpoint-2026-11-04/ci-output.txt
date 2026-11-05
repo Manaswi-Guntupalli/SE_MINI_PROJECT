@@ -1,0 +1,248 @@
+Node v24.22.1; win32/x64
+10.9.3
+463cde555490738bcaa5fde661e3910e29f8f7ab
+Cleared generated reports, coverage, manifest and frontend build before this CI run.
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+
+added 507 packages in 57s
+
+added 243 packages in 28s
+
+> online-exam-portal-server@1.0.0 build
+> node ../scripts/check-server-syntax.mjs
+
+Backend JavaScript syntax checks passed (no transpilation required).
+
+> client@0.0.0 lint
+> eslint .
+
+
+> client@0.0.0 build
+> vite build
+
+vite v8.3.5 building client environment for production...
+transforming...
+✓ 78 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.46 kB │ gzip:  0.30 kB
+dist/assets/index-eSL3qZHn.css    9.22 kB │ gzip:  2.53 kB
+dist/assets/index-D1UnMwYB.js   301.41 kB │ gzip: 95.81 kB
+
+✓ built in 407ms
+
+> online-exam-portal-server@1.0.0 test:ci
+> vitest run --coverage
+
+
+ RUN  v5.0.5 C:/Users/tanus/SE_MINI_PROJECT/server
+      Coverage enabled with v8
+
+ ✓ test/acceptance.test.mjs (35 tests) 55932ms
+   ✓ Acceptance criteria #21 #23 #24 #33–#37 (35)
+     ✓ AC23-01: rejects wrong, missing, malformed and inactive credentials without leaking password data 2950ms
+     ✓ AC23-02: rotates sessions on login and invalidates the old cookie and CSRF token 1906ms
+     ✓ AC23-03: logout clears the cookie and replay cannot access protected data 1000ms
+     ✓ AC24-01: current role and active status are rechecked for an existing session 1041ms
+     ✓ AC24-02: Student cannot call any Instructor management operation 1139ms
+     ✓ AC24-02: Admin cannot call any Instructor management operation 1158ms
+     ✓ AC24-03: foreign Instructor identifiers cannot read, write, publish or disclose results 1096ms
+     ✓ AC23-04: rejects missing CSRF, cross-origin writes, malformed JSON and invalid sessions 1000ms
+     ✓ AC33-01: optional start undefined creates a persisted owned draft 1251ms
+     ✓ AC33-01: optional start null creates a persisted owned draft 1031ms
+     ✓ AC33-01: optional start "" creates a persisted owned draft 1024ms
+     ✓ AC33-02: invalid fields {"title":""} insert nothing 1096ms
+     ✓ AC33-02: invalid fields {"description":{}} insert nothing 984ms
+     ✓ AC33-02: invalid fields {"duration":0} insert nothing 1026ms
+     ✓ AC33-02: invalid fields {"duration":-1} insert nothing 1006ms
+     ✓ AC33-02: invalid fields {"duration":"Infinity"} insert nothing 990ms
+     ✓ AC33-02: invalid fields {"duration":true} insert nothing 1037ms
+     ✓ AC33-02: invalid fields {"duration":[]} insert nothing 1052ms
+     ✓ AC33-02: invalid fields {"startTime":"bad"} insert nothing 956ms
+     ✓ AC33-02: invalid fields {"startTime":"2026-10-25T10:00"} insert nothing 994ms
+     ✓ AC34-01: cannot mass assign publication, ownership, questions or answer keys 1040ms
+     ✓ AC35-01: incomplete draft options [] cannot publish 1088ms
+     ✓ AC35-01: incomplete draft options [{"text":"a"}] cannot publish 1037ms
+     ✓ AC35-01: incomplete draft options [{"text":"","isCorrect":true},{"text":"b"}] cannot publish 1044ms
+     ✓ AC35-01: incomplete draft options [{"text":"a"},{"text":"b"}] cannot publish 1046ms
+     ✓ AC35-01: incomplete draft options [{"text":"a","isCorrect":true},{"text":"b","isCorrect":true}] cannot publish 1043ms
+     ✓ AC35-02: option removal clears correctness until a replacement is saved; rejects foreign option IDs 1172ms
+     ✓ AC36-01: listing exposes scheduled published exams with server start eligibility, hide answers and persist one unchanged deadline on concurrent resume 1221ms
+     ✓ AC24-04: student attempt/result ownership, Instructor result ownership and Admin non-inheritance 3827ms
+     ✓ AC24-05: only Admin can provision/change accounts; duplicates and escalation are rejected 3645ms
+     ✓ AC51-01: invalid provisioning, forbidden writes and inactive Admin sessions cannot change accounts 2973ms
+     ✓ AC51-02: Admin API demotion/deactivation revokes an existing session and preserves associated data 3103ms
+     ✓ AC51-03: initial Admin bootstrap hashes supplied credentials, rejects weak input and refuses repeat bootstrap 3870ms
+     ✓ AC34-02: publication races reject stale edits/deletion and preserve historical attempts/results 1123ms
+     ✓ AC36-02: concurrent HTTP question edit/publication cannot publish invalid content or mutate a published answer key 1293ms
+ ✓ test/results-workflow.test.mjs (15 tests) 5692ms
+   ✓ OEP-39: manual submission computes correct from saved answers, ignores supplied marks and survives reload 483ms
+   ✓ OEP-40/41: empty, pending, evaluated and direct-access privacy use persisted owned data 409ms
+   ✓ OEP44-IT-02: manual/timeout races, expired=false, repeat submission and late writes preserve one outcome 308ms
+   ✓ OEP44-IT-02: manual/timeout races, expired=true, repeat submission and late writes preserve one outcome 309ms
+ ✓ test/exam-api.test.mjs (15 tests) 33494ms
+   ✓ Exam API with authenticated Release 1 access (15)
+     ✓ IT-EXAM-01: serves the application health response 2240ms
+     ✓ IT-EXAM-02: persists a new draft and reloads it from MongoDB 2034ms
+     ✓ IT-EXAM-03: rejects blank titles without inserting a partial record 1833ms
+     ✓ IT-EXAM-04: lists only exams owned by the authenticated Instructor 2812ms
+     ✓ IT-EXAM-05: saves and reloads draft edits 1923ms
+     ✓ IT-EXAM-06: deletes a draft together with its embedded question data 2010ms
+     ✓ IT-EXAM-07: returns 404 for a missing exam and 400 for a malformed id 3104ms
+     ✓ IT-MCQ-01: adds, edits and deletes an MCQ with durable changes 2005ms
+     ✓ IT-MCQ-02: allows incomplete MCQ options while the exam remains a draft 1957ms
+     ✓ IT-MCQ-03: rejects blank question text and leaves the draft unchanged 1924ms
+     ✓ IT-MCQ-04: rejects a question identifier belonging to a different exam 1939ms
+     ✓ IT-PUBLISH-01: rejects publication of an empty draft 1928ms
+     ✓ IT-PUBLISH-02: rejects publication of stored questions without a correct option 1995ms
+     ✓ IT-PUBLISH-03: publishes valid content, persists status and never duplicates on repeat 1988ms
+     ✓ IT-PUBLISH-04: blocks published exam and question changes 2041ms
+ ✓ test/persistence-integration.test.mjs (11 tests) 3690ms
+ ✓ test/student-api.test.mjs (7 tests) 3932ms
+   ✓ #40 creates, changes and reloads one response; stale requests never overwrite 436ms
+   ✓ #47 manual submission is idempotent, evaluates saved answers and blocks later writes 325ms
+ ✓ test/exam-model.test.mjs (9 tests) 34ms
+ ✓ test/persistence-model.test.mjs (6 tests) 36ms
+ ✓ test/result-model.test.mjs (8 tests) 2270ms
+
+ Test Files  8 passed (8)
+      Tests  106 passed (106)
+   Start at  23:12:56
+   Duration  118.88s (tests 91%, import 8%)
+
+JUNIT report written to C:/Users/tanus/SE_MINI_PROJECT/server/reports/junit.xml
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   87.78 |    76.12 |   97.93 |   89.93 |
+ server            |   76.47 |    82.75 |     100 |   73.33 |
+  app.js           |   76.47 |    82.75 |     100 |   73.33 | 13,26-29,58-62,76
+ ...er/controllers |    83.6 |    68.06 |   96.77 |   83.47 |
+  ...Controller.js |   74.35 |     62.5 |    87.5 |   71.42 | 53,62,76-101
+  ...Controller.js |   85.36 |    68.86 |     100 |   85.57 | ...04,522,566-568
+ server/middleware |   96.66 |     90.9 |     100 |   96.66 |
+  ...Middleware.js |   94.73 |    92.85 |     100 |   94.73 | 29
+  ...Middleware.js |     100 |     87.5 |     100 |     100 | 4
+ server/models     |      98 |    90.32 |     100 |     100 |
+  Attempt.js       |     100 |       75 |     100 |     100 | 16
+  Exam.js          |   96.15 |    94.73 |     100 |     100 | 87
+ server/routes     |   91.66 |    76.52 |   96.29 |   94.04 |
+  adminRoutes.js   |   83.78 |    78.12 |   83.33 |   87.87 | 12-13,41,46
+  examRoutes.js    |   93.93 |    66.66 |     100 |     100 | 41-43
+  studentRoutes.js |   92.85 |    76.62 |     100 |   93.68 | ...5-76,81,96,122
+ server/services   |   87.01 |    81.37 |     100 |   95.72 |
+  ...ionService.js |   78.72 |    65.51 |     100 |   94.44 | 42-43
+  ...tionWorker.js |    90.9 |    85.71 |     100 |   94.44 | 26
+  ...nceService.js |   90.58 |    88.13 |     100 |   96.82 | 30-31
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 87.78% ( 618/704 )
+Branches     : 76.12% ( 373/490 )
+Functions    : 97.93% ( 95/97 )
+Lines        : 89.93% ( 563/626 )
+================================================================================
+
+> client@0.0.0 test:ci
+> vitest run --coverage
+
+
+ RUN  v5.0.5 C:/Users/tanus/SE_MINI_PROJECT/client
+      Coverage enabled with v8
+
+ ✓ src/examClock.test.jsx (2 tests) 16ms
+ ✓ src/ui.test.jsx (5 tests) 752ms
+   ✓ #65 Student shell exposes only relevant navigation with a main landmark 492ms
+ ✓ src/ResultsPanel.test.jsx (6 tests) 863ms
+   ✓ #65 results recover from API failure and show an explicit empty state 513ms
+ ✓ src/ExamAttempt.test.jsx (9 tests) 1477ms
+   ✓ #40 saves acknowledged choices and preserves unanswered navigation 314ms
+   ✓ #40 reports failure and retries without claiming the answer was saved 448ms
+ ✓ src/RoleDashboard.test.jsx (7 tests) 1679ms
+   ✓ Supporting role boundaries (6)
+     ✓ Student sees eligibility list, starts/resumes and receives the persisted deadline 799ms
+ ✓ src/StudentAttempt.test.jsx (7 tests) 2388ms
+   ✓ Student acceptance regressions #38 #40 #46 #47 (7)
+     ✓ AC40-ORDER: serializes rapid selections so a delayed older request cannot overwrite the newer acknowledged answer; navigation retains it 1066ms
+     ✓ AC47-DRAIN: manual submission waits for the pending answer acknowledgement and closes the completed listing action 445ms
+ ✓ src/App.test.jsx (17 tests) 4259ms
+   ✓ Authenticated Instructor exam management (14)
+     ✓ UI-AC35: removes the correct option without silently choosing another and supports adding replacements 1292ms
+     ✓ UI-MCQ-01: submits question text and options with one selected answer 328ms
+     ✓ UI-MCQ-02: editing an existing question uses its own API identifier 304ms
+   ✓ #65 Open replaces the dashboard, defaults to Details and Back restores the list 362ms
+   ✓ #65 keyboard tab navigation preserves edits and draft Results never calls the results API 335ms
+ ✓ src/system.test.jsx (1 test) 13427ms
+   ✓ SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB create/edit/options/publish/reload → Student start 9148ms
+
+ Test Files  8 passed (8)
+      Tests  54 passed (54)
+   Start at  23:14:57
+   Duration  20.37s (tests 44%, environment 36%, import 13%, transform 5%, worker 1%)
+
+JUNIT report written to C:/Users/tanus/SE_MINI_PROJECT/client/reports/junit.xml
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------
+All files          |    86.2 |    83.33 |   84.79 |   89.95 |
+ App.jsx           |   87.61 |    79.06 |   81.35 |   88.37 | 248,278-282,298,305,363,389-390,394-412,437-441,535,566,670,700,795-806,884
+ ExamAttempt.jsx   |   85.05 |    81.25 |   88.23 |   90.24 | 87-94,141,147-148,174
+ ResultsPanel.jsx  |     100 |    96.07 |     100 |     100 | 21,24
+ RoleDashboard.jsx |    75.6 |       80 |   71.42 |   86.88 | 31-36,60,68,73-75,103
+ ui.jsx            |   88.23 |    87.93 |   94.11 |   93.75 | 25,60
+-------------------|---------|----------|---------|---------|-----------------------------------------------------------------------------
+
+=============================== Coverage summary ===============================
+Statements   : 86.2% ( 500/580 )
+Branches     : 83.33% ( 380/456 )
+Functions    : 84.79% ( 145/171 )
+Lines        : 89.95% ( 421/468 )
+================================================================================
+
+> online-exam-portal-server@1.0.0 test:scoring
+> node --test tests/evaluationService.test.js
+
+✔ All correct answers give full marks (2.8052ms)
+✔ All wrong answers give zero marks (0.4172ms)
+✔ Mixed and unanswered questions award only correct marks (0.3175ms)
+✔ Duplicate answers are rejected (0.7318ms)
+✔ Invalid published answer key is rejected (0.306ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 894.6152
+
+> client@0.0.0 test:browser
+> playwright test
+
+[WebServer] (node:35348) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:1288) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 e2e\release1.spec.mjs:16:1 › OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin (14.4s)
+  ok 2 e2e\release1.spec.mjs:102:1 › OEP44-ST-02: closing the browser does not stop server timeout evaluation (4.1s)
+  ok 3 e2e\release1.spec.mjs:137:1 › AC40-ORDER / AC47-DRAIN: delayed saves, navigation and immediate Submit retain the latest choice end to end (4.5s)
+
+  3 passed (30.7s)
+Verified: the real test runner returned a nonzero exit code for the deliberately wrong Exam assertion.
+PASS AC-AUTH-01: Anonymous exam creation must be rejected (actual 401)
+PASS AC-AUTH-02: Anonymous access must not disclose management data/answer keys (actual {"status":401,"returnedCorrectAnswerFlags":false})
+PASS AC-AUTH-03: Anonymous exam edits must be rejected (actual 401)
+PASS AC-OWNER-01: Exam management must preserve the stored owner when an anonymous overwrite is rejected (actual {"status":401,"persistedOwner":"6aeb6f539f5e6d84947fe27c"})
+PASS AC-PUBLISH-01: Draft updates must not bypass publication validation (actual {"status":401,"persistedStatus":"Draft","questionCount":0})
+PASS AC-VALIDATION-01: Anonymous requests must be authenticated before exam creation validation (actual {"status":401,"message":"Authentication required"})
+PASS AC-VALIDATION-02: Anonymous requests must be authenticated before duration validation (actual 401)
+PASS AC-VALIDATION-03: Anonymous requests must be authenticated before title validation (actual 401)
+PASS AC-PUBLISH-02: Anonymous requests must not publish draft exams (actual 401)
+PASS AC-MCQ-01: Anonymous requests must not create or modify exam questions (actual 401)
+Acceptance diagnostic: 10 passed; 0 failed.
+Build/test evidence saved. Release acceptance: 0 diagnostic failures remain.

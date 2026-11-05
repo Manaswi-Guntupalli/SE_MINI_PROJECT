@@ -1,5 +1,7 @@
 # OEP-44 Release 1 functional and security verification
 
+> Historical dated record. Current implementation/test totals and submission status are in the [final reports](FINAL_CHECKPOINT_REPORT.md) and [submission checklist](FINAL_SUBMISSION_CHECKLIST.md). Earlier defects described here must not be read as current unresolved findings.
+
 Task: [#53](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/53).
 The [validation plan](08_Validation_Plan.md) is implemented by executable tests,
 with requirement/code/test mappings in the [OEP-19 execution RTM](OEP-19_Release1_RTM.md).

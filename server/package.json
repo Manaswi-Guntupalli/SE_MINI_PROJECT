@@ -14,6 +14,7 @@
     "test:ci": "vitest run --coverage",
     "test:security": "vitest run test/acceptance.test.mjs test/results-workflow.test.mjs",
     "test:scoring": "node --test tests/evaluationService.test.js",
+    "test:performance": "node scripts/checkPerformance.mjs",
     "build": "node ../scripts/check-server-syntax.mjs",
     "audit:sprint1": "node ../scripts/audit-sprint1.mjs"
   },
