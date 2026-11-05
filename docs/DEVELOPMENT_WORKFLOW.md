@@ -1,5 +1,7 @@
 # Git and GitHub Development Workflow
 
+> Finalization note, 5 November 2026: planning tables and earlier snapshots below retain their historical dates. The [current submission checklist](FINAL_SUBMISSION_CHECKLIST.md) records release integration, actual contribution/review evidence and remaining owner actions. Original 37-child planning totals are not current velocity; three subsequently deleted Sprint 2 tasks (#41/#43/#45) leave 34 planned release children.
+
 **Issue:** [#18 / OEP-9](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/18)
 
 **Verified:** 19 October 2026 (Asia/Kolkata)

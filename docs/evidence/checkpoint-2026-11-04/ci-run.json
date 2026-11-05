@@ -1,0 +1,86 @@
+{
+  "generatedAt": "2026-11-04T17:45:57.573Z",
+  "commit": "463cde555490738bcaa5fde661e3910e29f8f7ab",
+  "node": "v24.22.1",
+  "platform": "win32",
+  "arch": "x64",
+  "run": "local",
+  "lockfiles": {
+    "client": "5e06328918da0a9a827ca318edb2cb7da09c1d0b569e8408403ecefd6165b03b",
+    "server": "2f291fc3f843e86e76bed63414ca04bd759e46a6691c8ccbac6f79b27fd98102"
+  },
+  "coverage": {
+    "client": {
+      "lines": {
+        "total": 468,
+        "covered": 421,
+        "skipped": 0,
+        "pct": 89.95
+      },
+      "statements": {
+        "total": 580,
+        "covered": 500,
+        "skipped": 0,
+        "pct": 86.2
+      },
+      "functions": {
+        "total": 171,
+        "covered": 145,
+        "skipped": 0,
+        "pct": 84.79
+      },
+      "branches": {
+        "total": 456,
+        "covered": 380,
+        "skipped": 0,
+        "pct": 83.33
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": "Unknown"
+      }
+    },
+    "server": {
+      "lines": {
+        "total": 626,
+        "covered": 563,
+        "skipped": 0,
+        "pct": 89.93
+      },
+      "statements": {
+        "total": 704,
+        "covered": 618,
+        "skipped": 0,
+        "pct": 87.78
+      },
+      "functions": {
+        "total": 97,
+        "covered": 95,
+        "skipped": 0,
+        "pct": 97.93
+      },
+      "branches": {
+        "total": 490,
+        "covered": 373,
+        "skipped": 0,
+        "pct": 76.12
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    }
+  },
+  "browserTests": 3,
+  "releaseAcceptance": {
+    "passed": 10,
+    "failed": 0,
+    "diagnosticPassed": true,
+    "formalAcceptance": "Requires independent review, team agreement and remaining Release 1 feature acceptance"
+  },
+  "scope": "Integrated authentication, roles, Admin, authoring, Student attempts/submission, worker expiry and scoring/results suites, including real-browser workflows. Automated results do not replace human review or deployment acceptance."
+}

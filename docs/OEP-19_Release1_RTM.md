@@ -23,12 +23,12 @@ requires no failed or skipped tests and a passing real-browser workflow.
 | FR-08 | Owned-exam dashboard narrative | `client/src/App.jsx`, `server/routes/examRoutes.js` | IT-EXAM-04; AC24-03; UI-EXAM-01/02/05 |
 | FR-09 | ATT-FR-01 | `server/routes/studentRoutes.js`, `server/services/persistenceService.js` | AC36-01; RoleDashboard: “Student sees eligibility list”; OEP44-ST-01 |
 | FR-10 | ATT-FR-02 | `server/services/persistenceService.js`, `server/models/Attempt.js` | AC36-01; OEP44-IT-01; OEP44-SEC-01; OEP44-ST-01 |
-| FR-11 | ATT-FR-04 | `server/services/persistenceService.js`, `client/src/RoleDashboard.jsx` | OEP44-IT-01/02; persistence integration: “rejects expired writes”, “refuses early timeout”; OEP44-ST-01 |
-| FR-12 | ATT-FR-03 | `server/services/persistenceService.js`, `client/src/RoleDashboard.jsx` | OEP44-IT-01; OEP44-FAIL-01; persistence integration: “changes one persisted selection”; OEP44-ST-01 |
+| FR-11 | ATT-FR-04 | `server/services/persistenceService.js`, `client/src/ExamAttempt.jsx` | OEP44-IT-01/02; persistence integration: “rejects expired writes”, “refuses early timeout”; OEP44-ST-01 |
+| FR-12 | ATT-FR-03 | `server/services/persistenceService.js`, `client/src/ExamAttempt.jsx` | OEP44-IT-01; OEP44-FAIL-01; persistence integration: “changes one persisted selection”; OEP44-ST-01 |
 | FR-13 | ATT-FR-05 | `server/routes/studentRoutes.js`, `server/services/persistenceService.js` | OEP44-IT-02; results workflow: “manual submission computes”; OEP44-ST-01 |
 | FR-14 | ATT-FR-06 | `server/services/evaluationWorker.js`, `server/services/persistenceService.js` | OEP44-IT-02; OEP44-ST-02 (actual browser context closes before timeout); results workflow: “running worker finalizes and evaluates timeout without a browser” |
 | FR-15 | EVAL-FR-01/02 | `server/services/evaluationService.js`, `server/models/Result.js` | scoring unit tests: all-correct/all-wrong/mixed/unanswered; results workflow: “manual submission computes”, “full evaluation is idempotent”; persistence integration rollback/concurrency tests; OEP44-ST-01 |
-| FR-16 | RES-FR-01 | `server/routes/studentRoutes.js`, `client/src/RoleDashboard.jsx` | AC24-04; results workflow: “empty, pending, evaluated”, “API failures”; RoleDashboard persisted-result-state tests; OEP44-ST-01 |
+| FR-16 | RES-FR-01 | `server/routes/studentRoutes.js`, `client/src/ExamAttempt.jsx` | AC24-04; results workflow: “empty, pending, evaluated”, “API failures”; RoleDashboard persisted-result-state tests; OEP44-ST-01 |
 | FR-17 | RES-FR-02 | `server/routes/examRoutes.js`, `client/src/App.jsx` | AC24-03/04; results workflow ownership/pending/error tests; App OEP-41 loading/pending/error/switching tests; OEP44-ST-01 |
 
 ## Security and persistence requirements
@@ -45,7 +45,11 @@ requires no failed or skipped tests and a passing real-browser workflow.
 | OEP-NF-004 scoped backend coverage | Measured V8 line coverage in `server-coverage.json`; evidence collector enforces at least 70% |
 | OEP-NF-005 useful errors without internals | OEP44-FAIL-01; results API error tests; UI save/result failure states |
 
-## Exact source suites and execution evidence
+## Current execution evidence
+
+The [33 Test Plan ID mappings](evidence/checkpoint-2026-11-04/test-plan-execution.json) are verified against the final passing JUnit/browser/performance/coverage records. See the [four final reports](FINAL_CHECKPOINT_REPORT.md). OEP-NF-001 passed the declared local 30-active-user workload; OEP-NF-003 passed the recorded Chrome and Edge versions. The older October 29 JSON/RTM below remains historical execution evidence, not current totals.
+
+## Exact source suites and historical execution evidence
 
 - [Authentication, role, ownership, Admin and authoring acceptance](../server/test/acceptance.test.mjs)
 - [Draft/MCQ/publication API integration](../server/test/exam-api.test.mjs)
@@ -60,7 +64,5 @@ requires no failed or skipped tests and a passing real-browser workflow.
 - [Automated validation of executed mappings](evidence/oep44-2026-10-29/traceability.json)
 
 OEP-44 does not assert completion of every proposed nonfunctional/process row in
-the initial workbook. Load/latency, accessibility certification, production HTTPS,
-all-browser compatibility, deployment and teammate review/contribution evidence
-remain their own verification activities. Only the browser/version actually
+the initial workbook. The declared local load/latency and two-browser checks are now evidenced in the final reports. Accessibility certification, production HTTPS, every-browser compatibility, deployment and teammate review remain separate activities. Only the browser/version actually
 recorded by Playwright is claimed here. CI integration ownership remains OEP-35.
