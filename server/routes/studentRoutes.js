@@ -21,7 +21,7 @@ const questionsWithoutAnswers = exam => exam.questions.map(question => ({
 router.get('/exams', async (req, res) => {
   try {
     const now = new Date();
-    const exams = await Exam.find({ status: 'Published' }).select('_id title description duration startTime').sort({ startTime: 1 }).lean();
+    const exams = await Exam.find({ status: 'Published' }).select('_id title description duration startTime').sort({ startTime: -1, createdAt: -1, _id: -1 }).lean();
     const attempts = await Attempt.find({ studentId: req.user._id, examId: { $in: exams.map(exam => exam._id) } })
       .select('_id examId status deadline').lean();
     const byExam = new Map(attempts.map(attempt => [String(attempt.examId), attempt]));

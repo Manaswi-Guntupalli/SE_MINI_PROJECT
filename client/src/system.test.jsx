@@ -48,6 +48,7 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   render(<App />);
   await signIn('instructor');
   await screen.findByText('System Instructor');
+  fireEvent.click(screen.getByRole('tab', { name: 'Create exam' }));
   fireEvent.change(screen.getByPlaceholderText('Exam title'), { target: { value: 'System verified quiz' } });
   fireEvent.click(screen.getByRole('button', { name: 'Create Exam' }));
   fireEvent.click(await screen.findByRole('button', { name: 'Open' }));
@@ -94,6 +95,8 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   const submitted = await Attempt.findOne({ examId: stored._id });
   expect(submitted.status).toBe('Submitted');
   expect(submitted.evaluationStatus).toBe('Evaluated');
+  fireEvent.click(screen.getByRole('tab', { name: 'Results' }));
+  await screen.findByRole('heading', { name: 'My results' });
   fireEvent.click(screen.getByRole('button', { name: 'Refresh results' }));
   await screen.findByText('1 / 1');
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
@@ -108,6 +111,7 @@ it('SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB 
   fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
   await signIn('admin');
   await screen.findByRole('heading', { name: 'Accounts' });
+  fireEvent.click(screen.getByRole('tab', { name: 'Create account' }));
   for (const [field, value] of Object.entries({ name: 'New System User', email: 'new@system.invalid', password: 'SystemAccount123!' })) {
     fireEvent.change(screen.getByLabelText(`Account ${field}`), { target: { value } });
   }

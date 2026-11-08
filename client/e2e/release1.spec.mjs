@@ -19,10 +19,15 @@ test('OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload,
   await expect(page.getByRole('heading', { name: 'Sign In', exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('lavender-login.png'), fullPage: true });
   await login(page, 'instructor');
+  await expect(page.getByRole('heading', { name: 'My Exams', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Create Exam', exact: true })).toBeHidden();
+  await page.getByRole('tab', { name: 'Create exam', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'My Exams', exact: true })).toBeHidden();
   await expect(page.getByRole('heading', { name: 'Create Exam', exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('lavender-instructor.png'), fullPage: true });
   await page.getByPlaceholder('Exam title', { exact: true }).fill('Browser Release 1');
   await page.getByRole('button', { name: 'Create Exam', exact: true }).click();
+  await expect(page.getByRole('tab', { name: 'My exams', exact: true })).toHaveAttribute('aria-selected', 'true');
   await page.getByRole('button', { name: 'Open', exact: true }).click();
   await page.getByRole('tab', { name: 'Questions', exact: true }).click();
   for (let n = 1; n <= 3; n++) {
@@ -73,11 +78,14 @@ test('OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload,
   await page.getByRole('button', { name: 'Submit examination', exact: true }).click();
   await page.getByRole('button', { name: 'Confirm submission', exact: true }).click();
   // Q1 correct, Q2 wrong, Q3 unanswered.
+  await page.getByRole('link', { name: 'View my results', exact: true }).click();
   await expect(page.getByText('1 / 3', { exact: true })).toBeVisible();
   await page.reload();
+  await page.getByRole('tab', { name: 'Results', exact: true }).click();
   await expect(page.getByText('1 / 3', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Logout', exact: true }).click();
   await login(page, 'other');
+  await page.getByRole('tab', { name: 'Results', exact: true }).click();
   await expect(page.getByText('No evaluated results yet.')).toBeVisible();
   await expect(page.getByText('1 / 3', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Logout', exact: true }).click();
@@ -88,6 +96,7 @@ test('OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload,
   await expect(page.getByText('1 / 3', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Logout', exact: true }).click();
   await login(page, 'admin');
+  await page.getByRole('tab', { name: 'Create account', exact: true }).click();
   await page.getByLabel('Account name', { exact: true }).fill('Browser New');
   await page.getByLabel('Account email', { exact: true }).fill('new@browser.invalid');
   await page.getByLabel('Account password', { exact: true }).fill('BrowserAccount123!');
@@ -174,9 +183,12 @@ test('AC40-ORDER / AC47-DRAIN: delayed saves, navigation and immediate Submit re
     await expect(page.getByRole('button', { name: 'Confirm submission', exact: true })).toBeDisabled();
     expect(submits).toBe(0);
     release();
+    await expect(page.getByRole('heading', { name: 'Exam submitted', exact: true })).toBeVisible();
+    await page.getByRole('link', { name: 'View my results', exact: true }).click();
     await expect(page.getByText('1 / 2', { exact: true })).toBeVisible();
     expect(saves).toBe(2);
     expect(submits).toBe(1);
+    await page.getByRole('tab', { name: 'Exams', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Submitted Save order regression', exact: true })).toBeDisabled();
     await page.reload();
     await expect(page.getByRole('button', { name: 'Submitted Save order regression', exact: true })).toBeDisabled();
