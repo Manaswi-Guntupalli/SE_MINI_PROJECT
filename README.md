@@ -2,6 +2,14 @@
 
 A web-based multiple-choice examination system for instructors, students and administrators.
 
+## Final submission documents
+
+- [Current SRS architecture and Test Plan](docs/part-1/README.md)
+- [Final test system and coverage reports](docs/FINAL_CHECKPOINT_REPORT.md)
+- [Sprint 1 and Sprint 2 videos](docs/videos/README.md)
+- [Design changes and rationale](docs/FINAL_DEVIATIONS.md)
+- [Checkpoint completion and peer review actions](docs/FINAL_SUBMISSION_CHECKLIST.md)
+
 ## Team
 - Tanusha Prakash (PES1UG24CS494) — Exam and Question Management
 - Guntupalli Manaswi (PES1UG24CS548) — Student Exam Attempt
@@ -13,9 +21,9 @@ All members contribute to shared authentication, access control, MongoDB integra
 - Frontend: React
 - Backend: Node.js and Express
 - Database: MongoDB (Mongoose)
-- Quality and delivery: Git, GitHub Actions, Docker, SonarQube
+- Quality and delivery: Git, GitHub Actions, ESLint, automated tests and V8 coverage
 
-These are the agreed technology choices, not a claim that every component is already implemented.
+Current runtime and validation tools are listed above. Differences from initial tooling plans are recorded in the [final design changes](docs/FINAL_DEVIATIONS.md).
 
 ## Project management — GitHub only
 **[Online Exam Portal — Release 1 Project Board](https://github.com/users/Manaswi-Guntupalli/projects/3)** · [Kanban view](https://github.com/users/Manaswi-Guntupalli/projects/3/views/1)
@@ -43,7 +51,7 @@ Create a branch for the linked GitHub issue, commit with the issue reference, op
 
 Follow the [development workflow and verification guide](docs/DEVELOPMENT_WORKFLOW.md) for the exact steps, review/merge responsibilities and #18 evidence checklist. Repository setup is verified; independent teammate review and actual team workflow demonstrations remain pending.
 
-The assigned developer raises the PR and the repository owner reviews and merges it. GitHub Actions is the project's sole CI provider. The [application CI implementation in PR #58](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/58) runs locked MERN installs, build/lint, real MongoDB API tests and React component tests on Ubuntu and Windows for pushes and PRs, with its commands and execution evidence documented in that PR. [Repository checks](.github/workflows/repository-checks.yml) separately verify whitespace and Markdown links. No local CI server is required. Deployment and smoke-test work remains under #45; a passing CI run is not a deployed application.
+The assigned developer raises the PR and the repository owner reviews and merges it. GitHub Actions is the project's sole CI provider. The [application CI implementation in PR #58](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/58) runs locked MERN installs, build/lint, real MongoDB API tests and React component tests on Ubuntu and Windows for pushes and PRs, with its commands and execution evidence documented in that PR. [Repository checks](.github/workflows/repository-checks.yml) separately verify whitespace and Markdown links. No local CI server is required. The release is validated locally; a passing CI run is not production deployment or HTTPS certification. The earlier deployment task #45 was deleted; it is not represented as completed.
 
 The instructor workflow and shared access checks have an updated [acceptance record](docs/INSTRUCTOR_ACCEPTANCE.md). The [original Sprint 1 review](docs/SPRINT_1_ACCEPTANCE_REVIEW.md) describes the earlier prototype. Passing automated checks does not replace teammate review or establish acceptance of the separate student submission/evaluation work.
 
@@ -64,7 +72,7 @@ The [Release 1 scope and permissions agreement](docs/RELEASE_1_AGREEMENT.md) rec
 ## Documentation
 Documentation lives in [docs/](docs/). The project is planned and delivered iteratively using Agile practices.
 
-Current shared implementation contracts: [Domain model](docs/DOMAIN_MODEL.md), [Field Layout](docs/OEP-18_Field_Layout.md), [software design](docs/07_Software_Design.md), [database setup](docs/DATABASE_SETUP.md) and [foundation/persistence acceptance](docs/PERSISTENCE_ACCEPTANCE.md). The original Field Layout XLSX and Part 1 submissions remain historical proposals; the current specifications explicitly reconcile storage/naming choices and await team review.
+Current shared implementation contracts: [Domain model](docs/DOMAIN_MODEL.md), [Field Layout](docs/OEP-18_Field_Layout.md), [software design](docs/07_Software_Design.md), [database setup](docs/DATABASE_SETUP.md) and [foundation/persistence acceptance](docs/PERSISTENCE_ACCEPTANCE.md). The original Field Layout XLSX and PDF submissions remain historical proposals; the updated Part 1 Word documents and current specifications reconcile final storage/naming choices for review.
 
 ## Local development setup
 
@@ -140,4 +148,4 @@ npm run audit:sprint1 --prefix server
 
 Backend Vitest suites start an isolated real MongoDB process and never read your application database. On a machine with MongoDB already installed, avoid a binary download by setting `$env:MONGOMS_SYSTEM_BINARY` to its absolute `mongod.exe` path and `$env:MONGOMS_SYSTEM_BINARY_VERSION_CHECK='false'`. Otherwise the test runner downloads its pinned MongoDB binary on first run. The older optional Jest suite requires `NODE_ENV=test`, `SESSION_SECRET` and a dedicated `MONGO_URI` containing `online_exam_portal_test`; it clears users/exams in that test database.
 
-See [current acceptance evidence](docs/INSTRUCTOR_ACCEPTANCE.md) and [session and API contract](docs/AUTH_AND_EXAM_API.md). Student answer saving, submission, timeout finalization and evaluation remain separate backlog work; the availability/start handoff and protected attempt/result reads support the eight Instructor/foundation issues.
+See the [current checkpoint test and coverage reports](docs/FINAL_CHECKPOINT_REPORT.md), [Instructor acceptance evidence](docs/INSTRUCTOR_ACCEPTANCE.md) and [session and API contract](docs/AUTH_AND_EXAM_API.md). The integrated application includes Student answer saving, submission, timeout finalization, evaluation and results. Run the complete CI checks with `node scripts/ci.mjs all`; run the isolated 30-active-user performance check separately with `npm run test:performance --prefix server`.

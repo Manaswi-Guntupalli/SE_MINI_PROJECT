@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { validDuration } = require('../services/examDuration');
+const { maximumMarks } = require('../services/scoring');
 
 const optionSchema = new mongoose.Schema(
   {
@@ -32,6 +34,9 @@ const questionSchema = new mongoose.Schema(
       type: Number,
       default: 1,
       min: 1,
+      max: Number.MAX_SAFE_INTEGER,
+      required: true,
+      validate: Number.isFinite,
     },
   },
   { _id: true }
@@ -66,7 +71,7 @@ const examSchema = new mongoose.Schema(
       type: Number,
       required: true,
       min: Number.MIN_VALUE,
-      validate: Number.isFinite,
+      validate: value => validDuration(value),
     },
 
     status: {
@@ -85,6 +90,7 @@ const examSchema = new mongoose.Schema(
             identifiers.push(String(question._id), ...question.options.map(option => String(option._id)));
           }
           if (new Set(identifiers).size !== identifiers.length) return false;
+          try { maximumMarks(questions); } catch { return false; }
           return this.status !== 'Published' || (questions.length > 0 && questions.every(question =>
             question.questionText?.trim() && question.options.length >= 2 &&
             question.options.every(option => option.text?.trim()) &&

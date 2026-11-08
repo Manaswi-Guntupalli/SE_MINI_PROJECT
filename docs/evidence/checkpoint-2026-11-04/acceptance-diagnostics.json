@@ -1,0 +1,135 @@
+{
+  "scope": "Executable Sprint 1 acceptance probes for authentication, authorization, ownership and exam-management security.",
+  "generatedAt": "2026-11-04T17:45:57.446Z",
+  "passed": 10,
+  "failed": 0,
+  "results": [
+    {
+      "id": "AC-AUTH-01",
+      "issues": [
+        23,
+        24,
+        33
+      ],
+      "criterion": "Anonymous exam creation must be rejected",
+      "expected": "401 or 403",
+      "actual": 401,
+      "status": "PASS"
+    },
+    {
+      "id": "AC-AUTH-02",
+      "issues": [
+        24,
+        35,
+        37
+      ],
+      "criterion": "Anonymous access must not disclose management data/answer keys",
+      "expected": "401 or 403 with no answer key",
+      "actual": {
+        "status": 401,
+        "returnedCorrectAnswerFlags": false
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AC-AUTH-03",
+      "issues": [
+        24,
+        34
+      ],
+      "criterion": "Anonymous exam edits must be rejected",
+      "expected": "401 or 403",
+      "actual": 401,
+      "status": "PASS"
+    },
+    {
+      "id": "AC-OWNER-01",
+      "issues": [
+        33,
+        34
+      ],
+      "criterion": "Exam management must preserve the stored owner when an anonymous overwrite is rejected",
+      "expected": "6aeb6f539f5e6d84947fe27c",
+      "actual": {
+        "status": 401,
+        "persistedOwner": "6aeb6f539f5e6d84947fe27c"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AC-PUBLISH-01",
+      "issues": [
+        34,
+        36
+      ],
+      "criterion": "Draft updates must not bypass publication validation",
+      "expected": "empty exam remains Draft",
+      "actual": {
+        "status": 401,
+        "persistedStatus": "Draft",
+        "questionCount": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AC-VALIDATION-01",
+      "issues": [
+        23,
+        33
+      ],
+      "criterion": "Anonymous requests must be authenticated before exam creation validation",
+      "expected": "401",
+      "actual": {
+        "status": 401,
+        "message": "Authentication required"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "AC-VALIDATION-02",
+      "issues": [
+        23,
+        33,
+        34,
+        36
+      ],
+      "criterion": "Anonymous requests must be authenticated before duration validation",
+      "expected": "401",
+      "actual": 401,
+      "status": "PASS"
+    },
+    {
+      "id": "AC-VALIDATION-03",
+      "issues": [
+        23,
+        33
+      ],
+      "criterion": "Anonymous requests must be authenticated before title validation",
+      "expected": "401",
+      "actual": 401,
+      "status": "PASS"
+    },
+    {
+      "id": "AC-PUBLISH-02",
+      "issues": [
+        23,
+        36
+      ],
+      "criterion": "Anonymous requests must not publish draft exams",
+      "expected": "401",
+      "actual": 401,
+      "status": "PASS"
+    },
+    {
+      "id": "AC-MCQ-01",
+      "issues": [
+        23,
+        35
+      ],
+      "criterion": "Anonymous requests must not create or modify exam questions",
+      "expected": "401",
+      "actual": 401,
+      "status": "PASS"
+    }
+  ]
+}

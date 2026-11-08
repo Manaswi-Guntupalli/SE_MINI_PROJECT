@@ -14,14 +14,14 @@ router.use(requireAuth, requireRole('Student'));
 const validId = (req, res, next) => mongoose.isObjectIdOrHexString(req.params.id)
   ? next() : res.status(400).json({ message: 'Invalid resource identifier' });
 const questionsWithoutAnswers = exam => exam.questions.map(question => ({
-  _id: question._id, questionText: question.questionText,
+  _id: question._id, questionText: question.questionText, marks: question.marks,
   options: question.options.map(option => ({ _id: option._id, text: option.text })),
 }));
 
 router.get('/exams', async (req, res) => {
   try {
     const now = new Date();
-    const exams = await Exam.find({ status: 'Published' }).select('_id title description duration startTime').sort({ startTime: 1 }).lean();
+    const exams = await Exam.find({ status: 'Published' }).select('_id title description duration startTime').sort({ startTime: -1, createdAt: -1, _id: -1 }).lean();
     const attempts = await Attempt.find({ studentId: req.user._id, examId: { $in: exams.map(exam => exam._id) } })
       .select('_id examId status deadline').lean();
     const byExam = new Map(attempts.map(attempt => [String(attempt.examId), attempt]));

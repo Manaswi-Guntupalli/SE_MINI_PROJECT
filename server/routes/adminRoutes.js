@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const { updateAccountAccess } = require('../services/accountAccessService');
 const { requireAuth, requireRole } = require('../middleware/authMiddleware');
 const { requireCsrf } = require('../middleware/csrfMiddleware');
 const router = express.Router();
@@ -40,9 +41,8 @@ router.patch('/users/:id', requireCsrf, async (req, res) => {
     if (req.params.id === String(req.user._id) && (req.body.active === false || (req.body.role && req.body.role !== 'Admin'))) {
       return res.status(400).json({ message: 'Use another Admin to change your own access' });
     }
-    const user = await User.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true, runValidators: true });
-    if (!user) return res.status(404).json({ message: 'Account not found' });
+    const user = await updateAccountAccess({ actorId: req.user._id, userId: req.params.id, changes: req.body });
     res.json(publicUser(user));
-  } catch { res.status(400).json({ message: 'Could not update account' }); }
+  } catch (error) { res.status(error.status || 400).json({ message: error.status ? error.message : 'Could not update account' }); }
 });
 module.exports = router;

@@ -32,6 +32,25 @@ beforeEach(async () => {
 });
 const save = (revision, option = 0, question = exam.questions[0].id) => agent.put(`/api/student/attempts/${attempt._id}/responses/${question}`)
   .set('X-CSRF-Token', token).send({ selectedOptionId: exam.questions[0].options[option].id, expectedRevision: revision });
+
+it('lists exams by newest scheduled date first, with newer creations breaking ties and unscheduled exams last', async () => {
+  const now = Date.now();
+  const create = (title, startTime, createdAt) => Exam.create({
+    title, startTime, createdAt, instructorId: exam.instructorId, status: 'Published', duration: 30,
+    questions: [{ questionText: 'Question', options: [{ text: 'Correct', isCorrect: true }, { text: 'Wrong' }] }],
+  });
+  const older = await create('Older', new Date(now - 86400000), new Date(now - 3000));
+  const recent = await create('Recent', new Date(now - 60000), new Date(now - 2000));
+  const tied = await create('Recent, newly created', recent.startTime, new Date(now - 1000));
+  const future = await create('Future', new Date(now + 86400000), new Date(now));
+  const list = await agent.get('/api/student/exams');
+  expect(list.status).toBe(200);
+  expect(list.body.map(item => item._id)).toEqual([future.id, tied.id, recent.id, older.id, exam.id]);
+  expect(list.body[0].canStart).toBe(false);
+  expect(list.body.find(item => item._id === recent.id).canStart).toBe(true);
+  expect(JSON.stringify(list.body)).not.toMatch(/isCorrect|questions|instructorId/);
+});
+
 it('#40 creates, changes and reloads one response; stale requests never overwrite', async () => {
   expect((await save(0)).body.response.revision).toBe(1);
   expect((await save(1, 1)).body.response.revision).toBe(2);

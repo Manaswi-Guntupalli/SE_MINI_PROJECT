@@ -1,5 +1,7 @@
 # Online Exam Portal — Agile Project Plan
 
+> Finalization note, 5 November 2026: planning tables and earlier snapshots below retain their historical dates. The [current submission checklist](FINAL_SUBMISSION_CHECKLIST.md) records release integration, actual contribution/review evidence and remaining owner actions. Original 37-child planning totals are not current velocity; three subsequently deleted Sprint 2 tasks (#41/#43/#45) leave 34 planned release children.
+
 **Version:** 0.5 · **Date:** 13 October 2026 · **Course:** UE24CS341A — Software Engineering
 **Status:** Working planning baseline; refine estimates and dates during sprint planning.
 

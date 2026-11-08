@@ -1,0 +1,25 @@
+{
+  "preparedAt": "2026-11-05T02:56:37.456714+00:00",
+  "reviewBranch": "docs/final-checkpoint-review",
+  "applicationBaseline": "13ec9982bff073be048c54d51b59cb3d761672a2",
+  "runtimeSourceUnchanged": true,
+  "testCodeChange": "server/scripts/checkPerformance.mjs and its npm script",
+  "documents": {
+    "docs/part-1/Online_Exam_Portal_SRS.docx": {
+      "sha256": "30a7d8fb71fda5251044bdcf9942901086f7fbcfd0aa4314312cb6a63dff2044",
+      "renderedPagesInspected": 7
+    },
+    "docs/part-1/Online_Exam_Portal_SAD.docx": {
+      "sha256": "5ca7ce2ed1e3f1e0b3c08274058f156b622a8332999b67e5c107b82ce4814b37",
+      "renderedPagesInspected": 7
+    },
+    "docs/part-1/Online_Exam_Portal_Test_Plan.docx": {
+      "sha256": "e8a2b9e5cae738e8841fbbcb08e6c469b75e5cb2b68b78fb042d0e183705896e",
+      "renderedPagesInspected": 11
+    }
+  },
+  "testPlanCaseMappings": 33,
+  "relativeLinksChecked": 190,
+  "videoVerification": "../../videos/verification.json",
+  "scope": "Repository deliverables prepared for genuine peer review. No simulated approval, signature, teammate startup or viva outcome."
+}

@@ -1,5 +1,5 @@
 import { Button, Input, Textarea, Panel, Feedback, Loading, AppShell, ConfirmDialog, StatusBadge } from './ui';
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "./App.css";
 import { browserTimeZone, toLocalInput, toUtc, displayTime } from './dateTime';
@@ -20,6 +20,9 @@ const emptyQuestionForm = {
 };
 
 function App() {
+  const sessionGeneration = useRef(0);
+  const examListRequest = useRef(0);
+  const currentSession = useCallback(generation => generation === sessionGeneration.current, []);
   const [confirmation, setConfirmation] = useState(null);
   const [confirmBusy, setConfirmBusy] = useState(false);
   const [notice, setNotice] = useState('');
@@ -36,6 +39,8 @@ function App() {
 
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState(null);
+  const [workspaceTab, setWorkspaceTab] = useState('my-exams');
+  const [creatingExam, setCreatingExam] = useState(false);
   const [examTab, setExamTab] = useState('details');
   const [openingExam, setOpeningExam] = useState(false);
   const examHeading = useRef(null);
@@ -49,6 +54,7 @@ function App() {
     wasExamOpen.current = !!selectedExamId;
   }, [selectedExamId]);
   function backToExams() {
+    setWorkspaceTab('my-exams');
     setSelectedExam(null);
     setExamError('');
     setNotice('');
@@ -64,10 +70,12 @@ function App() {
       : event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : null;
     if (next === null) return;
     event.preventDefault();
+    setNotice(''); setExamError('');
     setExamTab(tabs[next]);
     document.getElementById(`exam-tab-${tabs[next]}`)?.focus();
   }
   const [examsLoading, setExamsLoading] = useState(false);
+  const [examListNeedsRefresh, setExamListNeedsRefresh] = useState(false);
   const [examError, setExamError] = useState("");
 
   const [examForm, setExamForm] = useState({
@@ -83,69 +91,119 @@ function App() {
   const [editingQuestionId, setEditingQuestionId] =
     useState(null);
 
+  function resetWorkspace() {
+    sessionGeneration.current++;
+    examListRequest.current++;
+    setNotice('');
+    setExamError('');
+    setLoginError('');
+    setConfirmation(null);
+    setConfirmBusy(false);
+    setExams([]);
+    setSelectedExam(null);
+    setWorkspaceTab('my-exams');
+    setExamTab('details');
+    setCreatingExam(false);
+    setOpeningExam(false);
+    setExamsLoading(false);
+    setExamListNeedsRefresh(false);
+    setEditingQuestionId(null);
+    setQuestionForm(emptyQuestionForm);
+    setExamForm({ title: '', description: '', startTime: '', duration: 30 });
+    wasExamOpen.current = false;
+    // Anchors belong to the previous workspace, not the next signed-in account.
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+
   const csrfHeaders = {
     "X-CSRF-Token": csrfToken,
   };
 
-  const loadCsrfToken = async () => {
+  const loadCsrfToken = useCallback(async (generation = sessionGeneration.current) => {
     const response = await axios.get(
       `${AUTH_API}/csrf-token`
     );
 
+    if (!currentSession(generation)) return;
     setCsrfToken(response.data.csrfToken);
 
     return response.data.csrfToken;
-  };
+  }, [currentSession]);
 
-  const loadExams = async () => {
+  const loadExams = useCallback(async (generation = sessionGeneration.current) => {
+    if (!currentSession(generation)) return;
+    const request = ++examListRequest.current;
+    const current = () => currentSession(generation) && request === examListRequest.current;
     try {
       setExamsLoading(true);
+      setExamListNeedsRefresh(false);
       setExamError("");
+      setNotice('');
 
       const response = await axios.get(
         `${EXAM_API}/mine`
       );
 
+      if (!current()) return;
       setExams(response.data);
+      return true;
     } catch (error) {
+      if (!current()) return;
+      setExamListNeedsRefresh(true);
       setExamError(
         error.response?.data?.message ||
           "Could not load exams"
       );
+      return false;
     } finally {
-      setExamsLoading(false);
+      if (current()) setExamsLoading(false);
     }
-  };
+  }, [currentSession]);
+
+  async function refreshExamsAfterSave(message, generation) {
+    const loaded = await loadExams(generation);
+    if (!currentSession(generation)) return;
+    if (loaded === true) setNotice(message);
+    else if (loaded === false) setExamError(`${message} The exam list could not refresh. Refresh exams to see the saved change.`);
+  }
 
   useEffect(() => {
     const restoreSession = async () => {
+      const generation = sessionGeneration.current;
       try {
         const response = await axios.get(
           `${AUTH_API}/me`
         );
 
+        if (!currentSession(generation)) return;
         const currentUser = response.data.user;
 
         setUser(currentUser);
 
-        await loadCsrfToken();
+        await loadCsrfToken(generation);
+        if (!currentSession(generation)) return;
 
         if (currentUser.role === "Instructor") {
-          await loadExams();
+          await loadExams(generation);
         }
       } catch {
+        if (!currentSession(generation)) return;
         setUser(null);
         setCsrfToken("");
       } finally {
-        setAuthLoading(false);
+        if (currentSession(generation)) setAuthLoading(false);
       }
     };
 
     restoreSession();
-  }, []);
+    const sessions = sessionGeneration, requests = examListRequest;
+    return () => { sessions.current++; requests.current++; };
+  }, [currentSession, loadCsrfToken, loadExams]);
 
   const login = async (event) => {
     event.preventDefault();
+    resetWorkspace();
+    const generation = sessionGeneration.current;
     setAuthLoading(true);
 
     try {
@@ -156,21 +214,25 @@ function App() {
         loginForm
       );
 
+      if (!currentSession(generation)) return;
       const loggedInUser = response.data.user;
 
       setUser(loggedInUser);
 
-      await loadCsrfToken();
+      await loadCsrfToken(generation);
+      if (!currentSession(generation)) return;
 
       if (loggedInUser.role === "Instructor") {
-        await loadExams();
+        await loadExams(generation);
       }
 
+      if (!currentSession(generation)) return;
       setLoginForm({
         email: "",
         password: "",
       });
     } catch (error) {
+      if (!currentSession(generation)) return;
       setUser(null);
       setCsrfToken('');
       setLoginError(
@@ -178,21 +240,34 @@ function App() {
           "Login failed"
       );
     } finally {
-      setAuthLoading(false);
+      if (currentSession(generation)) setAuthLoading(false);
     }
   };
 
   const logout = async () => {
-    await axios.post(`${AUTH_API}/logout`, {}, { headers: csrfHeaders });
-
+    // Invalidate callbacks immediately, even while the logout request is pending.
+    const generation = ++sessionGeneration.current;
+    examListRequest.current++;
+    try {
+      await axios.post(`${AUTH_API}/logout`, {}, { headers: csrfHeaders });
+    } catch (error) {
+      if (currentSession(generation)) {
+        setOpeningExam(false); setCreatingExam(false); setConfirmBusy(false); setExamsLoading(false);
+      }
+      throw error;
+    }
+    if (!currentSession(generation)) return;
     setUser(null);
     setCsrfToken("");
-    setExams([]);
-    setSelectedExam(null);
+    resetWorkspace();
   };
 
   const createExam = async (event) => {
+    const generation = sessionGeneration.current;
     event.preventDefault();
+    if (creatingExam) return;
+    setCreatingExam(true);
+    setNotice('');
 
     try {
       setExamError("");
@@ -209,7 +284,7 @@ function App() {
           headers: csrfHeaders,
         }
       );
-
+      if (!currentSession(generation)) return;
       setExamForm({
         title: "",
         description: "",
@@ -217,20 +292,23 @@ function App() {
         duration: 30,
       });
 
-      await loadExams();
-
-      setNotice("Exam created successfully");
+      await refreshExamsAfterSave("Exam created successfully", generation);
+      if (!currentSession(generation)) return;
+      setWorkspaceTab('my-exams');
+      requestAnimationFrame(() => { if (currentSession(generation)) listHeading.current?.focus(); });
     } catch (error) {
+      if (!currentSession(generation)) return;
       const message =
         error.response?.data?.errors?.join("\n") ||
         error.response?.data?.message ||
         "Could not create exam";
 
       setExamError(message);
-    }
+    } finally { if (currentSession(generation)) setCreatingExam(false); }
   };
 
   const selectExam = async (id) => {
+    const generation = sessionGeneration.current;
     setOpeningExam(true);
     try {
       setExamError("");
@@ -240,19 +318,23 @@ function App() {
         `${EXAM_API}/${id}`
       );
 
+      if (!currentSession(generation)) return;
       setSelectedExam(response.data);
       setExamTab('details');
       setEditingQuestionId(null);
       setQuestionForm(emptyQuestionForm);
     } catch (error) {
+      if (!currentSession(generation)) return;
       setExamError(
         error.response?.data?.message ||
           "Could not open exam"
       );
-    } finally { setOpeningExam(false); }
+    } finally { if (currentSession(generation)) setOpeningExam(false); }
   };
 
   const updateExam = async () => {
+    const generation = sessionGeneration.current;
+    setNotice('');
     try {
       setExamError("");
 
@@ -269,11 +351,11 @@ function App() {
         }
       );
 
+      if (!currentSession(generation)) return;
       setSelectedExam(response.data);
-      await loadExams();
-
-      setNotice("Draft updated successfully");
+      await refreshExamsAfterSave("Draft updated successfully", generation);
     } catch (error) {
+      if (!currentSession(generation)) return;
       const message =
         error.response?.data?.errors?.join("\n") ||
         error.response?.data?.message ||
@@ -284,6 +366,8 @@ function App() {
   };
 
   const deleteExam = async (id) => {
+    const generation = sessionGeneration.current;
+    setNotice('');
     try {
       setExamError("");
 
@@ -294,14 +378,14 @@ function App() {
         }
       );
 
+      if (!currentSession(generation)) return;
       if (selectedExam?._id === id) {
         setSelectedExam(null);
       }
 
-      await loadExams();
-
-      setNotice("Exam deleted successfully");
+      await refreshExamsAfterSave("Exam deleted successfully", generation);
     } catch (error) {
+      if (!currentSession(generation)) return;
       setExamError(
         error.response?.data?.message ||
           "Could not delete exam"
@@ -327,7 +411,9 @@ function App() {
   };
 
   const saveQuestion = async (event) => {
+    const generation = sessionGeneration.current;
     event.preventDefault();
+    setNotice('');
 
     try {
       setExamError("");
@@ -343,6 +429,7 @@ function App() {
           }
         );
 
+        if (!currentSession(generation)) return;
         setNotice("Question updated successfully");
       } else {
         response = await axios.post(
@@ -353,6 +440,7 @@ function App() {
           }
         );
 
+        if (!currentSession(generation)) return;
         setNotice("Question added successfully");
       }
 
@@ -360,6 +448,7 @@ function App() {
       setQuestionForm(emptyQuestionForm);
       setEditingQuestionId(null);
     } catch (error) {
+      if (!currentSession(generation)) return;
       setExamError(
         error.response?.data?.message ||
           "Could not save question"
@@ -391,6 +480,8 @@ function App() {
   };
 
   const deleteQuestion = async (questionId) => {
+    const generation = sessionGeneration.current;
+    setNotice('');
     try {
       setExamError("");
 
@@ -401,6 +492,7 @@ function App() {
         }
       );
 
+      if (!currentSession(generation)) return;
       setSelectedExam(response.data);
 
       if (editingQuestionId === questionId) {
@@ -409,6 +501,7 @@ function App() {
 
       setNotice("Question deleted successfully");
     } catch (error) {
+      if (!currentSession(generation)) return;
       setExamError(
         error.response?.data?.message ||
           "Could not delete question"
@@ -417,6 +510,8 @@ function App() {
   };
 
   const publishExam = async () => {
+    const generation = sessionGeneration.current;
+    setNotice('');
     try {
       setExamError("");
 
@@ -428,11 +523,11 @@ function App() {
         }
       );
 
+      if (!currentSession(generation)) return;
       setSelectedExam(response.data);
-      await loadExams();
-
-      setNotice("Exam published successfully");
+      await refreshExamsAfterSave("Exam published successfully", generation);
     } catch (error) {
+      if (!currentSession(generation)) return;
       const message =
         error.response?.data?.errors?.join("\n") ||
         error.response?.data?.message ||
@@ -497,22 +592,29 @@ function App() {
   }
 
   if (user.role !== "Instructor") {
-    return <RoleDashboard user={user} logout={logout} api={BASE_API} csrfToken={csrfToken} />;
+    return <RoleDashboard key={user.id} user={user} logout={logout} api={BASE_API} csrfToken={csrfToken} />;
   }
 
   return (
     <AppShell user={user} logout={logout}
       navigationLinks={selectedExam ? [['my-exams', 'My exams']] : undefined}
-      onNavigate={selectedExam ? backToExams : undefined}>
-      <Feedback>{notice}</Feedback>
-      <Feedback error>{examError}</Feedback>
+      activeTab={selectedExam ? undefined : workspaceTab}
+      onNavigate={selectedExam ? backToExams : tab => { setNotice(''); setExamError(''); setWorkspaceTab(tab); }}>
+      <Feedback onDismiss={() => setNotice('')}>{notice}</Feedback>
+      <Feedback error onDismiss={() => setExamError('')}>{examError}</Feedback>
+      {examListNeedsRefresh && <Button onClick={() => loadExams()}>Refresh exams</Button>}
       {openingExam && <Loading>Opening examination...</Loading>}
       {confirmation && <ConfirmDialog title={confirmation.title} busy={confirmBusy} cancelLabel="Cancel" confirmLabel={confirmation.label || 'Delete'}
-        onCancel={() => setConfirmation(null)} onConfirm={async () => { setConfirmBusy(true); try { await confirmation.action(); setConfirmation(null); } finally { setConfirmBusy(false); } }}>
+        onCancel={() => setConfirmation(null)} onConfirm={async () => {
+          const generation = sessionGeneration.current;
+          setConfirmBusy(true);
+          try { await confirmation.action(); if (currentSession(generation)) setConfirmation(null); }
+          finally { if (currentSession(generation)) setConfirmBusy(false); }
+        }}>
         <p>{confirmation.message || 'This removes the selected draft content. Published examinations remain protected.'}</p>
       </ConfirmDialog>}
       {!selectedExam && <>
-      <Panel id="create-exam">
+      <Panel id="create-exam" role="tabpanel" aria-labelledby="workspace-tab-create-exam" tabIndex={0} hidden={workspaceTab !== 'create-exam'}>
         <h2>Create Exam</h2>
 
         <form onSubmit={createExam}>
@@ -570,20 +672,19 @@ function App() {
             }
           />
 
-          <Button type="submit">
-            Create Exam
+          <Button type="submit" disabled={creatingExam}>
+            {creatingExam ? 'Creating exam...' : 'Create Exam'}
           </Button>
         </form>
       </Panel>
 
-      <Panel id="my-exams">
+      <Panel id="my-exams" role="tabpanel" aria-labelledby="workspace-tab-my-exams" tabIndex={0} hidden={workspaceTab !== 'my-exams'}>
         <h2 ref={listHeading} tabIndex={-1}>My Exams</h2>
 
         {examsLoading && <Loading>Loading exams...</Loading>}
 
-        {examError && <Button onClick={loadExams}>Refresh exams</Button>}
-
         {!examsLoading &&
+          !examListNeedsRefresh &&
           !examError &&
           exams.length === 0 && (
             <p>No exams created yet.</p>
@@ -645,7 +746,7 @@ function App() {
           <div role="tablist" aria-label="Examination sections" className="exam-tabs">
             {['details', 'questions', 'results'].map(tab => <Button key={tab} id={`exam-tab-${tab}`}
               role="tab" aria-selected={examTab === tab} aria-controls={`exam-panel-${tab}`}
-              tabIndex={examTab === tab ? 0 : -1} onClick={() => setExamTab(tab)} onKeyDown={navigateTabs}>
+              tabIndex={examTab === tab ? 0 : -1} onClick={() => { setNotice(''); setExamError(''); setExamTab(tab); }} onKeyDown={navigateTabs}>
               {tab === 'details' ? 'Details' : tab === 'questions' ? 'Questions' : 'Results'}
             </Button>)}
           </div>
@@ -801,6 +902,8 @@ function App() {
                   type="number"
                   id="question-marks"
                   min="1"
+                  step="any"
+                  required
                   value={questionForm.marks}
                   onChange={(e) =>
                     setQuestionForm({

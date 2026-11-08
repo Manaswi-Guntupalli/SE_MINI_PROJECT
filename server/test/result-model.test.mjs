@@ -46,8 +46,13 @@ describe("Result Model - Automatic MCQ Evaluation", () => {
     expect(createResult(5, 10).status).toBe("Evaluated");
   });
 
-  it("rejects decimal scores", () => {
-    expect(createResult(5.5, 10).validateSync()).toBeDefined();
+  it("accepts decimal scores for fractional question marks", () => {
+    expect(createResult(5.5, 10.5).validateSync()).toBeUndefined();
+  });
+
+  it.each([Infinity, -Infinity, NaN])("rejects non-finite scores and maxima: %s", value => {
+    expect(createResult(value, 10).validateSync()).toBeDefined();
+    expect(createResult(0, value).validateSync()).toBeDefined();
   });
 
   it("saves a result to MongoDB", async () => {

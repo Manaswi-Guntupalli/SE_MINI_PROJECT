@@ -4,7 +4,7 @@ import axios from 'axios';
 import { synchronizeClock, remainingTime, formatRemaining } from './examClock';
 import { browserTimeZone, displayTime } from './dateTime';
 
-export default function ExamAttempt({ data, api, csrfToken, onSubmitted, onClose }) {
+export default function ExamAttempt({ data, api, csrfToken, onSubmitted, onClose, panelId = 'examination', visible = true }) {
   const submissionInFlight = useRef(false);
   const saveQueue = useRef(Promise.resolve());
   const revisions = useRef(Object.fromEntries((data.responses || []).map(value => [value.questionId, value.revision || 0])));
@@ -65,10 +65,12 @@ export default function ExamAttempt({ data, api, csrfToken, onSubmitted, onClose
   useEffect(() => {
     if (status !== 'Submitted' || notified.current) return;
     notified.current = true;
-    completionHeading.current?.focus();
-    completionHeading.current?.scrollIntoView?.({ block: 'start' });
+    if (visible) {
+      completionHeading.current?.focus();
+      completionHeading.current?.scrollIntoView?.({ block: 'start' });
+    }
     onSubmitted?.();
-  }, [status, onSubmitted]);
+  }, [status, onSubmitted, visible]);
   useEffect(() => {
     if (status === 'Submitted') return;
     const tick = () => setRemaining(remainingTime(clock));
@@ -140,14 +142,14 @@ export default function ExamAttempt({ data, api, csrfToken, onSubmitted, onClose
       setSaveStates({}); setFailures({});
     } catch { setFailures(current => ({ ...current, [question._id]: { ...current[question._id], message: 'Could not reload answers. Please retry.' } })); }
   }
-  if (status === 'Submitted') return <Panel id="examination" aria-label="Submission complete">
+  if (status === 'Submitted') return <Panel id={panelId} aria-label="Submission complete">
     <h2 ref={completionHeading} tabIndex={-1}>Exam submitted</h2>
     <Feedback>{evaluationStatus === 'Evaluated' ? 'Evaluation complete. Your result is available.' : 'Submitted. Evaluation pending; the server will retry automatically.'}</Feedback>
     <p>Your examination is closed. Your saved responses have been finalized.</p>
     <a className="button" href="#results" onClick={() => onClose?.('results')}>View my results</a>
     {onClose && <Button className="secondary" onClick={() => onClose('available-exams')}>Back to available exams</Button>}
   </Panel>;
-  return <Panel id="examination" aria-label="Examination">
+  return <Panel id={panelId} aria-label="Examination">
     <h2>{status === 'Submitted' ? 'Exam submitted' : 'Exam started'}</h2>
     <p role="timer" aria-label="Time remaining">Time remaining: {formatRemaining(remaining)}</p>
     <Feedback error>{timerError}</Feedback>
@@ -162,6 +164,7 @@ export default function ExamAttempt({ data, api, csrfToken, onSubmitted, onClose
     {failed && active && <Button disabled={pendingSaves > 0} onClick={() => failed.conflict ? reloadAnswers() : save(failed.questionId, failed.selectedOptionId)}>{failed.conflict ? 'Reload saved answers' : 'Retry answer save'}</Button>}
     {question && <fieldset disabled={!active}>
       <legend>Question {index + 1} of {data.questions.length}: {question.questionText}</legend>
+      <p>Marks: {question.marks ?? 1}</p>
       {question.options.map(option => <label className="answer-option" key={option._id}>
         <Input type="radio" name={`answer-${question._id}`} checked={desired[question._id] === option._id}
           onChange={() => save(question._id, option._id)} />{option.text}
