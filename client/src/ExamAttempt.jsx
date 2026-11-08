@@ -162,6 +162,7 @@ export default function ExamAttempt({ data, api, csrfToken, onSubmitted, onClose
     {failed && active && <Button disabled={pendingSaves > 0} onClick={() => failed.conflict ? reloadAnswers() : save(failed.questionId, failed.selectedOptionId)}>{failed.conflict ? 'Reload saved answers' : 'Retry answer save'}</Button>}
     {question && <fieldset disabled={!active}>
       <legend>Question {index + 1} of {data.questions.length}: {question.questionText}</legend>
+      <p>Marks: {question.marks ?? 1}</p>
       {question.options.map(option => <label className="answer-option" key={option._id}>
         <Input type="radio" name={`answer-${question._id}`} checked={desired[question._id] === option._id}
           onChange={() => save(question._id, option._id)} />{option.text}

@@ -1,4 +1,5 @@
 const Exam = require("../models/Exam");
+const { validDuration } = require('../services/examDuration');
 
 const ownsExam = (exam, user) => {
   return exam.instructorId.toString() === user._id.toString();
@@ -17,7 +18,7 @@ const validateExamFields = ({ title, description, duration, startTime }) => {
   if (duration !== undefined) {
     const numericDuration = Number(duration);
 
-    if (!["number", "string"].includes(typeof duration) || !Number.isFinite(numericDuration) || numericDuration <= 0 || numericDuration > Number.MAX_SAFE_INTEGER / 60000) {
+    if (!["number", "string"].includes(typeof duration) || !validDuration(numericDuration)) {
       errors.push("Duration must be a finite positive number");
     }
   }
@@ -310,7 +311,7 @@ const addQuestion = async (req, res) => {
 
     const numericMarks = Number(marks);
 
-    if (!["number", "string"].includes(typeof marks) || !Number.isFinite(numericMarks) || numericMarks < 1) {
+    if (!["number", "string"].includes(typeof marks) || !Number.isFinite(numericMarks) || numericMarks < 1 || numericMarks > Number.MAX_SAFE_INTEGER) {
       return res.status(400).json({
         message: "Marks must be a positive number",
       });
@@ -414,7 +415,7 @@ const updateQuestion = async (req, res) => {
 
       if (
         !["number", "string"].includes(typeof req.body.marks) || !Number.isFinite(numericMarks) ||
-        numericMarks < 1
+        numericMarks < 1 || numericMarks > Number.MAX_SAFE_INTEGER
       ) {
         return res.status(400).json({
           message: "Marks must be a positive number",
@@ -498,8 +499,7 @@ const publishExam = async (req, res) => {
     }
 
     if (
-      !Number.isFinite(exam.duration) ||
-      exam.duration <= 0
+      !validDuration(exam.duration)
     ) {
       errors.push(
         "Exam duration must be a finite positive number"

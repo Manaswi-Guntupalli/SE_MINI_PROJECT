@@ -4,6 +4,8 @@ const Exam = require('../models/Exam');
 const Attempt = require('../models/Attempt');
 const Response = require('../models/Response');
 const Result = require('../models/Result');
+const { maximumMarks } = require('./scoring');
+const { validDuration } = require('./examDuration');
 
 const eligible = now => ({ status: 'Published', $or: [{ startTime: null }, { startTime: { $lte: now } }] });
 const activeAtDatabaseTime = { status: 'Active', $expr: { $gt: ['$deadline', '$$NOW'] } };
@@ -20,6 +22,7 @@ async function startAttempt({ examId, studentId }) {
   if (!await User.exists({ _id: studentId, role: 'Student', active: true })) throw unavailable();
   const exam = await Exam.findOne({ _id: examId, ...eligible(now) });
   if (!exam) throw Object.assign(new Error('Exam is not available'), { status: 404 });
+  if (!validDuration(exam.duration, now.getTime())) throw Object.assign(new Error('Exam duration cannot produce a valid deadline'), { status: 409 });
   const query = { examId: exam._id, studentId };
   let attempt;
   try {
@@ -89,7 +92,7 @@ async function finalizeAttempt({ attemptId, studentId, reason }) {
 }
 
 async function persistResult({ attemptId, score, maximum }) {
-  if (!Number.isInteger(score) || !Number.isInteger(maximum) || score < 0 || maximum < 0 || score > maximum) throw new Error('Invalid score');
+  if (!Number.isFinite(score) || !Number.isFinite(maximum) || score < 0 || maximum < 0 || maximum > Number.MAX_SAFE_INTEGER || score > maximum) throw new Error('Invalid score');
   return transaction(async session => {
     // Serialize retries on Attempt, then insert result and mark evaluation atomically.
     const attempt = await Attempt.findOneAndUpdate(
@@ -99,7 +102,7 @@ async function persistResult({ attemptId, score, maximum }) {
     const existing = await Result.findOne({ attemptId }).session(session);
     if (existing) return existing;
     const exam = await Exam.findOne({ _id: attempt.examId, status: 'Published' }).session(session);
-    if (!exam || maximum !== exam.questions.length) throw new Error('Maximum must match the published question count');
+    if (!exam || maximum !== maximumMarks(exam.questions)) throw new Error('Maximum must match the published total marks');
     const [result] = await Result.create([{
       attemptId: attempt._id, examId: attempt.examId, studentId: attempt.studentId, score, maximum, status: 'Evaluated',
     }], { session });

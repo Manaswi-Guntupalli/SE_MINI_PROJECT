@@ -36,7 +36,7 @@ describe('Exam schema: Release 1 validation', () => {
     }
   );
 
-  it.each([0, -5])(
+  it.each([0, -5, Number.MIN_VALUE, Number.MAX_SAFE_INTEGER / 60000, Infinity])(
     'UT-EXAM-03: rejects duration %s',
     (duration) => {
       expect(

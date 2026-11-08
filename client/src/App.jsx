@@ -801,6 +801,8 @@ function App() {
                   type="number"
                   id="question-marks"
                   min="1"
+                  step="any"
+                  required
                   value={questionForm.marks}
                   onChange={(e) =>
                     setQuestionForm({

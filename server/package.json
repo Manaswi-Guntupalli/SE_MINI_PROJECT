@@ -8,6 +8,7 @@
     "dev": "nodemon server.js",
     "db:dev": "node scripts/devDatabase.js",
     "db:check": "node scripts/checkDatabase.js",
+    "results:repair-marks": "node scripts/repairWeightedResults.js",
     "admin:bootstrap": "node scripts/bootstrapAdmin.js",
     "seed": "node scripts/seedUsers.js",
     "test": "vitest run",

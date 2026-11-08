@@ -14,7 +14,7 @@ router.use(requireAuth, requireRole('Student'));
 const validId = (req, res, next) => mongoose.isObjectIdOrHexString(req.params.id)
   ? next() : res.status(400).json({ message: 'Invalid resource identifier' });
 const questionsWithoutAnswers = exam => exam.questions.map(question => ({
-  _id: question._id, questionText: question.questionText,
+  _id: question._id, questionText: question.questionText, marks: question.marks,
   options: question.options.map(option => ({ _id: option._id, text: option.text })),
 }));
 
