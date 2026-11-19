@@ -28,6 +28,8 @@ jobs:
         run: git diff --check HEAD^ HEAD
       - name: Verify relative documentation links
         run: python3 scripts/check_documentation.py
+      - name: Verify documentation parser regression cases
+        run: python3 -m unittest discover -s scripts -p 'test_*.py'
       - name: Describe the scope of this run
         run: |
           echo '## Repository checks' >> "$GITHUB_STEP_SUMMARY"

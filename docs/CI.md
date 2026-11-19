@@ -1,5 +1,8 @@
 # GitHub Actions and local verification
 
+For SonarQube findings, checksum false positives and the owner setup required to
+import coverage, see [SonarQube Cloud checks](SONARQUBE.md).
+
 Final guide, 5 November 2026. GitHub Actions is the sole CI provider. The application workflow runs on pushes and PRs to develop/main, using Node 24 and an Ubuntu/Windows matrix. Repository checks separately verify whitespace and relative Markdown links.
 
 From the repository root, run `node scripts/ci.mjs all`. Stages are clean output preflight, locked npm installs, server syntax/client lint/production build, backend/frontend coverage suites, standalone scoring, real Playwright browser workflows, deliberate-failure detection, ten acceptance diagnostics and a validated evidence manifest. Actual commands are defined in scripts/ci.mjs. Browser tests use installed Edge by default on Windows, otherwise installed Playwright Chromium; set OEP_BROWSER_CHANNEL=chrome or msedge to select explicitly.

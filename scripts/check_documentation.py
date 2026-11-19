@@ -7,6 +7,33 @@ import sys
 from urllib.parse import unquote, urlsplit
 
 
+def markdown_destinations(content: str) -> list[str]:
+    """Scan once; repeated unmatched brackets cannot trigger regex backtracking."""
+    destinations = []
+    position = 0
+    while True:
+        start = content.find("](", position)
+        if start == -1:
+            break
+        end = content.find(")", start + 2)
+        if end == -1:
+            break
+        value = content[start + 2:end].strip()
+        if value.startswith("<") and ">" in value:
+            destinations.append(value[1:value.index(">")])
+        elif value:
+            destinations.append(value.split(maxsplit=1)[0])
+        position = end + 1
+    for line in content.splitlines():
+        value = line.lstrip()
+        separator = value.find("]:")
+        if value.startswith("[") and separator > 1:
+            target = value[separator + 2:].strip()
+            if target:
+                destinations.append(target.split(maxsplit=1)[0].strip("<>"))
+    return destinations
+
+
 def main() -> int:
     root = Path(__file__).resolve().parents[1]
     tracked = subprocess.check_output(
@@ -19,9 +46,7 @@ def main() -> int:
         content = source.read_text(encoding="utf-8")
         # Code examples are not navigation links.
         content = re.sub(r"```[^\n]*\n.*?(?:```|\Z)", "", content, flags=re.S)
-        inline = re.findall(r"!?\[[^\]]*\]\(([^\s)]+)(?:\s+[^)]*)?\)", content)
-        references = re.findall(r"^\s*\[[^\]]+\]:\s*(\S+)", content, flags=re.M)
-        for destination in inline + references:
+        for destination in markdown_destinations(content):
             parts = urlsplit(destination.strip("<>"))
             if parts.scheme or parts.netloc or not parts.path:
                 continue

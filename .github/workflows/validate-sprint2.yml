@@ -21,7 +21,7 @@ jobs:
           cache-dependency-path: server/package-lock.json
       - name: Install server dependencies
         working-directory: server
-        run: npm ci
+        run: npm ci --ignore-scripts
       - name: Check backend JavaScript syntax
         working-directory: server
         run: npm run build
@@ -43,10 +43,10 @@ jobs:
           cache-dependency-path: client/package-lock.json
       - name: Install backend dependencies required by system tests
         working-directory: server
-        run: npm ci
+        run: npm ci --ignore-scripts
       - name: Install client dependencies
         working-directory: client
-        run: npm ci
+        run: npm ci --ignore-scripts
       - name: Run client tests
         working-directory: client
         run: npm test

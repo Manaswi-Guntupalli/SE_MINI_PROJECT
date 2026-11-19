@@ -97,13 +97,13 @@ describe('Supporting role boundaries', () => {
     expect(await screen.findByRole('alert')).toHaveProperty('textContent', 'Exam is not available');
   });
   it('#39 restores an owned attempt from the server after reload', async () => {
-    sessionStorage.setItem('oep-attempt-s', 'attempt');
-    axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/attempts/attempt')
+    sessionStorage.setItem('oep-attempt-s', '507f1f77bcf86cd799439011');
+    axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/attempts/507f1f77bcf86cd799439011')
       ? { attempt: { _id: 'attempt', status: 'Active', deadline: '2099-01-01' }, serverTime: '2026-10-28T10:00:00Z', responses: [], questions: [{ _id: 'q', questionText: 'Restored question', options: [] }] }
       : [] }));
     render(<RoleDashboard {...props} user={{ id: 's', role: 'Student' }} />);
     expect(await screen.findByText(/Restored question/)).toBeTruthy();
-    expect(axios.get).toHaveBeenCalledWith('http://localhost:5000/api/student/attempts/attempt');
+    expect(axios.get).toHaveBeenCalledWith('http://localhost:5000/api/student/attempts/507f1f77bcf86cd799439011');
   });
   it('#38 uses server eligibility and disables scheduled and submitted exams', async () => {
     axios.get.mockResolvedValue({ data: [
@@ -145,8 +145,8 @@ describe('Supporting role boundaries', () => {
 });
 
 it('#47 clears the resume pointer on submission so dashboard refresh/reload cannot reopen it', async () => {
-  sessionStorage.setItem('oep-attempt-s', 'attempt');
-  axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/attempts/attempt')
+  sessionStorage.setItem('oep-attempt-s', '507f1f77bcf86cd799439011');
+  axios.get.mockImplementation(url => Promise.resolve({ data: url.endsWith('/attempts/507f1f77bcf86cd799439011')
     ? { attempt: { _id: 'attempt', status: 'Active', deadline: '2099-01-01' }, serverTime: '2026-10-28T10:00:00Z', responses: [], questions: [] }
     : [] }));
   axios.post.mockResolvedValue({ data: { attempt: { status: 'Submitted', evaluationStatus: 'Evaluated' } } });
@@ -157,7 +157,7 @@ it('#47 clears the resume pointer on submission so dashboard refresh/reload cann
   await screen.findByText('Exam submitted');
   await waitFor(() => expect(sessionStorage.getItem('oep-attempt-s')).toBeNull());
   expect(screen.queryByRole('timer')).toBeNull();
-  expect(axios.get.mock.calls.filter(([url]) => url.endsWith('/attempts/attempt'))).toHaveLength(1);
+  expect(axios.get.mock.calls.filter(([url]) => url.endsWith('/attempts/507f1f77bcf86cd799439011'))).toHaveLength(1);
   unmount();
   render(<RoleDashboard {...propsForStudent} />);
   await screen.findByText('No exams available yet.');

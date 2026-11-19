@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const { updateAccountAccess } = require('../services/accountAccessService');
+const { isValidEmail } = require('../services/emailValidation');
 const { requireAuth, requireRole } = require('../middleware/authMiddleware');
 const { requireCsrf } = require('../middleware/csrfMiddleware');
 const router = express.Router();
@@ -18,7 +19,7 @@ router.post('/users', requireCsrf, async (req, res) => {
     const { name, email, password, role } = req.body;
     if (Object.keys(req.body).some(key => !['name', 'email', 'password', 'role'].includes(key)) ||
         typeof name !== 'string' || !name.trim() || typeof email !== 'string' ||
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) || typeof password !== 'string' ||
+        !isValidEmail(email.trim()) || typeof password !== 'string' ||
         password.length < 12 || Buffer.byteLength(password, 'utf8') > 72 || !roles.includes(role)) {
       return res.status(400).json({ message: 'Provide a name, valid email, role and password of at least 12 characters and at most 72 UTF-8 bytes' });
     }

@@ -195,7 +195,7 @@ function App() {
       }
     };
 
-    restoreSession();
+    void restoreSession();
     const sessions = sessionGeneration, requests = examListRequest;
     return () => { sessions.current++; requests.current++; };
   }, [currentSession, loadCsrfToken, loadExams]);

@@ -1,4 +1,5 @@
-import { spawnSync, execFileSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
+import { gitOutput } from './git.mjs';
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync, copyFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
@@ -11,12 +12,12 @@ const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).forma
 const output = join(root, 'docs', 'evidence', `oep44-${day}`);
 mkdirSync(output, { recursive: true });
 const hash = value => createHash('sha256').update(value).digest('hex');
-const files = execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard'], { cwd: root, encoding: 'utf8' })
+const files = gitOutput(['ls-files', '--cached', '--others', '--exclude-standard'])
   .trim().split(/\r?\n/).filter(path => !path.startsWith('docs/') && /\.(?:m?js|jsx|json|ya?ml)$|^\.node-version$/.test(path));
 const manifest = {
   task: 'OEP-44 / #53', startedAt: new Date().toISOString(), node: process.version,
   platform: `${process.platform}/${process.arch}`, timezone: 'Asia/Kolkata',
-  baseCommit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
+  baseCommit: gitOutput(['rev-parse', 'HEAD']).trim(),
   sourceFiles: Object.fromEntries(files.map(path => [path, hash(readFileSync(join(root, path)))])),
   scope: 'Functional and security acceptance, real Edge/Chromium browser, isolated MongoDB 8.0.17. No production/load/multi-browser certification.',
   stages: [], status: 'running',

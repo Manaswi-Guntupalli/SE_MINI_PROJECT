@@ -7,6 +7,7 @@ const examRoutes = require("./routes/examRoutes");
 const authRoutes = require("./routes/authRoutes");
 
 const app = express();
+app.disable('x-powered-by');
 const clientOrigin = process.env.CLIENT_ORIGIN || 'http://localhost:5173';
 if (process.env.TRUST_PROXY === '1') app.set('trust proxy', 1);
 

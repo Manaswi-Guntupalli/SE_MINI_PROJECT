@@ -2,7 +2,8 @@
 import { createRequire } from 'node:module';
 import { once } from 'node:events';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
+import { gitOutput } from '../../scripts/git.mjs';
 import { cpus } from 'node:os';
 import { connectTestDatabase, closeTestDatabase } from '../test/database.mjs';
 
@@ -15,7 +16,7 @@ let listener, sessionStore, worker;
 const startedAt = new Date().toISOString();
 const report = {
   testId: 'TC-NF-PERF-01', requirement: 'OEP-NF-001', startedAt,
-  sourceCommit: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+  sourceCommit: gitOutput(['rev-parse', 'HEAD']).trim(),
   environment: { node: process.version, platform: process.platform, cpu: cpus()[0]?.model, logicalCpus: cpus().length },
   configuration: { concurrentUsers: users, durationMs, targetP95Ms: targetMs, questions: 20,
     database: 'Disposable real MongoDB 8.0.17 replica set', sessions: 'Real MongoStore',
@@ -27,7 +28,7 @@ const report = {
 try {
   if (Number(process.versions.node.split('.')[0]) !== 24) throw new Error('Node 24 is required');
   process.env.NODE_ENV = 'development';
-  process.env.SESSION_SECRET = 'isolated-performance-test-session-secret';
+  process.env.SESSION_SECRET = randomBytes(32).toString('hex');
   process.env.MONGO_URI = await connectTestDatabase();
   // Capture only our disposable app's session-store handle for orderly cleanup.
   const { MongoStore } = require('connect-mongo');
@@ -40,7 +41,7 @@ try {
   const base = `http://127.0.0.1:${listener.address().port}`;
   const models = Object.fromEntries(['User', 'Exam', 'Attempt', 'Response', 'Result'].map(name => [name, require(`../models/${name}`)]));
   await Promise.all(Object.values(models).map(model => model.init()));
-  const password = 'DisposablePerf123!';
+  const password = randomBytes(18).toString('base64url');
   const passwordHash = await require('bcryptjs').hash(password, 12);
   const instructor = await models.User.create({ name: 'Performance Instructor', email: 'teacher@performance.invalid', role: 'Instructor', passwordHash });
   const students = await models.User.create(Array.from({ length: users }, (_, i) => ({ name: `Student ${i}`, email: `student${i}@performance.invalid`, role: 'Student', passwordHash })));

@@ -96,6 +96,7 @@ describe('Acceptance criteria #21 #23 #24 #33–#37', () => {
     expect((await Exam.findById(draft.id)).title).toBe('Acceptance exam');
   });
   it('AC23-04: rejects missing CSRF, cross-origin writes, malformed JSON and invalid sessions', async () => {
+    expect((await request(app).get('/')).headers['x-powered-by']).toBeUndefined();
     const { agent, token } = await login();
     expect((await agent.post('/api/exams').send({ title: 'x', duration: 1 })).status).toBe(403);
     expect((await agent.post('/api/exams').set('Origin', 'https://attacker.invalid').set('X-CSRF-Token', token).send({ title: 'x', duration: 1 })).status).toBe(403);
