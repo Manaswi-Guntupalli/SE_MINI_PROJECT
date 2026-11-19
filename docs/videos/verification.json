@@ -1,0 +1,47 @@
+{
+  "preparedDate": "2026-11-05",
+  "sprint1Source": "docs/sprint1 video.mp4, historical source commit 1b9f90a",
+  "sprint1Segments": [
+    {
+      "sourceStartSeconds": 0,
+      "durationSeconds": 12,
+      "caption": "Sprint 1 historical product - instructor sign in"
+    },
+    {
+      "sourceStartSeconds": 66,
+      "durationSeconds": 12,
+      "caption": "Create and reload an owned examination draft"
+    },
+    {
+      "sourceStartSeconds": 112,
+      "durationSeconds": 12,
+      "caption": "Add MCQ options and choose the correct answer"
+    },
+    {
+      "sourceStartSeconds": 218,
+      "durationSeconds": 12,
+      "caption": "Stored questions and question management"
+    },
+    {
+      "sourceStartSeconds": 246,
+      "durationSeconds": 12,
+      "caption": "Edit and save a draft question"
+    }
+  ],
+  "sprint2Source": "Actual Edge walkthrough with synthetic accounts and disposable MongoDB; the recording test passed; video is trimmed to 120 seconds",
+  "audio": "Silent captioned edits; no speech or teammate approval is synthesized",
+  "videos": [
+    {
+      "path": "docs/videos/sprint-1-one-minute.mp4",
+      "seconds": 60.0,
+      "bytes": 1243261,
+      "decodedWithoutErrors": true
+    },
+    {
+      "path": "docs/videos/sprint-2-final-demo.mp4",
+      "seconds": 120.0,
+      "bytes": 1262708,
+      "decodedWithoutErrors": true
+    }
+  ]
+}

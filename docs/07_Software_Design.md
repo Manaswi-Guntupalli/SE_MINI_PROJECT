@@ -1,16 +1,16 @@
 # Release 1 software design
 
-Version 0.2, 25 October 2026. Integrated Instructor and persistence implementation baseline, **pending independent team review**. The initial Part 1 SAD and original XLSX remain historical proposals. This design, [Domain model](DOMAIN_MODEL.md) and [current Field Layout](OEP-18_Field_Layout.md) specify the reconciled contracts for #20/#22/#51/#52 and the Instructor stories.
+Version 1.0, 5 November 2026. Final integrated release candidate for peer review. The [current SAD](part-1/Online_Exam_Portal_SAD.docx), this design, [Domain model](DOMAIN_MODEL.md) and [Field Layout](OEP-18_Field_Layout.md) describe the finished release. Original PDF/XLSX designs remain historical; [final deviations](FINAL_DEVIATIONS.md) explain refinements.
 
 ## Modules and interfaces
 
-React App handles login/session restoration and Instructor draft/question/publication management. RoleDashboard supplies separate Student availability/start and Admin account views. Express auth middleware resolves current stored User state, role middleware enforces the permitted workflow, and controllers check resource ownership. Mongoose models hold shared persistence data; persistenceService supplies transaction-safe writes. MongoDB must support replica-set transactions. server.js connects, checks topology and initializes all indexes before listening.
+React App handles login/session restoration and Instructor Details/Questions/Results tabs. RoleDashboard supplies Student listing/attempt handoff and Admin views; ExamAttempt handles navigation, revisioned saves/retry, the synchronized monotonic countdown and submission; ResultsPanel displays persisted results and pending/error states. Express auth middleware resolves current stored User state, role middleware enforces the permitted workflow, and controllers check resource ownership. Mongoose models hold shared persistence data; persistenceService supplies transaction-safe writes. MongoDB must support replica-set transactions. server.js connects, checks topology and initializes all indexes before listening.
 
 | Module | Principal interfaces | Rules |
 |---|---|---|
 | Auth | login/logout/me/csrf-token | bcrypt password verification; regenerate/save session on login; invalidate on logout; HttpOnly/SameSite=Lax/Secure production cookie; CSRF on authenticated writes. |
 | Instructor | owned exam CRUD, nested question CRUD, publish, owned results | Session-derived owner; allowed Draft fields only; validated publication; immutable Published content; version-guarded writes/deletes. |
-| Student publication handoff | eligible exams, start/resume, own attempt/result reads | Same eligibility predicate for listing/start; one server-timed Attempt; safe projections exclude correctness. |
+| Student | Published listing, gated start/resume, versioned answers, manual/timeout submission, own results | Future exams display scheduled state but cannot start early; one fixed server deadline; Student projections exclude correctness. |
 | Admin | account list/create and role/active update | Admin only; exactly one permitted role, unique normalized email, bcrypt-only password persistence; no deletion of historical accounts. |
 | Persistence | startAttempt/saveResponse/finalizeAttempt/persistResult | Validate associations and lifecycle; database time controls expiry; transactions serialize save/submit and atomically persist result/evaluation state. |
 
@@ -32,7 +32,7 @@ Exact HTTP shapes and errors are in [AUTH_AND_EXAM_API.md](AUTH_AND_EXAM_API.md)
 4. Result persistence locks the Submitted Attempt, validates score bounds and maximum against the immutable question count, creates one Result, and marks evaluation successful in the same transaction. Duplicate retries return the existing Result. Failure leaves Submitted/Pending and never reopens answer writes.
 5. Account role/deactivation changes affect subsequent authorized requests but never rewrite historical Exam/Attempt/Response/Result associations.
 
-Only the persistence boundary accepts feature-service writes. Raw MongoDB updates bypass Mongoose validation and are not a supported runtime interface. Student answer navigation/submission UI, scoring calculation and background browser-closed expiry scheduling remain separate feature stories; these persistence mechanisms support them without claiming they are implemented here.
+Only the persistence boundary accepts feature-service writes. Raw MongoDB updates bypass Mongoose validation and are not supported application interfaces. Both answer-save HTTP paths require expectedRevision; stale writes fail with 409. The UI serializes rapid choices and offers explicit failed-save/conflict recovery. The implemented evaluation service awards +1/0; the independent worker finalizes browser-closed expiry and retries pending evaluation every five seconds by default (configurable 100–60000 ms).
 
 ## Failure and security behavior
 

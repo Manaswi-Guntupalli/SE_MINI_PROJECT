@@ -6,6 +6,74 @@ vi.mock('axios', () => ({ default: { get: vi.fn(), post: vi.fn(), patch: vi.fn()
 afterEach(() => { cleanup(); sessionStorage.clear(); vi.resetAllMocks(); });
 const props = { api: 'http://localhost:5000/api', csrfToken: 'csrf', logout: vi.fn() };
 
+it('admin tabs show one section at a time and retain unfinished input with keyboard navigation', async () => {
+  axios.get.mockResolvedValue({ data: [] });
+  render(<RoleDashboard {...props} user={{ id: 'a', role: 'Admin' }} />);
+  await screen.findByText('No accounts found.');
+  expect(screen.getAllByRole('tabpanel')).toHaveLength(1);
+  expect(screen.queryByRole('button', { name: 'Create account' })).toBeNull();
+  fireEvent.click(screen.getByRole('tab', { name: 'Create account' }));
+  expect(screen.queryByRole('heading', { name: 'Accounts' })).toBeNull();
+  fireEvent.change(screen.getByLabelText('Account name'), { target: { value: 'Unfinished account' } });
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Create account' }), { key: 'Home' });
+  expect(screen.getByRole('heading', { name: 'Accounts' })).toBeTruthy();
+  expect(document.activeElement).toBe(screen.getByRole('tab', { name: 'Accounts' }));
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Accounts' }), { key: 'ArrowRight' });
+  expect(screen.getByLabelText('Account name').value).toBe('Unfinished account');
+});
+
+it('failed account creation stays on the form with its error and entered values', async () => {
+  axios.get.mockResolvedValue({ data: [] });
+  axios.post.mockRejectedValue({ response: { data: { message: 'Email already exists' } } });
+  render(<RoleDashboard {...props} user={{ id: 'a', role: 'Admin' }} />);
+  await screen.findByText('No accounts found.');
+  fireEvent.click(screen.getByRole('tab', { name: 'Create account' }));
+  fireEvent.change(screen.getByLabelText('Account name'), { target: { value: 'Existing user' } });
+  fireEvent.submit(screen.getByRole('button', { name: 'Create account' }).closest('form'));
+  expect((await screen.findByRole('alert')).textContent).toBe('Email already exists');
+  expect(screen.getByRole('tab', { name: 'Create account' }).getAttribute('aria-selected')).toBe('true');
+  expect(screen.getByLabelText('Account name').value).toBe('Existing user');
+  expect(screen.getByRole('button', { name: 'Create account' }).disabled).toBe(false);
+});
+
+it('clears an old success before a failed update, supports dismissal, and clears messages on tab changes', async () => {
+  axios.get.mockResolvedValue({ data: [{ id: 's', email: 'student@test.invalid', role: 'Student', active: true }] });
+  axios.patch.mockResolvedValueOnce({ data: {} }).mockRejectedValueOnce({ response: { data: { message: 'Update denied' } } });
+  render(<RoleDashboard {...props} user={{ id: 'a', role: 'Admin' }} />);
+  fireEvent.click(await screen.findByRole('button', { name: 'Deactivate student@test.invalid' }));
+  await screen.findByText('Account updated successfully');
+  fireEvent.click(screen.getByRole('button', { name: 'Deactivate student@test.invalid' }));
+  await screen.findByText('Update denied');
+  expect(screen.queryByText('Account updated successfully')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Dismiss notification' }));
+  expect(screen.queryByRole('alert')).toBeNull();
+  axios.patch.mockResolvedValueOnce({ data: {} });
+  fireEvent.click(screen.getByRole('button', { name: 'Deactivate student@test.invalid' }));
+  await screen.findByText('Account updated successfully');
+  fireEvent.click(screen.getByRole('tab', { name: 'Create account' }));
+  expect(screen.queryByText('Account updated successfully')).toBeNull();
+});
+
+it.each(['create', 'update'])('reports a saved account %s separately from a failed list refresh', async action => {
+  axios.get.mockResolvedValue({ data: [{ id: 's', email: 'student@test.invalid', role: 'Student', active: true }] });
+  axios.post.mockResolvedValue({ data: {} });
+  axios.patch.mockResolvedValue({ data: {} });
+  render(<RoleDashboard {...props} user={{ id: 'a', role: 'Admin' }} />);
+  await screen.findByRole('button', { name: 'Deactivate student@test.invalid' });
+  axios.get.mockRejectedValueOnce(new Error('List refresh offline'));
+  if (action === 'create') {
+    fireEvent.click(screen.getByRole('tab', { name: 'Create account' }));
+    fireEvent.submit(screen.getByRole('button', { name: 'Create account' }).closest('form'));
+  } else fireEvent.click(screen.getByRole('button', { name: 'Deactivate student@test.invalid' }));
+  const alert = await screen.findByRole('alert');
+  expect(alert.textContent).toContain(`Account ${action === 'create' ? 'created' : 'updated'} successfully`);
+  expect(alert.textContent).toContain('The account list could not refresh');
+  expect(screen.queryByText(`Could not ${action} account`)).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Retry dashboard' }));
+  await screen.findByRole('button', { name: 'Deactivate student@test.invalid' });
+  expect(screen.queryByRole('alert')).toBeNull();
+});
+
 describe('Supporting role boundaries', () => {
   it('Student sees eligibility list, starts/resumes and receives the persisted deadline', async () => {
     axios.get.mockResolvedValue({ data: [{ _id: 'exam', title: 'Available quiz', duration: 30, startTime: null }] });
@@ -64,6 +132,7 @@ describe('Supporting role boundaries', () => {
     axios.post.mockResolvedValue({ data: {} });
     render(<RoleDashboard {...props} user={{ id: 'a', role: 'Admin' }} />);
     await screen.findByText('No accounts found.');
+    fireEvent.click(screen.getByRole('tab', { name: 'Create account' }));
     for (const [field, value] of Object.entries({ name: 'New User', email: 'new@test.invalid', password: 'Example12345!' })) {
       fireEvent.change(screen.getByLabelText(`Account ${field}`), { target: { value } });
     }
@@ -71,6 +140,7 @@ describe('Supporting role boundaries', () => {
     await waitFor(() => expect(axios.post).toHaveBeenCalled());
     expect(axios.post.mock.calls[0][1]).toEqual({ name: 'New User', email: 'new@test.invalid', password: 'Example12345!', role: 'Student' });
     await waitFor(() => expect(screen.getByLabelText('Account password').value).toBe(''));
+    expect(screen.getByRole('tab', { name: 'Accounts' }).getAttribute('aria-selected')).toBe('true');
   });
 });
 

@@ -1,6 +1,6 @@
 # Release 1 domain model
 
-Implementation baseline for OEP-11 (#20), OEP-18 and OEP-22, reconciled on 25 October 2026. **Team review and agreement pending.** This specification and the [current Field Layout](OEP-18_Field_Layout.md) describe the integrated Instructor and persistence branches. The original XLSX and Part 1 Word documents remain historical proposed designs; their embedding/naming choices are mapped below rather than silently claimed to be approved.
+Implementation baseline for OEP-11 (#20), OEP-18 and OEP-22, reconciled on 25 October 2026. **Team review and agreement pending.** This specification and the [current Field Layout](OEP-18_Field_Layout.md) describe the integrated Instructor and persistence branches. The original XLSX remains historical; the updated [Part 1 documents](part-1/README.md) describe the final design; their embedding/naming choices are mapped below rather than silently claimed to be approved.
 
 ## Entities and relationships
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, Feedback, Loading, Panel, StatusBadge } from './ui';
 
-export default function ResultsPanel({ endpoint, instructor = false, refreshKey = 0, pendingEndpoint }) {
+export default function ResultsPanel({ endpoint, instructor = false, refreshKey = 0, pendingEndpoint, panelId = 'results' }) {
   const [results, setResults] = useState([]);
   const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +32,7 @@ export default function ResultsPanel({ endpoint, instructor = false, refreshKey 
     return instructor ? <><strong>{student?.name || 'Student unavailable'}</strong>{student?.email && <small>{student.email}</small>}</>
       : result.examTitle || 'Examination';
   };
-  return <Panel id="results" aria-label="Results">
+  return <Panel id={panelId} aria-label="Results">
     <div className="section-heading"><h2>{instructor ? 'Exam results' : 'My results'}</h2>
       <Button disabled={loading} onClick={() => setReload(value => value + 1)}>Refresh results</Button></div>
     {loading ? <Loading>Loading results...</Loading> : error ? <Feedback error>{error}</Feedback> : <>

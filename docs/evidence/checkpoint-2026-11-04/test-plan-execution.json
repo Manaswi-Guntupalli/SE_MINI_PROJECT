@@ -1,0 +1,261 @@
+{
+  "date": "2026-11-04",
+  "applicationBase": "463cde555490738bcaa5fde661e3910e29f8f7ab",
+  "equivalentMain": "13ec9982bff073be048c54d51b59cb3d761672a2",
+  "method": "Original test IDs mapped to actual passing recorded assertions; this is a documented mapping, not an additional independent execution per ID.",
+  "cases": {
+    "TC-AUTH-01": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC23-02: rotates sessions on login and invalidates the old cookie and CSRF token"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-AUTH-02": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC23-01: rejects wrong, missing, malformed and inactive credentials without leaking password data"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-AUTH-03": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC23-03: logout clears the cookie and replay cannot access protected data"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-EXAM-01": {
+      "status": "PASS",
+      "assertions": [
+        "Exam API with authenticated Release 1 access > IT-EXAM-02: persists a new draft and reloads it from MongoDB"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-EXAM-02": {
+      "status": "PASS",
+      "assertions": [
+        "Exam API with authenticated Release 1 access > IT-EXAM-05: saves and reloads draft edits"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-EXAM-03": {
+      "status": "PASS",
+      "assertions": [
+        "Exam API with authenticated Release 1 access > IT-EXAM-06: deletes a draft together with its embedded question data"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-EXAM-04": {
+      "status": "PASS",
+      "assertions": [
+        "Exam API with authenticated Release 1 access > IT-PUBLISH-02: rejects publication of stored questions without a correct option",
+        "Exam API with authenticated Release 1 access > IT-PUBLISH-03: publishes valid content, persists status and never duplicates on repeat"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-QUES-01": {
+      "status": "PASS",
+      "assertions": [
+        "Exam API with authenticated Release 1 access > IT-MCQ-01: adds, edits and deletes an MCQ with durable changes"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-QUES-02": {
+      "status": "PASS",
+      "assertions": [
+        "Exam API with authenticated Release 1 access > IT-MCQ-01: adds, edits and deletes an MCQ with durable changes"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-QUES-03": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC35-01: incomplete draft options [] cannot publish",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC35-01: incomplete draft options [{\"text\":\"a\"}] cannot publish",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC35-01: incomplete draft options [{\"text\":\"\",\"isCorrect\":true},{\"text\":\"b\"}] cannot publish",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC35-01: incomplete draft options [{\"text\":\"a\"},{\"text\":\"b\"}] cannot publish",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC35-01: incomplete draft options [{\"text\":\"a\",\"isCorrect\":true},{\"text\":\"b\",\"isCorrect\":true}] cannot publish"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-ATT-01": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC36-01: listing exposes scheduled published exams with server start eligibility, hide answers and persist one unchanged deadline on concurrent resume",
+        "AC38-LIST: own attempt status distinguishes start/resume/expired/submitted without disclosing another Student attempt"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-ATT-02": {
+      "status": "PASS",
+      "assertions": [
+        "OEP44-IT-01: concurrent starts/resume and reload retain one attempt, deadline and latest acknowledged selection"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-ATT-03": {
+      "status": "PASS",
+      "assertions": [
+        "Student acceptance regressions #38 #40 #46 #47 > AC40-ORDER: serializes rapid selections so a delayed older request cannot overwrite the newer acknowledged answer; navigation retains it",
+        "AC40-REVISION: concurrent tabs with one revision cannot overwrite each other",
+        "AC40-REVISION: reloads server state after another tab wins before retrying a choice",
+        "AC40-LEGACY: legacy POST cannot bypass optimistic revisions or overwrite the latest acknowledged choice"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-TIME-01": {
+      "status": "PASS",
+      "assertions": [
+        "AC46-SYNC: start/resume and reload supply current server time without resetting the persisted deadline",
+        "AC46-READ: restoring an expired attempt finalizes it without reopening editing"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-SUB-01": {
+      "status": "PASS",
+      "assertions": [
+        "#47 manual submission is idempotent, evaluates saved answers and blocks later writes"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-SUB-02": {
+      "status": "PASS",
+      "assertions": [
+        "OEP-39: running worker finalizes and evaluates timeout without a browser; active attempts remain untouched",
+        "AC46-READ: restoring an expired attempt finalizes it without reopening editing"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-EVAL-01": {
+      "status": "PASS",
+      "assertions": [
+        "OEP-39: manual submission computes correct from saved answers, ignores supplied marks and survives reload",
+        "OEP-39: manual submission computes wrong from saved answers, ignores supplied marks and survives reload",
+        "OEP-39: manual submission computes mixed from saved answers, ignores supplied marks and survives reload",
+        "OEP-39: manual submission computes unanswered from saved answers, ignores supplied marks and survives reload"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-EVAL-02": {
+      "status": "PASS",
+      "assertions": [
+        "OEP-39: full evaluation is idempotent under concurrency; failed evaluation retains responses and worker retries"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-RES-01": {
+      "status": "PASS",
+      "assertions": [
+        "OEP-40/41: empty, pending, evaluated and direct-access privacy use persisted owned data"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-RES-02": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC24-04: student attempt/result ownership, Instructor result ownership and Admin non-inheritance",
+        "OEP-40/41: empty, pending, evaluated and direct-access privacy use persisted owned data"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-ADMIN-01": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC24-05: only Admin can provision/change accounts; duplicates and escalation are rejected",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC51-02: Admin API demotion/deactivation revokes an existing session and preserves associated data"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-SEC-01": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC24-02: Student cannot call any Instructor management operation"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-SEC-02": {
+      "status": "PASS",
+      "assertions": [
+        "OEP44-SEC-01: anonymous, foreign-student and wrong-role direct APIs never mutate or disclose an attempt",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC24-04: student attempt/result ownership, Instructor result ownership and Admin non-inheritance"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-SEC-03": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC24-03: foreign Instructor identifiers cannot read, write, publish or disclose results"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-SEC-04": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC51-03: initial Admin bootstrap hashes supplied credentials, rejects weak input and refuses repeat bootstrap"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-SEC-05": {
+      "status": "PASS",
+      "assertions": [
+        "OEP44-SEC-01: anonymous, foreign-student and wrong-role direct APIs never mutate or disclose an attempt"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-SEC-06": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC36-01: listing exposes scheduled published exams with server start eligibility, hide answers and persist one unchanged deadline on concurrent resume"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-SEC-07": {
+      "status": "PASS",
+      "assertions": [
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC33-02: invalid fields {\"title\":\"\"} insert nothing",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC33-02: invalid fields {\"description\":{}} insert nothing",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC33-02: invalid fields {\"duration\":0} insert nothing",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC33-02: invalid fields {\"duration\":-1} insert nothing",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC33-02: invalid fields {\"duration\":\"Infinity\"} insert nothing",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC33-02: invalid fields {\"duration\":true} insert nothing",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC33-02: invalid fields {\"duration\":[]} insert nothing",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC33-02: invalid fields {\"startTime\":\"bad\"} insert nothing",
+        "Acceptance criteria #21 #23 #24 #33\u2013#37 > AC33-02: invalid fields {\"startTime\":\"2026-10-25T10:00\"} insert nothing",
+        "Exam API with authenticated Release 1 access > IT-MCQ-04: rejects a question identifier belonging to a different exam"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-NF-REL-01": {
+      "status": "PASS",
+      "assertions": [
+        "OEP44-IT-01: concurrent starts/resume and reload retain one attempt, deadline and latest acknowledged selection",
+        "Student acceptance regressions #38 #40 #46 #47 > AC40-ORDER: serializes rapid selections so a delayed older request cannot overwrite the newer acknowledged answer; navigation retains it"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-NF-ERR-01": {
+      "status": "PASS",
+      "assertions": [
+        "OEP44-FAIL-01: failed response storage is not acknowledged and does not expose database internals",
+        "OEP-40/41: API failures return explicit errors without disclosing data"
+      ],
+      "report": "server-junit.xml and/or client-junit.xml"
+    },
+    "TC-NF-PERF-01": {
+      "status": "PASS",
+      "report": "performance.json",
+      "actual": "30 active users, 2420 requests, p95 469.02 ms, zero errors; login/setup excluded"
+    },
+    "TC-NF-COMP-01": {
+      "status": "PASS",
+      "report": "browser-chrome.json and browser-edge.json",
+      "actual": "3/3 workflows each; Chrome 156.0.8078.80 and Edge 156.0.4314.58; 1366 x 768"
+    },
+    "TC-NF-COV-01": {
+      "status": "PASS",
+      "report": "server-coverage.json",
+      "actual": "Backend line coverage 89.93% >= 70%"
+    }
+  }
+}

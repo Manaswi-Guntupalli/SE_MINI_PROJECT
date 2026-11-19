@@ -90,6 +90,7 @@ describe('Student acceptance regressions #38 #40 #46 #47', () => {
     await act(async () => { pending.resolve({ data: { response: { selectedOptionId: 'a1', revision: 1 } } }); });
     await screen.findByText('Exam submitted');
     expect(submissions()).toHaveLength(1);
+    fireEvent.click(screen.getByRole('tab', { name: 'Exams' }));
     expect(screen.getByRole('button', { name: 'Submitted Quiz' }).disabled).toBe(true);
     expect(screen.queryByText('Exam started')).toBeNull();
   });
@@ -148,4 +149,43 @@ describe('Student acceptance regressions #38 #40 #46 #47', () => {
     expect(screen.getByRole('button', { name: 'Submitted Quiz 2' }).disabled).toBe(true);
     expect(screen.getByRole('button', { name: 'Expired Quiz 3' }).disabled).toBe(true);
   });
+});
+
+it('separates all three tabs and preserves acknowledged answers and the running timer across switches', async () => {
+  vi.useFakeTimers();
+  axios.put.mockResolvedValue({ data: { response: { questionId: 'q1', selectedOptionId: 'a1', revision: 1 } } });
+  await act(async () => { render(<RoleDashboard {...props} />); });
+  expect(screen.getAllByRole('tab')).toHaveLength(3);
+  expect(screen.getAllByRole('tabpanel')).toHaveLength(1);
+  fireEvent.click(screen.getByRole('tab', { name: 'Current attempt' }));
+  expect(screen.getByText(/No exam is open/)).toBeTruthy();
+  fireEvent.click(screen.getByRole('button', { name: 'Browse exams' }));
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Start Quiz' })); });
+  await act(async () => { fireEvent.click(screen.getByLabelText('Choice A1')); });
+  expect(screen.getByText('Answer saved')).toBeTruthy();
+  await act(async () => { fireEvent.click(screen.getByRole('tab', { name: 'Results' })); });
+  expect(screen.getByRole('heading', { name: 'My results' })).toBeTruthy();
+  expect(screen.queryByRole('timer')).toBeNull();
+  expect(screen.queryByRole('heading', { name: 'Available exams' })).toBeNull();
+  await act(async () => { await vi.advanceTimersByTimeAsync(2000); });
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Results' }), { key: 'ArrowLeft' });
+  expect(screen.getByRole('timer').textContent).toBe('Time remaining: 0:58');
+  expect(screen.getByLabelText('Choice A1').checked).toBe(true);
+  expect(saves()).toHaveLength(1);
+  expect(axios.post.mock.calls.filter(([url]) => url.endsWith('/start'))).toHaveLength(1);
+});
+
+it('finalizes an expired attempt while another tab is visible without switching or stealing focus', async () => {
+  attempt.attempt.deadline = new Date(baseTime + 1000).toISOString();
+  vi.useFakeTimers();
+  await act(async () => { render(<RoleDashboard {...props} />); });
+  await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Start Quiz' })); });
+  fireEvent.click(screen.getByRole('tab', { name: 'Exams' }));
+  screen.getByRole('tab', { name: 'Exams' }).focus();
+  await act(async () => { await vi.advanceTimersByTimeAsync(1250); });
+  expect(submissions()).toHaveLength(1);
+  expect(screen.getByRole('tab', { name: 'Exams' }).getAttribute('aria-selected')).toBe('true');
+  expect(document.activeElement).toBe(screen.getByRole('tab', { name: 'Exams' }));
+  fireEvent.click(screen.getByRole('tab', { name: 'Current attempt' }));
+  expect(screen.getByText('Exam submitted')).toBeTruthy();
 });

@@ -3,6 +3,7 @@ const Attempt = require('../models/Attempt');
 const Response = require('../models/Response');
 const Result = require('../models/Result');
 const { persistResult, finalizeAttempt } = require('./persistenceService');
+const { questionMarks, maximumMarks, sumMarks } = require('./scoring');
 
 function evaluateAnswers(questions, answers) {
   if (!Array.isArray(questions) || !Array.isArray(answers)) throw new Error('Questions and answers must be arrays');
@@ -12,13 +13,14 @@ function evaluateAnswers(questions, answers) {
     if (answerMap.has(questionId)) throw new Error('Duplicate answer for question');
     answerMap.set(questionId, String(answer.selectedOptionId));
   }
-  let score = 0;
+  const awarded = [];
+  const maximumScore = maximumMarks(questions);
   for (const question of questions) {
     const correct = question.options.filter(option => option.isCorrect === true);
     if (correct.length !== 1) throw new Error('Published answer key must contain exactly one correct option per question');
-    if (answerMap.get(String(question._id)) === String(correct[0]._id)) score += 1;
+    if (answerMap.get(String(question._id)) === String(correct[0]._id)) awarded.push(questionMarks(question));
   }
-  return { score, maximumScore: questions.length };
+  return { score: sumMarks(awarded), maximumScore };
 }
 
 async function evaluateSubmittedAttempt({ attemptId, studentId }) {

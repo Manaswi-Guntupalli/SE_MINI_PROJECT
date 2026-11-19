@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="54" failures="0" errors="0" time="24.861736">
+    <testsuite name="src/App.test.jsx" timestamp="2026-11-04T17:45:17.692Z" hostname="LAPTOP-5FB5PH0L" tests="17" failures="0" errors="0" skipped="0" time="4.2591777">
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-AC35: removes the correct option without silently choosing another and supports adding replacements" time="1.2921899">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-AC33: editing the local start preserves the instant and explicitly identifies the timezone" time="0.2584905">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-AC23: shows rejected login and completes a successful login/logout" time="0.1951588">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-01: renders the empty list after loading" time="0.0537154">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-02: displays a fetched exam and its status" time="0.0489077">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-03: submits exam form data with CSRF protection" time="0.0752515">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-04: displays the server validation error on a rejected create" time="0.0845089">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-05: reports a failed exam list request" time="0.0298777">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-06: cancels deletion without sending a destructive request" time="0.1146591">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-EXAM-07: sends confirmed deletion with CSRF protection" time="0.1213502">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-MCQ-01: submits question text and options with one selected answer" time="0.3280502">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-MCQ-02: editing an existing question uses its own API identifier" time="0.3044924">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-PUBLISH-01: confirmed publication updates the displayed status" time="0.2719573">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="Authenticated Instructor exam management &gt; UI-PUBLISH-02: published content has no edit or delete management actions" time="0.1613053">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="#65 Open replaces the dashboard, defaults to Details and Back restores the list" time="0.3624181">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="#65 keyboard tab navigation preserves edits and draft Results never calls the results API" time="0.3352439">
+        </testcase>
+        <testcase classname="src/App.test.jsx" name="#65 published Details are read-only and Results load only when selected" time="0.2141819">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/ExamAttempt.test.jsx" timestamp="2026-11-04T17:45:17.704Z" hostname="LAPTOP-5FB5PH0L" tests="9" failures="0" errors="0" skipped="0" time="1.4774375">
+        <testcase classname="src/ExamAttempt.test.jsx" name="#40 saves acknowledged choices and preserves unanswered navigation" time="0.314448">
+        </testcase>
+        <testcase classname="src/ExamAttempt.test.jsx" name="#40 reports failure and retries without claiming the answer was saved" time="0.447697">
+        </testcase>
+        <testcase classname="src/ExamAttempt.test.jsx" name="#47 confirms submission only after saves finish and shows evaluation pending" time="0.236416">
+        </testcase>
+        <testcase classname="src/ExamAttempt.test.jsx" name="#46 #47 expired content locks answers and requests timeout submission" time="0.0412205">
+        </testcase>
+        <testcase classname="src/ExamAttempt.test.jsx" name="#47 restored submitted attempts have no countdown, questions or submission controls" time="0.0400287">
+        </testcase>
+        <testcase classname="src/ExamAttempt.test.jsx" name="#47 failed submission retains the attempt and offers retry instead of claiming completion" time="0.0825292">
+        </testcase>
+        <testcase classname="src/ExamAttempt.test.jsx" name="#47 stops countdown and polling after submission, ignoring an in-flight active response" time="0.0751315">
+        </testcase>
+        <testcase classname="src/ExamAttempt.test.jsx" name="AC40-RETRY-NAV: a failed question retains retry after another question saves" time="0.1268588">
+        </testcase>
+        <testcase classname="src/ExamAttempt.test.jsx" name="AC40-REVISION: reloads server state after another tab wins before retrying a choice" time="0.1078278">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/ResultsPanel.test.jsx" timestamp="2026-11-04T17:45:17.709Z" hostname="LAPTOP-5FB5PH0L" tests="6" failures="0" errors="0" skipped="0" time="0.863416">
+        <testcase classname="src/ResultsPanel.test.jsx" name="#65 results recover from API failure and show an explicit empty state" time="0.512898">
+        </testcase>
+        <testcase classname="src/ResultsPanel.test.jsx" name="#65 uses real score fields and a captioned result table" time="0.1253397">
+        </testcase>
+        <testcase classname="src/ResultsPanel.test.jsx" name="shows a clear fallback for a missing student without exposing the raw identifier" time="0.0475227">
+        </testcase>
+        <testcase classname="src/ResultsPanel.test.jsx" name="OEP-41 preserves populated student identities, pending evaluation and safe API errors" time="0.1002484">
+        </testcase>
+        <testcase classname="src/ResultsPanel.test.jsx" name="OEP-41 ignores a stale in-flight result when changing examinations" time="0.0322659">
+        </testcase>
+        <testcase classname="src/ResultsPanel.test.jsx" name="OEP-40 preserves student titles and durable pending evaluations" time="0.0405331">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/RoleDashboard.test.jsx" timestamp="2026-11-04T17:45:17.713Z" hostname="LAPTOP-5FB5PH0L" tests="7" failures="0" errors="0" skipped="0" time="1.67923">
+        <testcase classname="src/RoleDashboard.test.jsx" name="Supporting role boundaries &gt; Student sees eligibility list, starts/resumes and receives the persisted deadline" time="0.7990421">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="Supporting role boundaries &gt; Student sees an explicit empty state and start errors" time="0.176397">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="Supporting role boundaries &gt; #39 restores an owned attempt from the server after reload" time="0.0461953">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="Supporting role boundaries &gt; #38 uses server eligibility and disables scheduled and submitted exams" time="0.1271296">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="Supporting role boundaries &gt; Admin can update another account but own access controls are disabled" time="0.1687668">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="Supporting role boundaries &gt; Admin account creation sends validated fields and clears the password" time="0.1329304">
+        </testcase>
+        <testcase classname="src/RoleDashboard.test.jsx" name="#47 clears the resume pointer on submission so dashboard refresh/reload cannot reopen it" time="0.2221425">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/StudentAttempt.test.jsx" timestamp="2026-11-04T17:45:17.717Z" hostname="LAPTOP-5FB5PH0L" tests="7" failures="0" errors="0" skipped="0" time="2.3880073">
+        <testcase classname="src/StudentAttempt.test.jsx" name="Student acceptance regressions #38 #40 #46 #47 &gt; AC40-ORDER: serializes rapid selections so a delayed older request cannot overwrite the newer acknowledged answer; navigation retains it" time="1.0657237">
+        </testcase>
+        <testcase classname="src/StudentAttempt.test.jsx" name="Student acceptance regressions #38 #40 #46 #47 &gt; AC40-RETRY: failed selections are explicitly unsaved and can be retried without pretending they were acknowledged" time="0.2608831">
+        </testcase>
+        <testcase classname="src/StudentAttempt.test.jsx" name="Student acceptance regressions #38 #40 #46 #47 &gt; AC47-DRAIN: manual submission waits for the pending answer acknowledgement and closes the completed listing action" time="0.4453388">
+        </testcase>
+        <testcase classname="src/StudentAttempt.test.jsx" name="Student acceptance regressions #38 #40 #46 #47 &gt; AC46-CLOCK: countdown uses server time and monotonic elapsed time despite device-clock changes" time="0.1388514">
+        </testcase>
+        <testcase classname="src/StudentAttempt.test.jsx" name="Student acceptance regressions #38 #40 #46 #47 &gt; AC46-EXPIRY: expiry disables editing even when finalization fails, and permits submission retry" time="0.1738107">
+        </testcase>
+        <testcase classname="src/StudentAttempt.test.jsx" name="Student acceptance regressions #38 #40 #46 #47 &gt; AC47-EXPIRY: a hung pending save cannot delay finalization beyond the persisted deadline" time="0.2062568">
+        </testcase>
+        <testcase classname="src/StudentAttempt.test.jsx" name="Student acceptance regressions #38 #40 #46 #47 &gt; AC38-STATES: listing distinguishes Start/Resume/Submitted/Expired and disables ended attempts" time="0.0915512">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/examClock.test.jsx" timestamp="2026-11-04T17:45:17.721Z" hostname="LAPTOP-5FB5PH0L" tests="2" failures="0" errors="0" skipped="0" time="0.0159195">
+        <testcase classname="src/examClock.test.jsx" name="#46 countdown uses server time and monotonic elapsed time, ignoring device clock changes" time="0.0100254">
+        </testcase>
+        <testcase classname="src/examClock.test.jsx" name="#46 reload cannot restore elapsed time; invalid synchronization locks editing" time="0.0009192">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/system.test.jsx" timestamp="2026-11-04T17:45:17.723Z" hostname="LAPTOP-5FB5PH0L" tests="1" failures="0" errors="0" skipped="0" time="13.4267662">
+        <testcase classname="src/system.test.jsx" name="SYS-INSTRUCTOR-01: real React → HTTP/session/CSRF → Express → MongoDB create/edit/options/publish/reload → Student start" time="9.1477975">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/ui.test.jsx" timestamp="2026-11-04T17:45:17.724Z" hostname="LAPTOP-5FB5PH0L" tests="5" failures="0" errors="0" skipped="0" time="0.7517818">
+        <testcase classname="src/ui.test.jsx" name="#65 Student shell exposes only relevant navigation with a main landmark" time="0.4915764">
+        </testcase>
+        <testcase classname="src/ui.test.jsx" name="#65 Instructor shell exposes only relevant navigation with a main landmark" time="0.06149">
+        </testcase>
+        <testcase classname="src/ui.test.jsx" name="#65 Admin shell exposes only relevant navigation with a main landmark" time="0.0705375">
+        </testcase>
+        <testcase classname="src/ui.test.jsx" name="#65 dialog traps keyboard focus, supports Escape and restores focus" time="0.0965792">
+        </testcase>
+        <testcase classname="src/ui.test.jsx" name="#65 feedback distinguishes errors and status announcements" time="0.0269319">
+        </testcase>
+    </testsuite>
+</testsuites>

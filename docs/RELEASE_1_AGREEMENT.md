@@ -2,7 +2,7 @@
 
 **Prepared:** 19 October 2026 (Asia/Kolkata)
 **Tasks:** [#17 / OEP-8](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/17) and [#19 / OEP-10](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/19)
-**Review status:** Pending team agreement. This document records the existing Release 1 requirements for review; approval and implementation evidence are separate.
+**Review status:** Scope approval by Guru Teja is recorded on PR #55 (24 October); other individual confirmations are not inferred. The final [SRS/SAD/Test Plan](part-1/README.md), [deviation record](FINAL_DEVIATIONS.md) and [review checklist](FINAL_SUBMISSION_CHECKLIST.md) govern the current candidate. Below, original planning dates and expected cases are retained for traceability.
 
 ## Sources and review purpose
 
@@ -120,7 +120,7 @@ Only Admins provision accounts and change roles/status under #51. Enforce a uniq
 
 Use controlled fixtures: two active Students S1/S2, two active Instructors I1/I2, an Admin A1 and inactive accounts. I1 owns draft D1 and published exam P1; I2 owns D2/P2. Each Student has their own attempt/result. Use valid foreign IDs so ownership tests exercise authorization rather than only invalid-input handling.
 
-Every case below is **Not Executed**. These are reviewable specifications for #23/#24/#51 and incremental work under #53. Each future execution record must include the tested commit, fixture/preconditions, actual outcome and evidence link. Existing Test Plan IDs remain unchanged.
+The table below retains the original TC-RBAC expected scenarios. Executed security/API assertions and final Test Plan mappings are retained in [current evidence](FINAL_CHECKPOINT_REPORT.md). No claim is made that every original scenario was independently executed verbatim or that local HTTP tests certify production HTTPS. Existing Test Plan IDs remain unchanged.
 
 | Case ID | Requirement(s) and issues | Action | Expected result |
 |---|---|---|---|
@@ -153,7 +153,7 @@ Every case below is **Not Executed**. These are reviewable specifications for #2
 
 ## Existing quality targets
 
-The Word SRS targets remain unchanged: OEP-NF-001 requires the 95th percentile of non-file API requests to be at most 2 seconds at up to 30 concurrent active users, excluding client network delay; OEP-NF-002 requires acknowledged-save durability; OEP-NF-003 covers current major Chrome/Edge versions at 1366×768 or higher; OEP-NF-004 requires at least 70% line coverage for scoped backend business logic by Sprint 2 end; OEP-NF-005 requires useful errors without sensitive internals. OEP-SR-001..006 retain password hashing, authentication, RBAC, ownership, answer confidentiality and backend validation requirements. These are acceptance targets awaiting execution evidence.
+The Word SRS targets remain unchanged: OEP-NF-001 requires the 95th percentile of non-file API requests to be at most 2 seconds at up to 30 concurrent active users, excluding client network delay; OEP-NF-002 requires acknowledged-save durability; OEP-NF-003 covers current major Chrome/Edge versions at 1366×768 or higher; OEP-NF-004 requires at least 70% line coverage for scoped backend business logic by Sprint 2 end; OEP-NF-005 requires useful errors without sensitive internals. OEP-SR-001..006 retain password hashing, authentication, RBAC, ownership, answer confidentiality and backend validation requirements. The final reports record the measured classroom, persistence, browser and coverage outcomes with their exact scope.
 
 ## Team agreement and completion evidence
 
@@ -161,8 +161,8 @@ The Word SRS targets remain unchanged: OEP-NF-001 requires the 95th percentile o
 |---|---|---|
 | Guntupalli Manaswi | Manaswi-Guntupalli | Prepared at the assignee's request; final agreement pending |
 | Tanusha Prakash | Tanusha181825 | Requested through the PR; agreement pending |
-| Vidimalla Guru Teja | Guruteja2319 | Requested through the PR; agreement pending |
+| Vidimalla Guru Teja | Guruteja2319 | APPROVED review on [PR #55](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/55), 24 October 2026 |
 
 Each member should confirm the included/excluded scope, +1/0 rules, primary-ID crosswalk and permission matrix against the cited documents. Resolve changes in the PR and retain actual review/comment permalinks and dates. Any changed decision must be carried into the affected source documents and implementation contracts before approval.
 
-For #17, completion requires all three members' recorded agreement and consistent scope/rules/traceability across Proposal, SRS and backlog. For #19, completion requires the reviewed matrix, ownership/confidentiality rules, account/session behaviour and concrete check mapping to agree with #23/#24/#51. The PR is ready for human review; both issues remain open until their remaining agreement/review criteria are met. Merging this documentation does not certify application functionality, execute these planned tests or complete #18's real team workflow verification.
+For #17, completion requires all three members' recorded agreement and consistent scope/rules/traceability across Proposal, SRS and backlog. For #19, completion requires the reviewed matrix, ownership/confidentiality rules, account/session behaviour and concrete check mapping to agree with #23/#24/#51. The PR is ready for human review; issue closure must not be treated as proof of any missing individual agreement/review. Merging this documentation does not certify application functionality, execute these planned tests or complete #18's real team workflow verification.

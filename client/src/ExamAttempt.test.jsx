@@ -8,6 +8,12 @@ const data = { attempt: { _id: 'a', status: 'Active', deadline: '2099-01-01' }, 
   { _id: 'q1', questionText: 'First', options: [{ _id: 'o1', text: 'One' }, { _id: 'o2', text: 'Two' }] },
   { _id: 'q2', questionText: 'Second', options: [{ _id: 'o3', text: 'Three' }] },
 ] };
+it('shows each question\'s assigned marks during navigation', () => {
+  render(<ExamAttempt data={{ ...data, questions: data.questions.map((question, index) => ({ ...question, marks: index ? 2.5 : 5 })) }} api="/api" csrfToken="token" />);
+  expect(screen.getByText('Marks: 5')).toBeTruthy();
+  fireEvent.click(screen.getByText('Next question'));
+  expect(screen.getByText('Marks: 2.5')).toBeTruthy();
+});
 it('#40 saves acknowledged choices and preserves unanswered navigation', async () => {
   axios.put.mockResolvedValue({ data: { response: { questionId: 'q1', selectedOptionId: 'o1', revision: 1 } } });
   render(<ExamAttempt data={data} api="/api" csrfToken="token" />);

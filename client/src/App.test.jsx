@@ -243,6 +243,7 @@ describe(
 
     it('UI-EXAM-03: submits exam form data with CSRF protection', async () => {
       await renderInstructor([])
+      fireEvent.click(screen.getByRole('tab', { name: 'Create exam' }))
 
       axios.post.mockResolvedValue({
         data: exam(),
@@ -296,6 +297,7 @@ describe(
 
     it('UI-EXAM-04: displays the server validation error on a rejected create', async () => {
       await renderInstructor([])
+      fireEvent.click(screen.getByRole('tab', { name: 'Create exam' }))
 
       axios.post.mockRejectedValue({
         response: {
@@ -640,11 +642,46 @@ it('#65 Open replaces the dashboard, defaults to Details and Back restores the l
   expect(document.activeElement).toBe(screen.getByRole('heading', { name: 'Manage Exam' }));
   fireEvent.click(screen.getByRole('button', { name: 'Back to My Exams' }));
   expect(screen.getByRole('heading', { name: 'My Exams' })).toBeTruthy();
-  expect(screen.queryByRole('tablist')).toBeNull();
+  expect(screen.getByRole('tablist', { name: 'Instructor workspace' })).toBeTruthy();
+  expect(screen.getByRole('tab', { name: 'My exams' }).getAttribute('aria-selected')).toBe('true');
   expect(document.activeElement).toBe(screen.getByRole('heading', { name: 'My Exams' }));
   fireEvent.click(screen.getByRole('button', { name: 'Open' }));
   await screen.findByRole('tab', { name: 'Details' });
   expect(screen.getByRole('tab', { name: 'Details' }).getAttribute('aria-selected')).toBe('true');
+});
+
+it('keeps Create exam and My exams separate while preserving unfinished form input and keyboard navigation', async () => {
+  await renderInstructor([exam()]);
+  expect(screen.getByRole('tabpanel', { name: 'My exams' })).toBeTruthy();
+  expect(screen.queryByRole('heading', { name: 'Create Exam' })).toBeNull();
+  fireEvent.click(screen.getByRole('tab', { name: 'Create exam' }));
+  expect(screen.getAllByRole('tabpanel')).toHaveLength(1);
+  expect(screen.queryByRole('button', { name: 'Open' })).toBeNull();
+  fireEvent.change(screen.getByPlaceholderText('Exam title'), { target: { value: 'Unfinished draft' } });
+  fireEvent.change(screen.getByPlaceholderText('Description'), { target: { value: 'Keep this description' } });
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'Create exam' }), { key: 'End' });
+  expect(screen.getByRole('tab', { name: 'My exams' }).getAttribute('aria-selected')).toBe('true');
+  expect(document.activeElement).toBe(screen.getByRole('tab', { name: 'My exams' }));
+  expect(screen.getByRole('button', { name: 'Open' })).toBeTruthy();
+  fireEvent.keyDown(screen.getByRole('tab', { name: 'My exams' }), { key: 'ArrowRight' });
+  expect(screen.getByRole('tab', { name: 'Create exam' }).getAttribute('aria-selected')).toBe('true');
+  expect(screen.getByPlaceholderText('Exam title').value).toBe('Unfinished draft');
+  expect(screen.getByPlaceholderText('Description').value).toBe('Keep this description');
+});
+
+it('shows a newly created exam in My exams and resets the creation form after success', async () => {
+  await renderInstructor([]);
+  fireEvent.click(screen.getByRole('tab', { name: 'Create exam' }));
+  fireEvent.change(screen.getByPlaceholderText('Exam title'), { target: { value: exam().title } });
+  axios.post.mockResolvedValue({ data: exam() });
+  axios.get.mockResolvedValue({ data: [exam()] });
+  fireEvent.click(screen.getByRole('button', { name: 'Create Exam' }));
+  await screen.findByText('Exam created successfully');
+  expect(screen.getByRole('tab', { name: 'My exams' }).getAttribute('aria-selected')).toBe('true');
+  expect(screen.getByText(exam().title)).toBeTruthy();
+  expect(screen.queryByRole('button', { name: 'Create Exam' })).toBeNull();
+  fireEvent.click(screen.getByRole('tab', { name: 'Create exam' }));
+  expect(screen.getByPlaceholderText('Exam title').value).toBe('');
 });
 it('#65 keyboard tab navigation preserves edits and draft Results never calls the results API', async () => {
   await openExam();
@@ -672,4 +709,57 @@ it('#65 published Details are read-only and Results load only when selected', as
   expect(axios.get).toHaveBeenCalledWith(expect.stringMatching(/exam-1\/results$/));
   fireEvent.click(screen.getByRole('link', { name: 'My exams' }));
   expect(screen.getByRole('heading', { name: 'My Exams' })).toBeTruthy();
+});
+
+it('clears publication messages and previous workspace anchors across logout and a fresh instructor login', async () => {
+  await openExam(exam({ questions: [question()] }));
+  axios.post.mockResolvedValue({ data: exam({ status: 'Published', questions: [question()] }) });
+  fireEvent.click(screen.getByRole('button', { name: 'Publish Exam' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Confirm publication' }));
+  await screen.findByText('Exam published successfully');
+  window.history.replaceState(null, '', '/#results');
+  fireEvent.click(screen.getByRole('button', { name: 'Logout' }));
+  await screen.findByRole('button', { name: 'Login' });
+  expect(window.location.hash).toBe('');
+  mockAuthenticatedInstructor([exam({ status: 'Published' })]);
+  axios.post.mockResolvedValue({ data: { user: instructor } });
+  fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: instructor.email } });
+  fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'ExamplePassword123!' } });
+  // A manually retained anchor must also be cleared when a new login starts.
+  window.history.replaceState(null, '', '/#results');
+  fireEvent.click(screen.getByRole('button', { name: 'Login' }));
+  await screen.findByRole('heading', { name: 'My Exams' });
+  expect(screen.queryByText('Exam published successfully')).toBeNull();
+  expect(screen.queryByRole('dialog')).toBeNull();
+  expect(screen.queryByRole('heading', { name: 'Manage Exam' })).toBeNull();
+  expect(window.location.hash).toBe('');
+  expect(screen.getByRole('tab', { name: 'My exams' }).getAttribute('aria-selected')).toBe('true');
+});
+
+it('replaces a stale instructor success with the next save error', async () => {
+  await openExam();
+  axios.put.mockResolvedValueOnce({ data: exam() });
+  fireEvent.click(screen.getByRole('button', { name: 'Save Exam Changes' }));
+  await screen.findByText('Draft updated successfully');
+  axios.put.mockRejectedValueOnce({ response: { data: { message: 'Could not save changes' } } });
+  fireEvent.click(screen.getByRole('button', { name: 'Save Exam Changes' }));
+  await screen.findByText('Could not save changes');
+  expect(screen.queryByText('Draft updated successfully')).toBeNull();
+  fireEvent.click(screen.getByRole('button', { name: 'Dismiss notification' }));
+  expect(screen.queryByRole('alert')).toBeNull();
+});
+
+it('reports a saved exam separately when refreshing its list fails', async () => {
+  await openExam();
+  axios.put.mockResolvedValue({ data: exam() });
+  axios.get.mockRejectedValueOnce(new Error('List offline'));
+  fireEvent.click(screen.getByRole('button', { name: 'Save Exam Changes' }));
+  const alert = await screen.findByRole('alert');
+  expect(alert.textContent).toContain('Draft updated successfully');
+  expect(alert.textContent).toContain('The exam list could not refresh');
+  expect(screen.queryByText('Could not update exam')).toBeNull();
+  axios.get.mockResolvedValueOnce({ data: [exam()] });
+  fireEvent.click(screen.getByRole('button', { name: 'Refresh exams' }));
+  await waitFor(() => expect(screen.queryByRole('alert')).toBeNull());
+  expect(axios.put).toHaveBeenCalledTimes(1);
 });

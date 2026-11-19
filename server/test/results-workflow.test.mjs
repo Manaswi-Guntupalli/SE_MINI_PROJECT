@@ -12,6 +12,7 @@ const Result = require('../models/Result');
 const { startAttempt, saveResponse, finalizeAttempt } = require('../services/persistenceService');
 const { evaluateSubmittedAttempt } = require('../services/evaluationService');
 const { processPendingEvaluations, startEvaluationWorker } = require('../services/evaluationWorker');
+const { repairWeightedResults } = require('../services/repairWeightedResults');
 const bcrypt = require('bcryptjs');
 let student, other, instructor, foreign, exam, attempt, passwordHash;
 const password = 'ResultsTest123!';
@@ -42,6 +43,73 @@ async function select(index, option = 0) {
   const question = exam.questions[index];
   await saveResponse({ attemptId: attempt._id, studentId: student._id, questionId: question._id, selectedOptionId: question.options[option]._id });
 }
+
+it.each(['Manual', 'Timeout'])('assigned marks survive create/edit/publish, %s submission, retries and both result views', async reason => {
+  const teacher = await login(instructor), own = await login(student);
+  const created = await teacher.agent.post('/api/exams').set('X-CSRF-Token', teacher.token)
+    .send({ title: 'Weighted exam', duration: 30 });
+  expect(created.status).toBe(201);
+  const path = `/api/exams/${created.body._id}`;
+  let draft;
+  for (const marks of [1, 2.5, 3]) {
+    const added = await teacher.agent.post(`${path}/questions`).set('X-CSRF-Token', teacher.token)
+      .send({ questionText: `Worth ${marks}`, marks, options: [{ text: 'Yes', isCorrect: true }, { text: 'No' }] });
+    expect(added.status).toBe(201);
+    draft = added.body;
+  }
+  expect((await teacher.agent.put(`${path}/questions/${draft.questions[0]._id}`).set('X-CSRF-Token', teacher.token).send({ marks: 5 })).status).toBe(200);
+  const published = await teacher.agent.post(`${path}/publish`).set('X-CSRF-Token', teacher.token).send({});
+  expect(published.status).toBe(200);
+  const started = await own.agent.post(`/api/student/exams/${draft._id}/start`).set('X-CSRF-Token', own.token).send({});
+  expect(started.status).toBe(200);
+  expect(started.body.questions.map(question => question.marks)).toEqual([5, 2.5, 3]);
+  expect(JSON.stringify(started.body)).not.toContain('isCorrect');
+  const attemptId = started.body.attempt._id;
+  const expectedScore = reason === 'Manual' ? 5 : 2.5;
+  for (const [index, option] of (reason === 'Manual' ? [[0, 0], [1, 1]] : [[0, 1], [1, 0]])) {
+    const question = started.body.questions[index];
+    expect((await own.agent.put(`/api/student/attempts/${attemptId}/responses/${question._id}`).set('X-CSRF-Token', own.token)
+      .send({ selectedOptionId: question.options[option]._id, expectedRevision: 0 })).status).toBe(200);
+  }
+  if (reason === 'Timeout') {
+    const timed = await Attempt.findById(attemptId);
+    await Attempt.collection.updateOne({ _id: timed._id }, { $set: { deadline: new Date(Date.now() - 60000), startedAt: new Date(Date.now() - 120000) } });
+    await processPendingEvaluations();
+  }
+  const submission = await own.agent.post(`/api/student/attempts/${attemptId}/submit`).set('X-CSRF-Token', own.token).send({ reason, score: 999, maximum: 999 });
+  expect(submission.status).toBe(200);
+  expect(submission.body.result).toMatchObject({ score: expectedScore, maximum: 10.5 });
+  const repeated = await own.agent.post(`/api/student/attempts/${attemptId}/submit`).set('X-CSRF-Token', own.token).send({ reason });
+  expect(repeated.body.result._id).toBe(submission.body.result._id);
+  expect((await own.agent.get(`/api/student/attempts/${attemptId}`)).body.result).toMatchObject({ score: expectedScore, maximum: 10.5 });
+  expect((await own.agent.get('/api/student/results')).body[0]).toMatchObject({ score: expectedScore, maximum: 10.5 });
+  expect((await teacher.agent.get(`${path}/results`)).body.results[0]).toMatchObject({ score: expectedScore, maximum: 10.5 });
+});
+
+it('repairs legacy weighted results from saved answers with a read-only preview and repeat-safe apply', async () => {
+  const weighted = await Exam.create({ title: 'Historical weighted exam', duration: 30, status: 'Published', instructorId: instructor._id,
+    questions: [5, 2.5].map(marks => ({ questionText: 'Question', marks, options: [{ text: 'Correct', isCorrect: true }, { text: 'Wrong' }] })),
+  });
+  const historical = (await startAttempt({ examId: weighted._id, studentId: student._id })).attempt;
+  await saveResponse({ attemptId: historical._id, studentId: student._id, questionId: weighted.questions[0]._id, selectedOptionId: weighted.questions[0].options[0]._id });
+  await finalizeAttempt({ attemptId: historical._id, studentId: student._id, reason: 'Manual' });
+  const legacy = await Result.create({ attemptId: historical._id, examId: weighted._id, studentId: student._id, score: 1, maximum: 2 });
+  await Attempt.updateOne({ _id: historical._id }, { $set: { evaluationStatus: 'Evaluated' } });
+  const audit = vi.fn();
+  expect(await repairWeightedResults({ onChange: audit })).toMatchObject({ affected: 1, updated: 0 });
+  expect((await Result.findById(legacy._id)).score).toBe(1);
+  expect(audit).toHaveBeenCalledWith({ resultId: legacy.id, before: { score: 1, maximum: 2 }, after: { score: 5, maximum: 7.5 } });
+  expect(await repairWeightedResults({ apply: true })).toMatchObject({ affected: 1, updated: 1 });
+  expect(await Result.findById(legacy._id)).toMatchObject({ score: 5, maximum: 7.5, createdAt: legacy.createdAt });
+  expect(await repairWeightedResults({ apply: true })).toMatchObject({ affected: 0, updated: 0 });
+  expect(await Result.countDocuments({ attemptId: historical._id })).toBe(1);
+  expect((await evaluateSubmittedAttempt({ attemptId: historical._id, studentId: student._id })).score).toBe(5);
+  const inconsistent = (await startAttempt({ examId: weighted._id, studentId: other._id })).attempt;
+  await finalizeAttempt({ attemptId: inconsistent._id, studentId: other._id, reason: 'Manual' });
+  const suspect = await Result.create({ attemptId: inconsistent._id, examId: weighted._id, studentId: other._id, score: 1, maximum: 2 });
+  expect(await repairWeightedResults({ apply: true })).toMatchObject({ affected: 0, updated: 0, skipped: 1 });
+  expect(await Result.findById(suspect._id)).toMatchObject({ score: 1, maximum: 2 });
+});
 
 it.each(['correct', 'wrong', 'mixed', 'unanswered'])('OEP-39: manual submission computes %s from saved answers, ignores supplied marks and survives reload', async kind => {
   if (kind === 'correct' || kind === 'wrong') for (let i = 0; i < 3; i++) await select(i, kind === 'correct' ? 0 : 1);

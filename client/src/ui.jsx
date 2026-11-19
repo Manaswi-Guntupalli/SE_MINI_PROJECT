@@ -11,12 +11,19 @@ export function Textarea(props) {
 }
 export function Select(props) { return <select {...props} />; }
 export function Panel({ className = '', ...props }) { return <section className={`panel ${className}`} {...props} />; }
-export function Feedback({ children, error = false }) {
-  return children ? <p className={`feedback ${error ? 'error' : 'success'}`} role={error ? 'alert' : 'status'}>{children}</p> : null;
+export function Feedback({ children, error = false, onDismiss }) {
+  if (!children) return null;
+  const className = `feedback ${error ? 'error' : 'success'}`;
+  if (!onDismiss) return <p className={className} role={error ? 'alert' : 'status'}>{children}</p>;
+  return <div className={`${className} dismissible`} role={error ? 'alert' : 'status'}>
+    <span>{children}</span><Button className="notification-dismiss" aria-label="Dismiss notification" onClick={onDismiss}>
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" strokeWidth="2" /></svg>
+    </Button>
+  </div>;
 }
 export function Loading({ children = 'Loading...' }) { return <p className="feedback loading" role="status">{children}</p>; }
 export function StatusBadge({ children }) { return <span className="status">{children}</span>; }
-export function AppShell({ user, logout, children, navigationLinks, onNavigate }) {
+export function AppShell({ user, logout, children, navigationLinks, onNavigate, activeTab }) {
   const [logoutError, setLogoutError] = useState('');
   const [loggingOut, setLoggingOut] = useState(false);
   async function signOut() {
@@ -34,7 +41,20 @@ export function AppShell({ user, logout, children, navigationLinks, onNavigate }
       <div><h1>Online Exam Portal</h1><p>{user ? `${user.role} workspace` : 'Examinations and results'}</p></div></div>
       {user && <div className="account-summary"><span><strong>{user.name}</strong><small>{user.email}</small></span><Button disabled={loggingOut} onClick={signOut}>Logout</Button></div>}
     </header>
-    {user && <nav className="app-nav" aria-label={`${user.role} navigation`}>{links.map(([id, label]) => <a key={id} href={`#${id}`} onClick={onNavigate ? event => { event.preventDefault(); onNavigate(id); } : undefined}>{label}</a>)}</nav>}
+    {user && <nav className="app-nav" aria-label={`${user.role} navigation`}>
+      {activeTab ? <div role="tablist" aria-label={`${user.role} workspace`} className="workspace-tabs">
+        {links.map(([id, label], index) => <Button key={id} role="tab" id={`workspace-tab-${id}`}
+          aria-controls={id} aria-selected={activeTab === id} tabIndex={activeTab === id ? 0 : -1}
+          onClick={() => onNavigate(id)} onKeyDown={event => {
+            const next = event.key === 'ArrowRight' ? (index + 1) % links.length
+              : event.key === 'ArrowLeft' ? (index + links.length - 1) % links.length
+              : event.key === 'Home' ? 0 : event.key === 'End' ? links.length - 1 : null;
+            if (next === null) return;
+            event.preventDefault(); onNavigate(links[next][0]);
+            document.getElementById(`workspace-tab-${links[next][0]}`)?.focus();
+          }}>{label}</Button>)}
+      </div> : links.map(([id, label]) => <a key={id} href={`#${id}`} onClick={onNavigate ? event => { event.preventDefault(); onNavigate(id); } : undefined}>{label}</a>)}
+    </nav>}
     <main id="main-content" className={`container ${user ? '' : 'auth-layout'}`} tabIndex={-1}><Feedback error>{logoutError}</Feedback>{children}</main>
     <footer className="app-footer">Online Exam Portal <span>Release 1</span></footer>
   </>;

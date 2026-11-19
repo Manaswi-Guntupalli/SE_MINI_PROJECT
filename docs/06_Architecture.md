@@ -1,46 +1,15 @@
-# Online Exam Portal
-## High-Level Architecture
+# Release 1 architecture
 
-**Version:** 0.1
-**Status:** Initial Architecture Baseline
-**Course:** UE24CS341A - Software Engineering
+Final review revision, 5 November 2026. The authoritative [SAD](part-1/Online_Exam_Portal_SAD.docx) contains component responsibilities, traceability, security, two UML sequence diagrams, actual API shapes and error handling.
 
----
+![Component architecture](diagrams/components.png)
 
-## Revision History
+The application uses a layered client-server MERN architecture: React presentation, Express routes/middleware/controllers, persistence/evaluation services, Mongoose and a MongoDB replica set. A modular application keeps role boundaries and transactional behavior testable without adding microservices.
 
-| Version | Date | Author | Change |
-|---|---|---|---|
-| 0.1 | 02 October 2026 | Tanusha | Initial high-level architecture baseline |
+React App handles login and Instructor management; RoleDashboard supplies Student/Admin dashboards; ExamAttempt handles versioned saves, navigation, countdown and submission; ResultsPanel handles persisted results and loading/pending/error states. Express checks current account status/role, CSRF/origin, ownership and lifecycle. MongoDB transactions and unique indexes protect associations, saves, finalization and one result per attempt.
 
----
+The independent server worker sweeps expired and evaluation-pending attempts every five seconds by default. Browser closure cannot stop it. Failed evaluation remains Submitted/Pending and retries without reopening answers. MongoDB time is authoritative; the browser's synchronized monotonic timer is a display and edit lock.
 
-## 1. Purpose
+Security uses bcrypt hashes, regenerated server sessions, MongoStore, HttpOnly/SameSite cookies, CSRF tokens, exact CORS origin and safe JSON errors. Production requires HTTPS/Secure cookie configuration. Admin does not inherit Student or Instructor operations; Student payloads omit answer keys.
 
-This document describes the initial high-level architecture of the Online Exam Portal.
-
-The architecture represents the current planning baseline and may evolve during development based on implementation experience, sprint reviews and faculty feedback.
-
----
-
-## 2. Architecture Style
-
-The Online Exam Portal follows a client-server architecture using the MERN stack.
-
-The major architectural flow is:
-
-```text
-User Browser
-     |
-     v
-React Frontend
-     |
-     | HTTP / REST
-     v
-Node.js + Express Backend
-     |
-     v
-Mongoose
-     |
-     v
-MongoDB
+See [software design](07_Software_Design.md), [API contract](AUTH_AND_EXAM_API.md), [Field Layout](OEP-18_Field_Layout.md), [changes from the initial design](FINAL_DEVIATIONS.md) and [executed evidence](FINAL_CHECKPOINT_REPORT.md). No deployment, rate-limit or SonarQube certification is implied.
