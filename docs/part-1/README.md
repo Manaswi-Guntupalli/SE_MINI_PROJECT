@@ -1,8 +1,8 @@
 # Online Exam Portal Part 1 documents
 
-**Release 1 · Version 1.3 · 8 November 2026**
+**Release 1 · Version 1.4 · 20 November 2026**
 
-These are the current requirements, architecture and test documents for the `docs/final-checkpoint-review` branch.
+These are the current requirements, architecture and test documents aligned to main after PRs #72 and #73. The Word and PDF editions contain the same content. See [current submission verification](../SUBMISSION_VERIFICATION.md) for exact test and Sonar observations.
 
 ## Release documents
 
@@ -21,4 +21,10 @@ These are the current requirements, architecture and test documents for the `doc
 
 ## Historical references
 
-The original proposal and PDF SRS record the earlier scope. Use the Version 1.3 documents above for the current specification. [Original proposal](../../OEP-16_Project_Proposal_Final.pdf) · [Original PDF SRS](../OEP-17_SRS_Final.pdf) · [Project plan](../05_Project_Plan.md)
+The original proposal and PDF SRS record the earlier scope. Use the Version 1.4 documents above for the current specification. [Original proposal](../../OEP-16_Project_Proposal_Final.pdf) · [Original PDF SRS](../OEP-17_SRS_Final.pdf) · [Project plan](../05_Project_Plan.md)
+
+## Matching PDF editions
+
+- [SRS PDF](Online_Exam_Portal_SRS.pdf)
+- [SAD PDF](Online_Exam_Portal_SAD.pdf)
+- [Test Plan PDF](Online_Exam_Portal_Test_Plan.pdf)

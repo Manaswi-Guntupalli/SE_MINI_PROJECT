@@ -1,5 +1,7 @@
 # OEP-19 Release 1 execution traceability
 
+**20 November 2026 alignment:** The 32 SRS requirements and 33 Test Plan IDs are retained. EVAL-FR-01/02 now use weighted marks, including decimals, as specified in Version 1.4. OEP-SR-006 is additionally checked by bounded-email regression cases in `server/test/email-validation.test.mjs`; seed isolation/random credentials by `server/test/seed-users.test.mjs`; tooling regressions by `scripts/security.test.mjs` and `scripts/test_check_documentation.py`. Sonar static analysis supplements the existing runtime tests. See [current evidence](SUBMISSION_VERIFICATION.md); static analysis is not a penetration test. Dated mapping/evidence below preserves the earlier execution scope.
+
 This executed supplement connects the [initial OEP-19 workbook](OEP-19_Initial_RTM.xlsx)
 to OEP-44's real tests and reports. It preserves the workbook's proposed UT/IT/ST
 IDs and review history: its 188 candidate scenarios are **not** collectively

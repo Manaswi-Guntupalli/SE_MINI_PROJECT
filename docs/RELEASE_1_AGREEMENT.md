@@ -1,5 +1,7 @@
 # Release 1 Scope and Permissions Agreement
 
+**Current-status note — 20 November 2026:** The original plan, estimates and dated review observations below remain historical. PRs #72 and #73 are now merged to main. SonarQube Cloud analysis is delivered; weighted scoring and the final regressions are in the current release. See [submission verification](SUBMISSION_VERIFICATION.md), [current specifications](part-1/README.md) and [deviations](FINAL_DEVIATIONS.md). Historical pending-work statements below do not establish current issue status or missing functionality. Team approvals, startup records and course acceptance must be genuine.
+
 **Prepared:** 19 October 2026 (Asia/Kolkata)
 **Tasks:** [#17 / OEP-8](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/17) and [#19 / OEP-10](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/issues/19)
 **Review status:** Scope approval by Guru Teja is recorded on PR #55 (24 October); other individual confirmations are not inferred. The final [SRS/SAD/Test Plan](part-1/README.md), [deviation record](FINAL_DEVIATIONS.md) and [review checklist](FINAL_SUBMISSION_CHECKLIST.md) govern the current candidate. Below, original planning dates and expected cases are retained for traceability.

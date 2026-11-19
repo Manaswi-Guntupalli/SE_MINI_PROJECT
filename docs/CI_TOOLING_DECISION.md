@@ -1,5 +1,7 @@
 # CI tooling decision
 
+**20 November 2026 amendment:** GitHub Actions remains the CI provider. SonarQube Cloud now supplies separate static analysis; it does not replace Actions or imply deployment. Main 5966da9 passed the observed Sonar quality gate. CI-based Sonar coverage import remains optional and was skipped in the recorded hosted run. See [Sonar setup](SONARQUBE.md) and [current evidence](SUBMISSION_VERIFICATION.md). The decision and amendment history below retain their original dates.
+
 **Decision date:** 24 October 2026. **Requested by:** Guntupalli Manaswi.
 
 Use **GitHub Actions as the sole CI provider** for the Online Exam Portal. The former local CI-server configuration, setup instructions, provider-specific environment fallback and provider-specific evidence files have been removed from the current implementation. No Windows CI service or local CI-server job is required. Existing Git history and earlier verification comments remain historical records.

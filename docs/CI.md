@@ -1,5 +1,7 @@
 # GitHub Actions and local verification
 
+**Current alignment — 20 November 2026:** SonarQube Cloud is the static-analysis service; GitHub Actions remains the sole CI provider. The optional Ubuntu Sonar upload is conditional and was skipped in main run 44588050194. Automatic Analysis separately passed its quality gate for 5966da9; it did not report coverage. Current tests, coverage and evidence are in [submission verification](SUBMISSION_VERIFICATION.md). The November 5 execution below is historical. Locked CI installs now use `--ignore-scripts`; the test stage also runs two Node tooling security regression cases, and the workflow prepares combined LCOV after the suites.
+
 For SonarQube findings, checksum false positives and the owner setup required to
 import coverage, see [SonarQube Cloud checks](SONARQUBE.md).
 

@@ -1,5 +1,7 @@
 # Online Exam Portal — Agile Project Plan
 
+**Current-status note — 20 November 2026:** The original plan, estimates and dated review observations below remain historical. PRs #72 and #73 are now merged to main. SonarQube Cloud analysis is delivered; weighted scoring and the final regressions are in the current release. See [submission verification](SUBMISSION_VERIFICATION.md), [current specifications](part-1/README.md) and [deviations](FINAL_DEVIATIONS.md). Historical pending-work statements below do not establish current issue status or missing functionality. Team approvals, startup records and course acceptance must be genuine.
+
 > Finalization note, 5 November 2026: planning tables and earlier snapshots below retain their historical dates. The [current submission checklist](FINAL_SUBMISSION_CHECKLIST.md) records release integration, actual contribution/review evidence and remaining owner actions. Original 37-child planning totals are not current velocity; three subsequently deleted Sprint 2 tasks (#41/#43/#45) leave 34 planned release children.
 
 **Version:** 0.5 · **Date:** 13 October 2026 · **Course:** UE24CS341A — Software Engineering

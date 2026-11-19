@@ -21,9 +21,9 @@ All members contribute to shared authentication, access control, MongoDB integra
 - Frontend: React
 - Backend: Node.js and Express
 - Database: MongoDB (Mongoose)
-- Quality and delivery: Git, GitHub Actions, ESLint, automated tests and V8 coverage
+- Quality and delivery: Git, GitHub Actions, ESLint, SonarQube Cloud static analysis, automated tests and V8 coverage
 
-Current runtime and validation tools are listed above. Differences from initial tooling plans are recorded in the [final design changes](docs/FINAL_DEVIATIONS.md).
+See [SonarQube Cloud checks](docs/SONARQUBE.md) and the [20 November submission verification](docs/SUBMISSION_VERIFICATION.md) for the analyzed commit, quality gate, test evidence and coverage limitations. Current runtime and validation tools are listed above. Differences from initial tooling plans are recorded in the [final design changes](docs/FINAL_DEVIATIONS.md).
 
 ## Project management — GitHub only
 **[Online Exam Portal — Release 1 Project Board](https://github.com/users/Manaswi-Guntupalli/projects/3)** · [Kanban view](https://github.com/users/Manaswi-Guntupalli/projects/3/views/1)

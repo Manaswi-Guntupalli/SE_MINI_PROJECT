@@ -1,4 +1,6 @@
 
+
+**Current-status note — 20 November 2026:** The original plan, estimates and dated review observations below remain historical. PRs #72 and #73 are now merged to main. SonarQube Cloud analysis is delivered; weighted scoring and the final regressions are in the current release. See [submission verification](SUBMISSION_VERIFICATION.md), [current specifications](part-1/README.md) and [deviations](FINAL_DEVIATIONS.md). Historical pending-work statements below do not establish current issue status or missing functionality. Team approvals, startup records and course acceptance must be genuine.
 # Online Exam Portal
 ## Initial Validation Plan
 

@@ -1,5 +1,7 @@
 # Online Exam Portal final checkpoint test report
 
+**Latest submission evidence — 20 November 2026:** PRs #72 and #73 are merged to main. Use [submission verification](SUBMISSION_VERIFICATION.md) for the post-Sonar-fix test run and analysis results. The November 8 results below remain a dated historical record; 211 is not the current suite total.
+
 **Release 1 · 8 November 2026**
 
 **Reviewed branch** `docs/final-checkpoint-review` · [`8fa07c1`](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/commit/8fa07c13eaad24e3c3051b44e786462d7d4aeffc)

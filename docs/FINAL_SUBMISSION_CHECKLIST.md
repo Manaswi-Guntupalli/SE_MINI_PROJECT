@@ -1,8 +1,10 @@
 # Final checkpoint and peer review checklist
 
-Prepared 5 November 2026 against the supplied Mini Project Demo FAQ and evaluation checklist. This is a review candidate, not an assertion of faculty acceptance. No extra feature, Docker/Sonar project, Gantt chart or public deployment was added solely for these PDFs. Earlier approved course obligations still require an explained/accepted disposition where relevant.
+**Current alignment — 20 November 2026:** Use [submission verification](SUBMISSION_VERIFICATION.md) for current test, coverage and Sonar results. Checklist review/points/approval observations not revalidated on this date remain historical and must not be treated as current facts. No team signatures, Project updates or faculty approvals are invented.
 
-The application baseline is main `13ec9982bff073be048c54d51b59cb3d761672a2`, promoted through PR 70, with the integrated implementation from PR 71. Finalization changes are limited to the repeatable benchmark, evidence, required documents/diagrams/videos and accurate current instructions. Business logic and UI source are unchanged. [Specifications](part-1/README.md), [four reports](FINAL_CHECKPOINT_REPORT.md), [deviations](FINAL_DEVIATIONS.md) and [videos](videos/README.md) form the submission index.
+Prepared 5 November 2026 against the supplied Mini Project Demo FAQ and evaluation checklist. This is a review candidate, not an assertion of faculty acceptance. SonarQube Cloud has since been added and verified separately; Docker, a Gantt chart and public deployment are not asserted delivered. Earlier approved course obligations still require an explained/accepted disposition where relevant.
+
+The current verified application baseline is main `5966da9cbfd0d73844c9caa63aba345ca497b352`, including merged PRs 70, 71, 72 and 73. This November 20 alignment changes documents and retained evidence only. Finalization changes are limited to the repeatable benchmark, evidence, required documents/diagrams/videos and accurate current instructions. Business logic and UI source are unchanged. [Specifications](part-1/README.md), [four reports](FINAL_CHECKPOINT_REPORT.md), [deviations](FINAL_DEVIATIONS.md) and [videos](videos/README.md) form the submission index.
 
 | Item | Required criterion | State | Evidence or exact remaining action |
 |---|---|---|---|
@@ -37,14 +39,14 @@ The application baseline is main `13ec9982bff073be048c54d51b59cb3d761672a2`, pro
 | 29 | Tests executed according to plan | Done for declared local scope | CI/security plus Chrome/Edge, classroom performance and coverage evidence. Production/network/load exclusions explicit. |
 | 30 | Unit report in docs | Done | Final UNIT_REPORT with JUnit and scoring output. |
 | 31 | System validation report in docs | Done | Real HTTP/browser results, 30-user benchmark and exact versions. |
-| 32 | Code coverage report in docs | Done | Backend lines 89.93%; frontend lines 89.95%; raw summary/Cobertura. |
-| 33 | Branch coverage report in docs | Done | Backend 76.12%; frontend 83.33%; raw reports retained. |
-| 34 | Working core use cases | Done on recorded execution | 178 tests passed plus ten diagnostics; requester also reported successful complete walkthrough. |
+| 32 | Code coverage report in docs | Done | Current measured values are in [submission verification](SUBMISSION_VERIFICATION.md); November 4 raw reports remain a dated baseline. |
+| 33 | Branch coverage report in docs | Done | Current measured values are in [submission verification](SUBMISSION_VERIFICATION.md); dated raw reports are retained. |
+| 34 | Working core use cases | Done on recorded execution | See the current suite counts and ten diagnostics in [submission verification](SUBMISSION_VERIFICATION.md); requester previously reported a successful complete walkthrough. |
 | 35 | Team explains deviations | Each member | Read and explain FINAL_DEVIATIONS; repository artifacts cannot certify an oral answer. |
 | 36 | Accessible readable version controlled code | Ready for review | Public repo; review branch preserves main, source history and existing functionality. |
 | 37 | Individual contribution explanation | Each member | Show own actual issues, PRs and source, using the provenance table below. |
 | 38 | Agile SDLC understanding | Each member | Explain actual estimates, sprint plan and integration blockers; planning points are not claimed completed velocity. |
-| 39 | Architecture API test justification | Each member | Explain sessions/CSRF, ownership, immutable publication, deadlines, revisions, transactions, worker retry and +1/0 scoring. |
+| 39 | Architecture API test justification | Each member | Explain sessions/CSRF, ownership, immutable publication, deadlines, revisions, transactions, worker retry and weighted scoring. |
 
 ## Actual contribution and review provenance
 
@@ -60,9 +62,9 @@ PR 70 is merged to main. It and PR 71 had no submitted approvals at the last rea
 
 1. Read the three specifications, deviations, current reports and both videos; check this PR's exact diff and Actions results.
 2. Run the existing startup steps and core workflow on each teammate's own machine/account, recording only actual outcomes. Each person must understand their own code/PRs.
-3. Reconcile issue/Project state after acceptance: results stories 48/49/50 remain open; epics 12/13/14 and task 53 are now closed but some status labels/checklists still say Todo. Use actual acceptance evidence and update native Project Status and labels consistently. The branch does not silently mutate project fields or impersonate reviewers.
+3. Reconcile current issue/Project state after acceptance. The earlier audit found mismatched open/closed/status fields; those observations are historical, not a statement that those issues are still open today. Use actual acceptance evidence and update native Project Status and labels consistently. The branch does not silently mutate project fields or impersonate reviewers.
 4. Confirm #67's optional native points disposition using its existing retrospective estimate; keep historical planned totals separate from current work/velocity.
-5. Submit a genuine review, resolve any findings, then owner accepts/merges this PR and records the exact release commit/date as the final freeze. No final acceptance signature is generated here.
+5. Submit a genuine review, resolve any findings, then owner records the accepted release commit/date as the final freeze. PRs #72 and #73 are already merged; a merge does not fabricate a formal approval. No final acceptance signature is generated here.
 6. Rehearse the three viva areas: individual contribution; real Agile planning/points/blockers; architecture/API/test rationale. Explain permitted AI use and documented deviations accurately.
 
 Repository deliverables are prepared for review. Remaining people-owned actions above cannot be completed by changing files or marking all items Done. The issue states and review observations are dated snapshots; verify them when signing off.

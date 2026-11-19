@@ -1,6 +1,6 @@
 # Release 1 software design
 
-Version 1.0, 5 November 2026. Final integrated release candidate for peer review. The [current SAD](part-1/Online_Exam_Portal_SAD.docx), this design, [Domain model](DOMAIN_MODEL.md) and [Field Layout](OEP-18_Field_Layout.md) describe the finished release. Original PDF/XLSX designs remain historical; [final deviations](FINAL_DEVIATIONS.md) explain refinements.
+Version 1.1, 20 November 2026. Final integrated release candidate for peer review. The [current SAD](part-1/Online_Exam_Portal_SAD.docx), this design, [Domain model](DOMAIN_MODEL.md) and [Field Layout](OEP-18_Field_Layout.md) describe the finished release. Original PDF/XLSX designs remain historical; [final deviations](FINAL_DEVIATIONS.md) explain refinements.
 
 ## Modules and interfaces
 
@@ -29,10 +29,10 @@ Exact HTTP shapes and errors are in [AUTH_AND_EXAM_API.md](AUTH_AND_EXAM_API.md)
 1. Eligible active Student starts/resumes a Published Exam. A unique Student/exam index permits one Attempt. Start/deadline are derived on the server; resume never replaces them.
 2. The response service verifies active Student, owned Active Attempt, published Exam, Question membership and selected Option membership. The same transaction locks the Attempt with an incrementing counter, upserts one Response per Attempt/Question, then rechecks MongoDB time before completing. Invalid membership/expiry rolls back all writes.
 3. Manual/Timeout finalization conditionally updates only Active. MongoDB `$$NOW` supplies the timing predicate and submission timestamp. Manual requires deadline in the future; Timeout requires expiry. Repeated/racing finalization preserves the first stored outcome.
-4. Result persistence locks the Submitted Attempt, validates score bounds and maximum against the immutable question count, creates one Result, and marks evaluation successful in the same transaction. Duplicate retries return the existing Result. Failure leaves Submitted/Pending and never reopens answer writes.
+4. Result persistence locks the Submitted Attempt, validates weighted score bounds and maximum against the sum of immutable published question marks, creates one Result, and marks evaluation successful in the same transaction. Duplicate retries return the existing Result. Failure leaves Submitted/Pending and never reopens answer writes.
 5. Account role/deactivation changes affect subsequent authorized requests but never rewrite historical Exam/Attempt/Response/Result associations.
 
-Only the persistence boundary accepts feature-service writes. Raw MongoDB updates bypass Mongoose validation and are not supported application interfaces. Both answer-save HTTP paths require expectedRevision; stale writes fail with 409. The UI serializes rapid choices and offers explicit failed-save/conflict recovery. The implemented evaluation service awards +1/0; the independent worker finalizes browser-closed expiry and retries pending evaluation every five seconds by default (configurable 100–60000 ms).
+Only the persistence boundary accepts feature-service writes. Raw MongoDB updates bypass Mongoose validation and are not supported application interfaces. Both answer-save HTTP paths require expectedRevision; stale writes fail with 409. The UI serializes rapid choices and offers explicit failed-save/conflict recovery. The implemented evaluation service awards published question marks for correct answers and zero otherwise, including fractional totals; the independent worker finalizes browser-closed expiry and retries pending evaluation every five seconds by default (configurable 100–60000 ms).
 
 ## Failure and security behavior
 

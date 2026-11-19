@@ -1,0 +1,12 @@
+[WebServer] (node:16436) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:21004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 client\e2e\release1.spec.mjs:16:1 › OEP44-ST-01: browser → HTTP → database, save/change/navigation/reload, scoring, privacy and Admin (10.3s)
+  ok 2 client\e2e\release1.spec.mjs:111:1 › OEP44-ST-02: closing the browser does not stop server timeout evaluation (3.5s)
+  ok 3 client\e2e\release1.spec.mjs:146:1 › AC40-ORDER / AC47-DRAIN: delayed saves, navigation and immediate Submit retain the latest choice end to end (3.6s)
+
+  3 passed (24.6s)

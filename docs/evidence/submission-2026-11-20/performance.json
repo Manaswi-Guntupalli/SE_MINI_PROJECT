@@ -1,0 +1,82 @@
+{
+  "testId": "TC-NF-PERF-01",
+  "requirement": "OEP-NF-001",
+  "startedAt": "2026-11-19T19:03:41.999Z",
+  "sourceCommit": "5966da9cbfd0d73844c9caa63aba345ca497b352",
+  "environment": {
+    "node": "v24.22.3",
+    "platform": "win32",
+    "cpu": "AMD Ryzen 7 6800H with Radeon Graphics         ",
+    "logicalCpus": 16
+  },
+  "configuration": {
+    "concurrentUsers": 30,
+    "durationMs": 30000,
+    "targetP95Ms": 2000,
+    "questions": 20,
+    "database": "Disposable real MongoDB 8.0.17 replica set",
+    "sessions": "Real MongoStore",
+    "workload": "30 signed-in students: list/start; repeat load + versioned save + 100ms think time for 30s; submit + results",
+    "exclusions": "Login/setup, browser rendering, external network, production hosting and sustained/capacity testing. This checks active-user classroom API latency, not simultaneous login throughput."
+  },
+  "status": "passed",
+  "elapsedWorkloadMs": 31262.494800000004,
+  "errors": [],
+  "overall": {
+    "count": 4440,
+    "errors": 0,
+    "p50Ms": 153.6199000000015,
+    "p95Ms": 233.22509999999966,
+    "maxMs": 453.45110000000204
+  },
+  "endpoints": {
+    "list": {
+      "count": 30,
+      "errors": 0,
+      "p50Ms": 216.04509999999937,
+      "p95Ms": 281.32310000000143,
+      "maxMs": 286.9519
+    },
+    "start": {
+      "count": 30,
+      "errors": 0,
+      "p50Ms": 343.1705000000002,
+      "p95Ms": 409.0948000000026,
+      "maxMs": 453.45110000000204
+    },
+    "load": {
+      "count": 2160,
+      "errors": 0,
+      "p50Ms": 131.2077999999965,
+      "p95Ms": 187.28440000000046,
+      "maxMs": 304.22550000000047
+    },
+    "save": {
+      "count": 2160,
+      "errors": 0,
+      "p50Ms": 173.5844999999972,
+      "p95Ms": 243.54069999999774,
+      "maxMs": 350.47710000000006
+    },
+    "submit": {
+      "count": 30,
+      "errors": 0,
+      "p50Ms": 312.0772999999972,
+      "p95Ms": 332.690300000002,
+      "maxMs": 334.6577000000034
+    },
+    "results": {
+      "count": 30,
+      "errors": 0,
+      "p50Ms": 95.43319999999949,
+      "p95Ms": 129.36740000000282,
+      "maxMs": 134.7595999999976
+    }
+  },
+  "persisted": {
+    "attempts": 30,
+    "responses": 30,
+    "results": 30
+  },
+  "finishedAt": "2026-11-19T19:04:30.342Z"
+}

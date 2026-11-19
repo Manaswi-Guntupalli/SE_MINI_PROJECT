@@ -1,0 +1,215 @@
+{
+  "observedAt": "2026-11-19T19:07:27.915560+00:00",
+  "applicationBase": "5966da9cbfd0d73844c9caa63aba345ca497b352",
+  "applicationSourceUnchangedByAlignment": true,
+  "sourceTrees": {
+    "client": "7453f9a29efc8d7bd11bec18c04937f4a529ce86",
+    "server": "75a17a344f3bb0b325cf43dbd621daf7f0ab9a30",
+    "scripts": "4b496b253e9d26e052f823718ac531c3034f9244",
+    ".github": "23277bb318d487cb796d7ced783d7803e93185bd"
+  },
+  "runtime": {
+    "generatedAt": "2026-11-19T19:03:22.648Z",
+    "commit": "5966da9cbfd0d73844c9caa63aba345ca497b352",
+    "node": "v24.22.3",
+    "platform": "win32",
+    "arch": "x64",
+    "run": "local",
+    "lockfiles": {
+      "client": "5e06328918da0a9a827ca318edb2cb7da09c1d0b569e8408403ecefd6165b03b",
+      "server": "2f291fc3f843e86e76bed63414ca04bd759e46a6691c8ccbac6f79b27fd98102"
+    },
+    "coverage": {
+      "client": {
+        "lines": {
+          "total": 643,
+          "covered": 593,
+          "skipped": 0,
+          "pct": 92.22
+        },
+        "statements": {
+          "total": 834,
+          "covered": 728,
+          "skipped": 0,
+          "pct": 87.29
+        },
+        "functions": {
+          "total": 197,
+          "covered": 176,
+          "skipped": 0,
+          "pct": 89.34
+        },
+        "branches": {
+          "total": 635,
+          "covered": 524,
+          "skipped": 0,
+          "pct": 82.51
+        },
+        "branchesTrue": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": "Unknown"
+        }
+      },
+      "server": {
+        "lines": {
+          "total": 717,
+          "covered": 655,
+          "skipped": 0,
+          "pct": 91.35
+        },
+        "statements": {
+          "total": 816,
+          "covered": 725,
+          "skipped": 0,
+          "pct": 88.84
+        },
+        "functions": {
+          "total": 113,
+          "covered": 111,
+          "skipped": 0,
+          "pct": 98.23
+        },
+        "branches": {
+          "total": 564,
+          "covered": 444,
+          "skipped": 0,
+          "pct": 78.72
+        },
+        "branchesTrue": {
+          "total": 0,
+          "covered": 0,
+          "skipped": 0,
+          "pct": 100
+        }
+      }
+    },
+    "browserTests": 3,
+    "releaseAcceptance": {
+      "passed": 10,
+      "failed": 0,
+      "diagnosticPassed": true,
+      "formalAcceptance": "Requires independent review, team agreement and remaining Release 1 feature acceptance"
+    },
+    "scope": "Integrated authentication, roles, Admin, authoring, Student attempts/submission, worker expiry and scoring/results suites, including real-browser workflows. Automated results do not replace human review or deployment acceptance."
+  },
+  "passed": {
+    "backend": 136,
+    "frontend": 85,
+    "standaloneScoring": 9,
+    "toolingSecurity": 2,
+    "edge": 3,
+    "chrome": 3,
+    "documentationParser": 3,
+    "acceptanceDiagnostics": 10
+  },
+  "scope": "Windows local execution with disposable databases. Hosted Ubuntu/Windows status separately recorded. No application, dependency or workflow changes.",
+  "retainedFiles": [
+    {
+      "path": ".gitattributes",
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "path": "acceptance-diagnostic.json",
+      "sha256": "aa5b6e0e256cf1fb866956d66354bb59aa708cfcf3134643cfc0599ce47e6065"
+    },
+    {
+      "path": "BRANCH_COVERAGE_REPORT.md",
+      "sha256": "3993603df34fe1247d40cb4c34f76932c958b4b6ef741fff91b0dacce69a22e3"
+    },
+    {
+      "path": "browser-chrome.json",
+      "sha256": "8782bcbf0c71ebe37aa7bdea355f195ba624e93424c60d5e6f0aa6911dccfd6d"
+    },
+    {
+      "path": "browser-edge.json",
+      "sha256": "a3c5e737785f904db93d8d4f7d56574b39cddfdce0e71469f903b8b1ba5356d6"
+    },
+    {
+      "path": "chrome-output.txt",
+      "sha256": "cf3f11192a1ae5779f9e634437284272a93c10950661479df6c237f8112fdcfc"
+    },
+    {
+      "path": "ci-output.txt",
+      "sha256": "fbe84376551ec7534ea71c24e637017b57abdd1e240f8aa42cac9bf6a300fcee"
+    },
+    {
+      "path": "ci-run.json",
+      "sha256": "98abf3d0c90cd3f699e59fb3a3cf72756dca3e983bd9bf9703c97c205c0e7b76"
+    },
+    {
+      "path": "client-audit.json",
+      "sha256": "ae330551b99ffc2e706d078c92e2720a9d87507d87b27d32ec039031f963f579"
+    },
+    {
+      "path": "client-coverage.json",
+      "sha256": "dee489e7266085c52eb4e677d7fcef264585d592c02b11262d52eefcc6d88d0a"
+    },
+    {
+      "path": "client-junit.xml",
+      "sha256": "7a75e05091435743d8b13a63114adcd4fcbc79dc42afe5bff0e7b685ebcb484d"
+    },
+    {
+      "path": "CODE_COVERAGE_REPORT.md",
+      "sha256": "bbe03850ba94b6074de4fe041ee53c7adf9be62d8734124b2217d0f6450c9a72"
+    },
+    {
+      "path": "hosted-jobs.json",
+      "sha256": "22066831ba824d2037c3110efc1ea777b9900d7c69b2fdd20192967045faca34"
+    },
+    {
+      "path": "negative-control.json",
+      "sha256": "a45be6206d9653979a6b6b26f03444e8a10922d7105d81895505e731abf7a13b"
+    },
+    {
+      "path": "performance-output.txt",
+      "sha256": "263f7ae5862da14798de188477bb51e076548ea6b1b7609e31ed1556c75c5847"
+    },
+    {
+      "path": "performance.json",
+      "sha256": "263f7ae5862da14798de188477bb51e076548ea6b1b7609e31ed1556c75c5847"
+    },
+    {
+      "path": "repository-checks.txt",
+      "sha256": "921b60a7fd52e978fbb551cacd29df2d6708879400278e1fcc70fceeb0c6f8e0"
+    },
+    {
+      "path": "server-audit.json",
+      "sha256": "37a69608ff9664838b38b4206c52006f2b31f4c2038dbf46a7ba7e453a50b8c5"
+    },
+    {
+      "path": "server-coverage.json",
+      "sha256": "bf60c78fb911ab2d50611a474899ab23b17f00402c89e53c19fc4149f9d54cec"
+    },
+    {
+      "path": "server-junit.xml",
+      "sha256": "7b549fe7c28ab58c48ffab2cb6e5058fe8e615d03104fdd657c8e1b54aac3e75"
+    },
+    {
+      "path": "sonar-analysis.json",
+      "sha256": "16c7fb9690ed4a3e50e9a09393d9e74739706aa01d5a9c03746e03ba9955ea0f"
+    },
+    {
+      "path": "sonar-measures.json",
+      "sha256": "7b96f6828190d335bc7b3b6fd59d2f5bf0f77fe1d94e7595e3192fb24a8ae3e3"
+    },
+    {
+      "path": "sonar-quality-gate.json",
+      "sha256": "fcca30ca5318fa92fd1f4a4ee6b24fb3a3837492776ac6f5884f748dca8308f5"
+    },
+    {
+      "path": "SYSTEM_VALIDATION_REPORT.md",
+      "sha256": "7192662798ffa3931bf570d16c9950175d5670d810f009937b6798015f919115"
+    },
+    {
+      "path": "test-plan-execution.json",
+      "sha256": "15f18645c845b3ada57789140f25593e96b5c5be1088d2b3b41b1799204abf8f"
+    },
+    {
+      "path": "UNIT_REPORT.md",
+      "sha256": "469562515870219e0b93677ea28ad7e15be85c4c0f2e5498c3f827d7f857dd99"
+    }
+  ],
+  "logNormalization": "Evidence text uses LF newlines; retained text logs have trailing whitespace removed. Result content is unchanged. Folder attributes preserve these bytes across clones."
+}

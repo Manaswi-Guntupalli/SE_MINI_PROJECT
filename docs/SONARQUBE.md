@@ -2,6 +2,17 @@
 
 Project: [Online Exam Portal](https://sonarcloud.io/project/overview?id=Manaswi-Guntupalli_SE_MINI_PROJECT).
 
+## Verified submission status
+
+Checked on 20 November 2026: the latest Automatic Analysis revision was main
+`5966da9cbfd0d73844c9caa63aba345ca497b352`. Its quality gate was **OK** and
+the service reported zero bugs, vulnerabilities, code smells and security hotspots.
+No coverage metric was returned. The optional Sonar upload was skipped in
+Application CI run 44588050194; its successful build/test jobs are separate evidence.
+See [retained responses and fresh runtime checks](SUBMISSION_VERIFICATION.md).
+Zero reported findings is an observation of this analysis, not a guarantee that
+every possible vulnerability is absent.
+
 The November 19 review found 29 open findings. Repository corrections validate the
 saved attempt identifier before forming a request URL, confine the traceability
 CLI to real directories and non-symlink report files under `docs/evidence`, use
@@ -35,7 +46,8 @@ paths. `sonar-project.properties` points to that file and identifies test files.
 Tooling scripts are excluded from coverage percentages, while still being scanned
 for security and reliability issues.
 
-A SonarCloud project owner must finish this setup:
+To switch from Automatic Analysis to optional CI analysis with coverage, a
+SonarCloud project owner must finish this setup:
 
 1. Configure a suitable SonarCloud analysis token as the GitHub repository Actions
    secret `SONAR_TOKEN`. Keep the token out of source code and chat.
@@ -48,3 +60,5 @@ A SonarCloud project owner must finish this setup:
 The optional scan step stays off until that setup is complete. Merely adding the
 configuration does not upload coverage or change a dashboard rating. Confirm the
 latest analysis commit, issue totals, quality gate and coverage after the scan.
+The current workflow does not explicitly wait for a quality-gate result. Verify
+the service result separately; a green scan step alone does not enforce that gate.

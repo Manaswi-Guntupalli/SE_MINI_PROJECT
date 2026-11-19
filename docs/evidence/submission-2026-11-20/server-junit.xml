@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="136" failures="0" errors="0" time="88.2208732">
+    <testsuite name="test/acceptance.test.mjs" timestamp="2026-11-19T19:02:20.316Z" hostname="LAPTOP-5FB5PH0L" tests="35" failures="0" errors="0" skipped="0" time="39.7322579">
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC23-01: rejects wrong, missing, malformed and inactive credentials without leaking password data" time="2.0785615">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC23-02: rotates sessions on login and invalidates the old cookie and CSRF token" time="1.2399737">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC23-03: logout clears the cookie and replay cannot access protected data" time="0.7633321">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC24-01: current role and active status are rechecked for an existing session" time="0.6261791">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC24-02: Student cannot call any Instructor management operation" time="0.6951045">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC24-02: Admin cannot call any Instructor management operation" time="0.7030172">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC24-03: foreign Instructor identifiers cannot read, write, publish or disclose results" time="0.8172555">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC23-04: rejects missing CSRF, cross-origin writes, malformed JSON and invalid sessions" time="0.6564506">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-01: optional start undefined creates a persisted owned draft" time="0.6365335">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-01: optional start null creates a persisted owned draft" time="0.6500126">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-01: optional start &quot;&quot; creates a persisted owned draft" time="0.7772593">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-02: invalid fields {&quot;title&quot;:&quot;&quot;} insert nothing" time="0.6530674">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-02: invalid fields {&quot;description&quot;:{}} insert nothing" time="0.6254592">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-02: invalid fields {&quot;duration&quot;:0} insert nothing" time="0.6052943">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-02: invalid fields {&quot;duration&quot;:-1} insert nothing" time="0.7505513">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-02: invalid fields {&quot;duration&quot;:&quot;Infinity&quot;} insert nothing" time="0.6279726">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-02: invalid fields {&quot;duration&quot;:true} insert nothing" time="0.6413417">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-02: invalid fields {&quot;duration&quot;:[]} insert nothing" time="0.6410546">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-02: invalid fields {&quot;startTime&quot;:&quot;bad&quot;} insert nothing" time="0.6176141">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC33-02: invalid fields {&quot;startTime&quot;:&quot;2026-10-25T10:00&quot;} insert nothing" time="0.6224038">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC34-01: cannot mass assign publication, ownership, questions or answer keys" time="0.7542589">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC35-01: incomplete draft options [] cannot publish" time="0.6374843">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC35-01: incomplete draft options [{&quot;text&quot;:&quot;a&quot;}] cannot publish" time="0.7583238">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC35-01: incomplete draft options [{&quot;text&quot;:&quot;&quot;,&quot;isCorrect&quot;:true},{&quot;text&quot;:&quot;b&quot;}] cannot publish" time="0.7546839">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC35-01: incomplete draft options [{&quot;text&quot;:&quot;a&quot;},{&quot;text&quot;:&quot;b&quot;}] cannot publish" time="0.64438">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC35-01: incomplete draft options [{&quot;text&quot;:&quot;a&quot;,&quot;isCorrect&quot;:true},{&quot;text&quot;:&quot;b&quot;,&quot;isCorrect&quot;:true}] cannot publish" time="0.7562108">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC35-02: option removal clears correctness until a replacement is saved; rejects foreign option IDs" time="0.6958623">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC36-01: listing exposes scheduled published exams with server start eligibility, hide answers and persist one unchanged deadline on concurrent resume" time="0.773902">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC24-04: student attempt/result ownership, Instructor result ownership and Admin non-inheritance" time="2.620715">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC24-05: only Admin can provision/change accounts; duplicates and escalation are rejected" time="2.5559559">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC51-01: invalid provisioning, forbidden writes and inactive Admin sessions cannot change accounts" time="2.0250451">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC51-02: Admin API demotion/deactivation revokes an existing session and preserves associated data" time="2.1110498">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC51-03: initial Admin bootstrap hashes supplied credentials, rejects weak input and refuses repeat bootstrap" time="4.7905054">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC34-02: publication races reject stale edits/deletion and preserve historical attempts/results" time="0.7944191">
+        </testcase>
+        <testcase classname="test/acceptance.test.mjs" name="Acceptance criteria #21 #23 #24 #33–#37 &gt; AC36-02: concurrent HTTP question edit/publication cannot publish invalid content or mutate a published answer key" time="0.8553224">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/admin-access.test.mjs" timestamp="2026-11-19T19:02:20.329Z" hostname="LAPTOP-5FB5PH0L" tests="4" failures="0" errors="0" skipped="0" time="2.0823897">
+        <testcase classname="test/admin-access.test.mjs" name="BUG-02: concurrent cross-admin updates preserve an active admin: {&quot;active&quot;:false}" time="0.2517559">
+        </testcase>
+        <testcase classname="test/admin-access.test.mjs" name="BUG-02: concurrent cross-admin updates preserve an active admin: {&quot;role&quot;:&quot;Student&quot;}" time="0.0924131">
+        </testcase>
+        <testcase classname="test/admin-access.test.mjs" name="BUG-02: concurrent cross-admin updates preserve an active admin: {&quot;role&quot;:&quot;Instructor&quot;,&quot;active&quot;:false}" time="0.0915788">
+        </testcase>
+        <testcase classname="test/admin-access.test.mjs" name="BUG-02: normal role/status changes and self-protection still work" time="0.1268008">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/email-validation.test.mjs" timestamp="2026-11-19T19:02:20.330Z" hostname="LAPTOP-5FB5PH0L" tests="14" failures="0" errors="0" skipped="0" time="0.0072211">
+        <testcase classname="test/email-validation.test.mjs" name="accepts a normal account email: student@example.test" time="0.0032074">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="accepts a normal account email: first.last+exam@dept.example.edu" time="0.0003308">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (0)" time="0.0002139">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (1)" time="0.0001317">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (2)" time="0.0001192">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (3)" time="0.0000947">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (4)" time="0.0000931">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (5)" time="0.0000966">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (6)" time="0.0001543">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (7)" time="0.0000929">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (8)" time="0.0000907">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (9)" time="0.000088">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (10)" time="0.0000884">
+        </testcase>
+        <testcase classname="test/email-validation.test.mjs" name="rejects malformed or excessive email input (11)" time="0.0000968">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/exam-api.test.mjs" timestamp="2026-11-19T19:02:20.335Z" hostname="LAPTOP-5FB5PH0L" tests="15" failures="0" errors="0" skipped="0" time="21.0388704">
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-EXAM-01: serves the application health response" time="1.3771033">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-EXAM-02: persists a new draft and reloads it from MongoDB" time="1.2454757">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-EXAM-03: rejects blank titles without inserting a partial record" time="1.2067106">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-EXAM-04: lists only exams owned by the authenticated Instructor" time="1.8194706">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-EXAM-05: saves and reloads draft edits" time="1.2823033">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-EXAM-06: deletes a draft together with its embedded question data" time="1.2545205">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-EXAM-07: returns 404 for a missing exam and 400 for a malformed id" time="1.2546879">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-MCQ-01: adds, edits and deletes an MCQ with durable changes" time="1.2844417">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-MCQ-02: allows incomplete MCQ options while the exam remains a draft" time="1.2181518">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-MCQ-03: rejects blank question text and leaves the draft unchanged" time="1.2420999">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-MCQ-04: rejects a question identifier belonging to a different exam" time="1.2848132">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-PUBLISH-01: rejects publication of an empty draft" time="1.2632995">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-PUBLISH-02: rejects publication of stored questions without a correct option" time="1.2848148">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-PUBLISH-03: publishes valid content, persists status and never duplicates on repeat" time="1.2834099">
+        </testcase>
+        <testcase classname="test/exam-api.test.mjs" name="Exam API with authenticated Release 1 access &gt; IT-PUBLISH-04: blocks published exam and question changes" time="1.2909728">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/exam-model.test.mjs" timestamp="2026-11-19T19:02:20.341Z" hostname="LAPTOP-5FB5PH0L" tests="12" failures="0" errors="0" skipped="0" time="0.0320954">
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-EXAM-01: creates a draft with trimmed text and an empty question list" time="0.0148002">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-EXAM-02: rejects blank title &quot;&quot;" time="0.0015271">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-EXAM-02: rejects blank title &quot;   &quot;" time="0.0006238">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-EXAM-03: rejects duration 0" time="0.0006509">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-EXAM-03: rejects duration -5" time="0.0004501">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-EXAM-03: rejects duration 5e-324" time="0.0004713">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-EXAM-03: rejects duration 150119987579.0165" time="0.000439">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-EXAM-03: rejects duration Infinity" time="0.0004271">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-EXAM-04: rejects a status outside the draft/publication lifecycle" time="0.0006212">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-MCQ-01: permits incomplete option data while an exam remains a draft" time="0.0052822">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-MCQ-02: still requires nonblank question text" time="0.0013532">
+        </testcase>
+        <testcase classname="test/exam-model.test.mjs" name="Exam schema: Release 1 validation &gt; UT-MCQ-03: gives embedded questions and options distinct identifiers" time="0.0022689">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/persistence-integration.test.mjs" timestamp="2026-11-19T19:02:20.345Z" hostname="LAPTOP-5FB5PH0L" tests="11" failures="0" errors="0" skipped="0" time="2.5753557">
+        <testcase classname="test/persistence-integration.test.mjs" name="OEP-43 real replica-set persistence and cross-branch integration &gt; enforces actual unique login, attempt, response and result indexes" time="0.1539125">
+        </testcase>
+        <testcase classname="test/persistence-integration.test.mjs" name="OEP-43 real replica-set persistence and cross-branch integration &gt; rejects foreign students, nonexistent students and invalid question/option associations" time="0.0644538">
+        </testcase>
+        <testcase classname="test/persistence-integration.test.mjs" name="OEP-43 real replica-set persistence and cross-branch integration &gt; changes one persisted selection without resetting the authoritative deadline" time="0.0716124">
+        </testcase>
+        <testcase classname="test/persistence-integration.test.mjs" name="OEP-43 real replica-set persistence and cross-branch integration &gt; rejects expired writes even if a caller supplies a past clock; only timeout can finalize expiry" time="0.0750038">
+        </testcase>
+        <testcase classname="test/persistence-integration.test.mjs" name="OEP-43 real replica-set persistence and cross-branch integration &gt; refuses early timeout and leaves a still-active attempt unchanged" time="0.0421522">
+        </testcase>
+        <testcase classname="test/persistence-integration.test.mjs" name="OEP-43 real replica-set persistence and cross-branch integration &gt; serializes concurrent answer saves and finalization with no post-submission writes" time="0.1021395">
+        </testcase>
+        <testcase classname="test/persistence-integration.test.mjs" name="OEP-43 real replica-set persistence and cross-branch integration &gt; persists a single immutable result and evaluation state atomically under concurrent retries" time="0.0857372">
+        </testcase>
+        <testcase classname="test/persistence-integration.test.mjs" name="OEP-43 real replica-set persistence and cross-branch integration &gt; rolls back result/evaluation writes for invalid maxima and refuses evaluation of active attempts" time="0.0560442">
+        </testcase>
+        <testcase classname="test/persistence-integration.test.mjs" name="OEP-43 real replica-set persistence and cross-branch integration &gt; rolls back an inserted Result if the evaluation status write fails and permits a clean retry" time="0.0723199">
+        </testcase>
+        <testcase classname="test/persistence-integration.test.mjs" name="OEP-43 real replica-set persistence and cross-branch integration &gt; preserves historical relations when an Admin changes account role/status" time="0.0771375">
+        </testcase>
+        <testcase classname="test/persistence-integration.test.mjs" name="OEP-43 real replica-set persistence and cross-branch integration &gt; prevents resetting attempt ownership/deadline and rejects invalid Published definitions" time="0.0429939">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/persistence-model.test.mjs" timestamp="2026-11-19T19:02:20.348Z" hostname="LAPTOP-5FB5PH0L" tests="6" failures="0" errors="0" skipped="0" time="0.0254055">
+        <testcase classname="test/persistence-model.test.mjs" name="OEP-43 model validation and index definitions &gt; rejects invalid roles and normalizes login identifiers" time="0.0135928">
+        </testcase>
+        <testcase classname="test/persistence-model.test.mjs" name="OEP-43 model validation and index definitions &gt; enforces a unique student/exam pair in index declarations" time="0.0016643">
+        </testcase>
+        <testcase classname="test/persistence-model.test.mjs" name="OEP-43 model validation and index definitions &gt; rejects reversed deadlines and inconsistent submission metadata" time="0.0053881">
+        </testcase>
+        <testcase classname="test/persistence-model.test.mjs" name="OEP-43 model validation and index definitions &gt; defines one response per attempt/question" time="0.0003589">
+        </testcase>
+        <testcase classname="test/persistence-model.test.mjs" name="OEP-43 model validation and index definitions &gt; rejects scores exceeding the maximum and duplicate result index declarations" time="0.0012483">
+        </testcase>
+        <testcase classname="test/persistence-model.test.mjs" name="OEP-43 model validation and index definitions &gt; exposes guarded persistence entry points" time="0.0002135">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/result-model.test.mjs" timestamp="2026-11-19T19:02:20.351Z" hostname="LAPTOP-5FB5PH0L" tests="11" failures="0" errors="0" skipped="0" time="2.1633457">
+        <testcase classname="test/result-model.test.mjs" name="Result Model - Automatic MCQ Evaluation &gt; accepts a valid score" time="0.0123962">
+        </testcase>
+        <testcase classname="test/result-model.test.mjs" name="Result Model - Automatic MCQ Evaluation &gt; rejects a score greater than maximum score" time="0.0013595">
+        </testcase>
+        <testcase classname="test/result-model.test.mjs" name="Result Model - Automatic MCQ Evaluation &gt; accepts a zero score" time="0.000564">
+        </testcase>
+        <testcase classname="test/result-model.test.mjs" name="Result Model - Automatic MCQ Evaluation &gt; rejects a negative score" time="0.0005754">
+        </testcase>
+        <testcase classname="test/result-model.test.mjs" name="Result Model - Automatic MCQ Evaluation &gt; sets status to Evaluated by default" time="0.0005145">
+        </testcase>
+        <testcase classname="test/result-model.test.mjs" name="Result Model - Automatic MCQ Evaluation &gt; accepts decimal scores for fractional question marks" time="0.0005343">
+        </testcase>
+        <testcase classname="test/result-model.test.mjs" name="Result Model - Automatic MCQ Evaluation &gt; rejects non-finite scores and maxima: Infinity" time="0.00104">
+        </testcase>
+        <testcase classname="test/result-model.test.mjs" name="Result Model - Automatic MCQ Evaluation &gt; rejects non-finite scores and maxima: -Infinity" time="0.0008428">
+        </testcase>
+        <testcase classname="test/result-model.test.mjs" name="Result Model - Automatic MCQ Evaluation &gt; rejects non-finite scores and maxima: NaN" time="0.0150942">
+        </testcase>
+        <testcase classname="test/result-model.test.mjs" name="Result Model - Automatic MCQ Evaluation &gt; saves a result to MongoDB" time="0.0267056">
+        </testcase>
+        <testcase classname="test/result-model.test.mjs" name="Result Model - Automatic MCQ Evaluation &gt; prevents duplicate results for the same attempt" time="0.01224">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/results-workflow.test.mjs" timestamp="2026-11-19T19:02:20.354Z" hostname="LAPTOP-5FB5PH0L" tests="18" failures="0" errors="0" skipped="0" time="4.6465774">
+        <testcase classname="test/results-workflow.test.mjs" name="assigned marks survive create/edit/publish, Manual submission, retries and both result views" time="0.5130847">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="assigned marks survive create/edit/publish, Timeout submission, retries and both result views" time="0.3608721">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="repairs legacy weighted results from saved answers with a read-only preview and repeat-safe apply" time="0.1951175">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP-39: manual submission computes correct from saved answers, ignores supplied marks and survives reload" time="0.1462812">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP-39: manual submission computes wrong from saved answers, ignores supplied marks and survives reload" time="0.1617616">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP-39: manual submission computes mixed from saved answers, ignores supplied marks and survives reload" time="0.132229">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP-39: manual submission computes unanswered from saved answers, ignores supplied marks and survives reload" time="0.0911828">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP-39: running worker finalizes and evaluates timeout without a browser; active attempts remain untouched" time="0.0938815">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP-39: full evaluation is idempotent under concurrency; failed evaluation retains responses and worker retries" time="0.1388676">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP-40/41: empty, pending, evaluated and direct-access privacy use persisted owned data" time="0.2448391">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP-40/41: API failures return explicit errors without disclosing data" time="0.0793092">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP44-IT-01: concurrent starts/resume and reload retain one attempt, deadline and latest acknowledged selection" time="0.1348382">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP44-SEC-01: anonymous, foreign-student and wrong-role direct APIs never mutate or disclose an attempt" time="0.1218574">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP44-IT-02: manual/timeout races, expired=false, repeat submission and late writes preserve one outcome" time="0.1551625">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP44-IT-02: manual/timeout races, expired=true, repeat submission and late writes preserve one outcome" time="0.1564372">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="OEP44-FAIL-01: failed response storage is not acknowledged and does not expose database internals" time="0.0617882">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="AC38-LIST: own attempt status distinguishes start/resume/expired/submitted without disclosing another Student attempt" time="0.1295809">
+        </testcase>
+        <testcase classname="test/results-workflow.test.mjs" name="AC46-SYNC: start/resume and reload supply current server time without resetting the persisted deadline" time="0.0709253">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/seed-users.test.mjs" timestamp="2026-11-19T19:02:20.358Z" hostname="LAPTOP-5FB5PH0L" tests="2" failures="0" errors="0" skipped="0" time="12.9671091">
+        <testcase classname="test/seed-users.test.mjs" name="generates independent demo credentials, stores hashes and generates new credentials on an explicit rerun" time="10.1526084">
+        </testcase>
+        <testcase classname="test/seed-users.test.mjs" name="refuses production seeding and leaves existing accounts unchanged" time="1.2672882">
+        </testcase>
+    </testsuite>
+    <testsuite name="test/student-api.test.mjs" timestamp="2026-11-19T19:02:20.360Z" hostname="LAPTOP-5FB5PH0L" tests="8" failures="0" errors="0" skipped="0" time="2.9502453">
+        <testcase classname="test/student-api.test.mjs" name="lists exams by newest scheduled date first, with newer creations breaking ties and unscheduled exams last" time="0.240375">
+        </testcase>
+        <testcase classname="test/student-api.test.mjs" name="#40 creates, changes and reloads one response; stale requests never overwrite" time="0.1799846">
+        </testcase>
+        <testcase classname="test/student-api.test.mjs" name="#40 validates membership, CSRF, ownership and the strict deadline" time="0.14316">
+        </testcase>
+        <testcase classname="test/student-api.test.mjs" name="#47 manual submission is idempotent, evaluates saved answers and blocks later writes" time="0.2251529">
+        </testcase>
+        <testcase classname="test/student-api.test.mjs" name="#47 rejects foreign submission and early timeout" time="0.0990543">
+        </testcase>
+        <testcase classname="test/student-api.test.mjs" name="AC40-REVISION: concurrent tabs with one revision cannot overwrite each other" time="0.1067884">
+        </testcase>
+        <testcase classname="test/student-api.test.mjs" name="AC46-READ: restoring an expired attempt finalizes it without reopening editing" time="0.1376588">
+        </testcase>
+        <testcase classname="test/student-api.test.mjs" name="AC40-LEGACY: legacy POST cannot bypass optimistic revisions or overwrite the latest acknowledged choice" time="0.1592878">
+        </testcase>
+    </testsuite>
+</testsuites>

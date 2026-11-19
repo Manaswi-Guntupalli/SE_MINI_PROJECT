@@ -1,10 +1,10 @@
 # Online Exam Portal final deviations from the original SRS and SAD
 
-**Release 1 · 8 November 2026**
+**Release 1 · aligned 20 November 2026**
 
 **Reviewed branch** `docs/final-checkpoint-review` · [`8fa07c1`](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/commit/8fa07c13eaad24e3c3051b44e786462d7d4aeffc) · [Final review PR #72](https://github.com/Manaswi-Guntupalli/SE_MINI_PROJECT/pull/72)
 
-The baseline is the [original proposal](../OEP-16_Project_Proposal_Final.pdf), the [original PDF SRS](OEP-17_SRS_Final.pdf), earlier design and the [October scope agreement](RELEASE_1_AGREEMENT.md). The current [SRS](part-1/Online_Exam_Portal_SRS.docx), [SAD](part-1/Online_Exam_Portal_SAD.docx) and [Test Plan](part-1/Online_Exam_Portal_Test_Plan.docx) are Version 1.3. This record explains the implemented changes and their reasons for the final demo. It records observed behavior and test evidence separately from formal review.
+The baseline is the [original proposal](../OEP-16_Project_Proposal_Final.pdf), the [original PDF SRS](OEP-17_SRS_Final.pdf), earlier design and the [October scope agreement](RELEASE_1_AGREEMENT.md). The current [SRS](part-1/Online_Exam_Portal_SRS.docx), [SAD](part-1/Online_Exam_Portal_SAD.docx) and [Test Plan](part-1/Online_Exam_Portal_Test_Plan.docx) are Version 1.4, aligned to main after PRs #72 and #73. This record explains the implemented changes and their reasons for the final demo. It records observed behavior and test evidence separately from formal review.
 
 ## Changes to requirements and validation scope
 
@@ -14,7 +14,7 @@ The baseline is the [original proposal](../OEP-16_Project_Proposal_Final.pdf), t
 | Draft authoring descriptions treated incomplete MCQs as invalid at save time. | Instructors can save incomplete options in a Draft. Publish requires nonblank question text, at least two nonblank options and exactly one correct option per question, plus valid exam fields. Published definitions are immutable. This lets Instructors save work in progress and keeps Student exams valid. | QUES-FR-03, EXAM-FR-04, TC-QUES-03, TC-EXAM-04. [Exam controller](../server/controllers/examController.js). |
 | An early listing interpretation showed only currently startable exams. | Students see Published scheduled exams with their eligibility and own attempt state. Drafts stay hidden and the server rejects early Start. The original availability rule is enforced while future exams are visible. | ATT-FR-01/02, TC-ATT-01/02. [Student API](../server/routes/studentRoutes.js). |
 | Original portability text named Chrome, Edge and Firefox. | The Version 1.3 acceptance target is the core workflow on Chrome and Edge. The retained local named-channel report covers those two browsers. Firefox has no validation record in the reviewed evidence. | OEP-NF-003, TC-NF-COMP-01. [Browser report](evidence/checkpoint-2026-11-04/SYSTEM_VALIDATION_REPORT.md). |
-| Early planning referenced Docker, SonarQube or equivalent validation, and a local CI server was considered. | GitHub Actions is the sole CI provider. Locked installs, ESLint, backend syntax checks, automated tests and V8 coverage are the recorded checks. Docker and SonarQube have no delivered verification evidence. Any earlier tooling obligation requires an evaluator decision. | [CI tooling decision](CI_TOOLING_DECISION.md) and [current test report](FINAL_CHECKPOINT_REPORT.md). |
+| Early planning referenced Docker, SonarQube or equivalent validation, and a local CI server was considered. | GitHub Actions is the sole CI provider. Locked installs, ESLint, backend syntax checks, automated tests and V8 coverage are the recorded checks. SonarQube Cloud Automatic Analysis of main 5966da9 passed its quality gate with zero reported bugs, vulnerabilities, code smells and security hotspots when checked on 20 November. Sonar coverage was not reported; optional CI analysis was skipped. Docker has no delivered verification evidence. Any remaining earlier tooling obligation requires an evaluator decision. See [Sonar evidence](SUBMISSION_VERIFICATION.md). | [CI tooling decision](CI_TOOLING_DECISION.md) and [current test report](FINAL_CHECKPOINT_REPORT.md). |
 
 ## Design changes and implementation refinements
 
@@ -28,7 +28,7 @@ The baseline is the [original proposal](../OEP-16_Project_Proposal_Final.pdf), t
 
 ## Baseline references and final demo
 
-The original PDF SRS and October scope agreement preserve the historical fixed-scoring rule. Some older repository references also repeat it, including the November 5 [API contract](AUTH_AND_EXAM_API.md) and [submission checklist](FINAL_SUBMISSION_CHECKLIST.md). For the final demo, use the Version 1.3 SRS and SAD and the current scoring code. The older checklist’s counts and coverage describe its earlier evidence snapshot. Use the [final checkpoint test report](FINAL_CHECKPOINT_REPORT.md) for current figures.
+The original PDF SRS and October scope agreement preserve the historical fixed-scoring rule. The [API contract](AUTH_AND_EXAM_API.md), domain model, field layout and software design now describe weighted scoring consistently. For the final demo, use the Version 1.4 SRS and SAD and the current scoring code. Dated November 4 and November 8 counts remain historical. Use the [submission verification](SUBMISSION_VERIFICATION.md) for the latest retained execution and Sonar evidence.
 
 The original proposal described an earlier sprint sequence. The repository project plan records Sprint 1 as October 19–23 and Sprint 2 as October 26–30, with later integration and validation recorded on their actual dates. The final review and release freeze require the team's recorded acceptance. [Project plan](05_Project_Plan.md)
 
