@@ -2,10 +2,11 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const User = require('../models/User');
+const { isValidEmail } = require('../services/emailValidation');
 
 (async () => {
   const { ADMIN_EMAIL: email, ADMIN_PASSWORD: password, ADMIN_NAME: name = 'Administrator' } = process.env;
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !password || password.length < 12 || Buffer.byteLength(password, 'utf8') > 72) {
+  if (!isValidEmail(email) || !password || password.length < 12 || Buffer.byteLength(password, 'utf8') > 72) {
     throw new Error('Provide ADMIN_EMAIL and ADMIN_PASSWORD (at least 12 characters, at most 72 UTF-8 bytes) in the process environment.');
   }
   await mongoose.connect(process.env.MONGO_URI);

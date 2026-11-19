@@ -32,8 +32,8 @@ const stages = {
     console.log('Cleared generated reports, coverage, manifest and frontend build before this CI run.');
   },
   install() {
-    npm('npm ci --prefix server --no-audit --no-fund');
-    npm('npm ci --prefix client --no-audit --no-fund');
+    npm('npm ci --prefix server --ignore-scripts --no-audit --no-fund');
+    npm('npm ci --prefix client --ignore-scripts --no-audit --no-fund');
   },
   build() {
     npm('npm run build --prefix server');
@@ -41,6 +41,7 @@ const stages = {
     npm('npm run build --prefix client');
   },
   test() {
+    run(process.execPath, ['--test', 'scripts/security.test.mjs']);
     npm('npm run test:ci --prefix server');
     npm('npm run test:ci --prefix client');
     npm('npm run test:scoring --prefix server');

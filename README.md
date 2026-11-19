@@ -124,14 +124,14 @@ Run `npm run db:check --prefix server` to verify connectivity, replica-set topol
 
 ### 4. Development accounts
 
-For a local demonstration only, run `npm run seed --prefix server`. This creates or resets test accounts in the configured database, so do not run it against a database containing real accounts. Production seeding is blocked.
+For a local demonstration only, run `npm run seed --prefix server`. This creates or resets test accounts in the configured database with a fresh random password per account, printed in that terminal. Keep those credentials private. Do not run it against a database containing real accounts. Production seeding is blocked.
 
 | Role | Email | Development password |
 |---|---|---|
-| Instructor | instructor@test.com | Instructor123! |
-| Second Instructor | instructor2@test.com | Instructor234! |
-| Student | student@test.com | Student123! |
-| Admin | admin@test.com | Admin123! |
+| Instructor | instructor@test.com | Printed by the seed command |
+| Second Instructor | instructor2@test.com | Printed by the seed command |
+| Student | student@test.com | Printed by the seed command |
+| Admin | admin@test.com | Printed by the seed command |
 
 The second Instructor starts with a separate owned-exam list. Admin accounts do not inherit Instructor or Student permissions. Inactive accounts cannot log in. Every teammate must perform startup and record their own result before #21 can be fully accepted.
 

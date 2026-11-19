@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execFileSync } from 'node:child_process';
+import { gitOutput } from './git.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const coverage = {};
@@ -23,7 +23,7 @@ if (!browser.stats.expected || browser.stats.unexpected || browser.stats.skipped
 }
 const evidence = {
   generatedAt: new Date().toISOString(),
-  commit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
+  commit: gitOutput(['rev-parse', 'HEAD']).trim(),
   node: process.version, platform: process.platform, arch: process.arch,
   run: process.env.GITHUB_RUN_ID || 'local',
   lockfiles: Object.fromEntries(['client', 'server'].map((part) => [part,

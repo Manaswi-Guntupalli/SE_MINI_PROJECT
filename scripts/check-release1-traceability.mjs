@@ -1,12 +1,12 @@
 import { readFileSync, writeFileSync } from 'node:fs';
-import { resolve, join } from 'node:path';
+import { evidenceDirectory, evidenceFile } from './evidencePaths.mjs';
 
-const directory = resolve(process.argv[2]);
+const directory = evidenceDirectory(process.argv[2]);
 const assertions = ['server', 'client'].flatMap(suite => {
-  const report = JSON.parse(readFileSync(join(directory, `${suite}-tests.json`), 'utf8'));
+  const report = JSON.parse(readFileSync(evidenceFile(directory, `${suite}-tests.json`), 'utf8'));
   return report.testResults.flatMap(file => file.assertionResults.map(test => ({ suite, name: test.fullName, status: test.status })));
 });
-const browser = JSON.parse(readFileSync(join(directory, 'browser.json'), 'utf8'));
+const browser = JSON.parse(readFileSync(evidenceFile(directory, 'browser.json'), 'utf8'));
 function collect(suites) {
   for (const suite of suites) {
     for (const spec of suite.specs || []) assertions.push({ suite: 'browser', name: spec.title, status: spec.ok ? 'passed' : 'failed' });
@@ -49,5 +49,5 @@ const rows = Object.entries(mapping).map(([requirement, selectors]) => ({
     return { selector, matches };
   }),
 }));
-writeFileSync(join(directory, 'traceability.json'), JSON.stringify({ status: 'passed', requirements: rows }, null, 2) + '\n');
+writeFileSync(evidenceFile(directory, 'traceability.json'), JSON.stringify({ status: 'passed', requirements: rows }, null, 2) + '\n');
 console.log(`Verified executed test mappings for 17 functional and 6 security requirements.`);

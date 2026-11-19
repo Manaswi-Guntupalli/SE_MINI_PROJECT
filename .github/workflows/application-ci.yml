@@ -26,6 +26,7 @@ jobs:
       - name: Check out the commit under test
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
+          fetch-depth: 0
           persist-credentials: false
       - name: Set up the recorded Node version
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -45,6 +46,14 @@ jobs:
         run: node scripts/ci.mjs build
       - name: Run backend integration and frontend component suites
         run: node scripts/ci.mjs test
+      - name: Prepare frontend and backend coverage for SonarQube Cloud
+        run: node scripts/prepare-sonar-coverage.mjs
+      # Enable only after configuring SONAR_TOKEN and turning off Automatic Analysis.
+      - name: Analyze code and coverage with SonarQube Cloud
+        if: matrix.os == 'ubuntu-latest' && vars.SONAR_CI_ENABLED == 'true' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: SonarSource/sonarqube-scan-action@c7ee0f9df90b7aa20e8dcf9695dcfe2e7da5b4f2 # v7
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Run real-browser acceptance workflows
         run: node scripts/ci.mjs browser
       - name: Verify real failing-test detection

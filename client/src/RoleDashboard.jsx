@@ -5,6 +5,16 @@ import ExamAttempt from './ExamAttempt';
 import ResultsPanel from './ResultsPanel';
 import { browserTimeZone, displayTime } from './dateTime';
 
+function storedAttemptId(key) {
+  const id = sessionStorage.getItem(key);
+  // Browser storage is untrusted. Only a MongoDB identifier may form a URL path.
+  if (id && !/^[a-f\d]{24}$/i.test(id)) {
+    sessionStorage.removeItem(key);
+    return null;
+  }
+  return id;
+}
+
 export default function RoleDashboard({ user, logout, api, csrfToken }) {
   const [reload, setReload] = useState(0);
   const [success, setSuccess] = useState('');
@@ -14,7 +24,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   const listRequest = useRef(0);
   const restoreRequest = useRef(0);
   const alive = useRef(true);
-  const [restoringAttempt, setRestoringAttempt] = useState(() => user.role === 'Student' && !!sessionStorage.getItem(`oep-attempt-${user.id}`));
+  const [restoringAttempt, setRestoringAttempt] = useState(() => user.role === 'Student' && !!storedAttemptId(`oep-attempt-${user.id}`));
   const [restoreError, setRestoreError] = useState('');
   const [restoreReload, setRestoreReload] = useState(0);
   const [error, setError] = useState('');
@@ -60,7 +70,7 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   }
   function refreshDashboard() {
     clearNotifications(); setLoading(true); setListStatus('loading');
-    setRestoreError(''); setRestoringAttempt(isStudent && !!sessionStorage.getItem(attemptKey));
+    setRestoreError(''); setRestoringAttempt(isStudent && !!storedAttemptId(attemptKey));
     setReload(value => value + 1);
   }
   async function refreshAccountsAfterSave(message) {
@@ -86,9 +96,9 @@ export default function RoleDashboard({ user, logout, api, csrfToken }) {
   useEffect(() => {
     const requests = restoreRequest;
     const request = ++requests.current;
-    const id = isStudent && sessionStorage.getItem(attemptKey);
+    const id = isStudent && storedAttemptId(attemptKey);
     if (!id) return;
-    void axios.get(`${api}/student/attempts/${id}`).then(restored => {
+    void axios.get(`${api}/student/attempts/${encodeURIComponent(id)}`).then(restored => {
       if (!alive.current || request !== restoreRequest.current) return;
       setRestoreError('');
       setAttempt(restored.data);

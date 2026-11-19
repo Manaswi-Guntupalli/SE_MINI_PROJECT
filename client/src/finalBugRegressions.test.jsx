@@ -46,17 +46,28 @@ it.each(['open', 'save', 'list'].flatMap(action => ['resolve', 'reject'].map(out
 });
 
 const restored = { attempt: { _id: 'attempt', status: 'Active', deadline: '2099-01-01' }, questions: [], responses: [], serverTime: '2026-11-08T00:00:00Z' };
+it.each(['../../admin/users', '%2e%2e%2fadmin', 'https://attacker.invalid',
+  '507f1f77bcf86cd799439011/../../admin', '507f1f77bcf86cd799439011?extra=true', 'invalid'])(
+'rejects a malformed saved attempt ID before sending any restoration request (%#)', async id => {
+  sessionStorage.setItem('oep-attempt-student', id);
+  axios.get.mockResolvedValue({ data: [] });
+  render(<RoleDashboard {...props} user={{ id: 'student', role: 'Student' }} />);
+  await screen.findByText('No exams available yet.');
+  expect(axios.get.mock.calls.map(([url]) => url)).toEqual(['/api/student/exams']);
+  expect(sessionStorage.getItem('oep-attempt-student')).toBeNull();
+});
+
 it('BUG-03: restores the active attempt even if the exam list fails', async () => {
-  sessionStorage.setItem('oep-attempt-student', 'attempt');
+  sessionStorage.setItem('oep-attempt-student', '507f1f77bcf86cd799439011');
   axios.get.mockImplementation(url => url.endsWith('/student/exams') ? Promise.reject(new Error('listing offline')) : Promise.resolve({ data: restored }));
   render(<RoleDashboard {...props} user={{ id: 'student', role: 'Student' }} />);
   expect(await screen.findByRole('heading', { name: 'Exam started' })).toBeTruthy();
-  expect(axios.get).toHaveBeenCalledWith('/api/student/attempts/attempt');
+  expect(axios.get).toHaveBeenCalledWith('/api/student/attempts/507f1f77bcf86cd799439011');
   expect(screen.queryByText(/No exam is open/)).toBeNull();
 });
 
 it('BUG-03: a failed restoration has its own retry without claiming the attempt is missing', async () => {
-  sessionStorage.setItem('oep-attempt-student', 'attempt');
+  sessionStorage.setItem('oep-attempt-student', '507f1f77bcf86cd799439011');
   let fail = true;
   axios.get.mockImplementation(url => url.endsWith('/student/exams') ? Promise.resolve({ data: [] }) : fail ? Promise.reject(new Error('attempt offline')) : Promise.resolve({ data: restored }));
   render(<RoleDashboard {...props} user={{ id: 'student', role: 'Student' }} />);
